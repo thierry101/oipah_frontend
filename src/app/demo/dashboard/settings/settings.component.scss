@@ -1,0 +1,585 @@
+// ── Variables ──────────────────────────────────────────────
+$green-900: #173404;
+$green-800: #27500A;
+$green-700: #3B6D11;
+$green-600: #639922;
+$green-100: #EAF3DE;
+
+$amber-500: #EF9F27;
+$amber-100: #FDF3E1;
+
+$red-500: #DC2626;
+$red-100: #FEE2E2;
+
+$gray-50: #F9F8F5;
+$gray-100: #F1EFE8;
+$gray-200: #D3D1C7;
+$gray-400: #9B9890;
+$gray-600: #5F5E5A;
+$gray-900: #2C2C2A;
+
+$white: #FFFFFF;
+
+$radius-sm: 8px;
+$radius-md: 12px;
+$radius-lg: 16px;
+
+$font-display: 'Playfair Display', serif;
+$font-body: 'DM Sans', sans-serif;
+
+$shadow-sm: 0 1px 3px rgba(0, 0, 0, .06),
+  0 1px 2px rgba(0, 0, 0, .04);
+
+$shadow-md: 0 4px 16px rgba(0, 0, 0, .08);
+
+// ── Page ───────────────────────────────────────────────────
+.settings-page {
+  font-family: $font-body;
+  background: $gray-50;
+  min-height: 100vh;
+  padding: 32px 40px;
+  color: $gray-900;
+  position: relative;
+}
+
+// ── Header ─────────────────────────────────────────────────
+.page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 28px;
+
+  .header-left {
+    display: flex;
+    align-items: flex-start;
+    gap: 16px;
+  }
+
+  .header-icon {
+    width: 48px;
+    height: 48px;
+    background: $green-100;
+    border-radius: $radius-md;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    color: $green-700;
+
+    svg {
+      width: 22px;
+      height: 22px;
+    }
+  }
+
+  h1 {
+    font-family: $font-display;
+    font-size: 24px;
+    color: $gray-900;
+    margin-bottom: 4px;
+    line-height: 1.2;
+  }
+
+  p {
+    font-size: 13px;
+    color: $gray-600;
+  }
+}
+
+// ── Layout ─────────────────────────────────────────────────
+.settings-layout {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+// ── Navigation horizontale ────────────────────────────────
+.settings-nav {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: $white;
+  border: 1px solid $gray-100;
+  border-radius: $radius-lg;
+  padding: 10px;
+  box-shadow: $shadow-sm;
+  overflow-x: auto;
+  scrollbar-width: thin;
+
+  &::-webkit-scrollbar {
+    height: 6px;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: $gray-200;
+    border-radius: 999px;
+  }
+}
+
+.nav-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 18px;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  border-radius: $radius-md;
+  font-family: $font-body;
+  font-size: 13.5px;
+  color: $gray-600;
+  transition: all 0.18s ease;
+  white-space: nowrap;
+  flex-shrink: 0;
+
+  .nav-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 18px;
+    height: 18px;
+
+    ::ng-deep svg {
+      width: 16px;
+      height: 16px;
+    }
+  }
+
+  .nav-label {
+    font-weight: 500;
+  }
+
+  .nav-arrow {
+    display: none;
+  }
+
+  &:hover {
+    background: $gray-50;
+    color: $green-700;
+  }
+
+  &.active {
+    background: $green-700;
+    color: $white;
+    box-shadow: 0 4px 12px rgba(59, 109, 17, 0.18);
+
+    svg {
+      color: $white;
+    }
+  }
+}
+
+// ── Content area ───────────────────────────────────────────
+.settings-content {
+  background: $white;
+  border: 1px solid $gray-100;
+  border-radius: $radius-lg;
+  box-shadow: $shadow-sm;
+  overflow: hidden;
+}
+
+// ── Tab panel ──────────────────────────────────────────────
+.tab-panel {
+  padding: 32px 36px 0;
+  animation: fadeSlide 0.2s ease;
+}
+
+@keyframes fadeSlide {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.panel-header {
+  margin-bottom: 28px;
+  padding-bottom: 20px;
+  border-bottom: 1.5px solid $gray-100;
+
+  h2 {
+    font-family: $font-display;
+    font-size: 20px;
+    color: $gray-900;
+    margin-bottom: 5px;
+  }
+
+  p {
+    font-size: 13px;
+    color: $gray-600;
+  }
+}
+
+// ── Logo section ───────────────────────────────────────────
+.logo-section {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  margin-bottom: 28px;
+  padding: 20px;
+  background: $gray-50;
+  border: 1.5px dashed $gray-200;
+  border-radius: $radius-md;
+}
+
+.logo-preview {
+  width: 96px;
+  height: 96px;
+  border-radius: $radius-md;
+  border: 1.5px solid $gray-200;
+  background: $white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+  flex-shrink: 0;
+  transition: border-color 0.18s;
+
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    padding: 6px;
+  }
+
+  &:hover {
+    border-color: $green-600;
+
+    .logo-overlay {
+      opacity: 1;
+    }
+  }
+}
+
+.logo-placeholder {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  color: $gray-400;
+  font-size: 11px;
+
+  svg {
+    width: 28px;
+    height: 28px;
+  }
+}
+
+.logo-overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba($green-700, 0.82);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  color: $white;
+  font-size: 12px;
+  font-weight: 500;
+  opacity: 0;
+  transition: opacity 0.18s;
+
+  svg {
+    width: 20px;
+    height: 20px;
+  }
+}
+
+.logo-info {
+  .logo-title {
+    font-size: 14px;
+    font-weight: 600;
+    color: $gray-900;
+    margin-bottom: 4px;
+  }
+
+  .logo-hint {
+    font-size: 12px;
+    color: $gray-400;
+    margin-bottom: 12px;
+  }
+}
+
+// ── Bouton upload ──────────────────────────────────────────
+.btn-upload {
+  height: 34px;
+  padding: 0 14px;
+  background: $white;
+  color: $green-700;
+  border: 1.5px solid $green-600;
+  border-radius: $radius-sm;
+  font-family: $font-body;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.14s;
+
+  &:hover {
+    background: $green-100;
+  }
+}
+
+// ── Form grid ──────────────────────────────────────────────
+.form-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+
+  &.full {
+    grid-column: 1 / -1;
+  }
+
+  label {
+    font-size: 13px;
+    font-weight: 500;
+    color: $gray-900;
+  }
+
+  .req {
+    color: $amber-500;
+  }
+}
+
+.input-with-icon {
+  position: relative;
+
+  svg {
+    position: absolute;
+    left: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 15px;
+    height: 15px;
+    color: $gray-400;
+    pointer-events: none;
+  }
+
+  input {
+    width: 100%;
+    height: 44px;
+    border: 1.5px solid $gray-200;
+    border-radius: $radius-sm;
+    padding: 0 14px 0 38px;
+    font-family: $font-body;
+    font-size: 14px;
+    color: $gray-900;
+    background: $white;
+    outline: none;
+    transition: border-color 0.18s, box-shadow 0.18s;
+
+    &:focus {
+      border-color: $green-600;
+      box-shadow: 0 0 0 3px rgba(99, 153, 34, 0.1);
+    }
+
+    &::placeholder {
+      color: $gray-400;
+    }
+  }
+}
+
+// ── Future section ─────────────────────────────────────────
+.future-section {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  margin-top: 28px;
+  padding: 16px 20px;
+  background: $amber-100;
+  border: 1px solid rgba(239, 159, 39, 0.3);
+  border-radius: $radius-md;
+
+  .future-icon {
+    flex-shrink: 0;
+    color: $amber-500;
+
+    svg {
+      width: 20px;
+      height: 20px;
+    }
+  }
+
+  p {
+    font-size: 13px;
+    color: #7a5000;
+    line-height: 1.5;
+    margin: 0;
+  }
+}
+
+// ── Panel actions ──────────────────────────────────────────
+.panel-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  padding: 20px 36px 28px;
+  margin-top: 28px;
+  border-top: 1px solid $gray-100;
+}
+
+.btn-reset {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  height: 44px;
+  padding: 0 20px;
+  background: $white;
+  color: $gray-600;
+  border: 1.5px solid $gray-200;
+  border-radius: $radius-sm;
+  font-family: $font-body;
+  font-size: 14px;
+  cursor: pointer;
+
+  svg {
+    width: 15px;
+    height: 15px;
+  }
+
+  &:hover {
+    background: $gray-50;
+    border-color: $gray-400;
+  }
+}
+
+.btn-save {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  height: 44px;
+  padding: 0 24px;
+  background: $green-700;
+  color: $white;
+  border: none;
+  border-radius: $radius-sm;
+  font-family: $font-body;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.14s;
+
+  svg {
+    width: 16px;
+    height: 16px;
+  }
+
+  &:hover {
+    background: $green-800;
+  }
+
+  &.loading {
+    opacity: 0.7;
+    cursor: not-allowed;
+  }
+}
+
+// ── Spinner ────────────────────────────────────────────────
+.spinner {
+  width: 16px;
+  height: 16px;
+  border: 2px solid rgba($white, 0.3);
+  border-top-color: $white;
+  border-radius: 50%;
+  animation: spin 0.7s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+// ── Toast ──────────────────────────────────────────────────
+.toast {
+  position: fixed;
+  bottom: 28px;
+  right: 28px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: $gray-900;
+  color: $white;
+  padding: 13px 20px;
+  border-radius: $radius-md;
+  font-size: 13.5px;
+  font-weight: 500;
+  box-shadow: 0 8px 28px rgba(0, 0, 0, 0.2);
+  transform: translateY(20px);
+  opacity: 0;
+  pointer-events: none;
+  transition: transform 0.28s cubic-bezier(.22, .68, 0, 1.2),
+    opacity 0.22s ease;
+  z-index: 2000;
+
+  svg {
+    width: 17px;
+    height: 17px;
+    flex-shrink: 0;
+  }
+
+  &.show {
+    transform: translateY(0);
+    opacity: 1;
+    pointer-events: auto;
+  }
+
+  &.error {
+    background: $red-500;
+  }
+}
+
+// ── Responsive ─────────────────────────────────────────────
+@media (max-width: 768px) {
+  .settings-page {
+    padding: 20px;
+  }
+
+  .form-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .tab-panel {
+    padding: 24px 20px 0;
+  }
+
+  .panel-actions {
+    padding: 16px 20px 24px;
+    flex-direction: column-reverse;
+
+    button {
+      width: 100%;
+      justify-content: center;
+    }
+  }
+
+  .logo-section {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .page-header {
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .settings-nav {
+    padding-bottom: 8px;
+  }
+
+  .nav-item {
+    padding: 10px 14px;
+  }
+}

@@ -1,0 +1,329 @@
+// ── Variables ──────────────────────────────────────────────
+$green-900: #173404;
+$green-800: #27500A;
+$green-700: #3B6D11;
+$green-600: #639922;
+$green-300: #C0DD97;
+$green-100: #EAF3DE;
+$amber-500: #EF9F27;
+$gray-50: #F9F8F5;
+$gray-100: #F1EFE8;
+$gray-200: #D3D1C7;
+$gray-600: #5F5E5A;
+$gray-900: #2C2C2A;
+$white: #FFFFFF;
+
+$radius-sm: 8px;
+$radius-md: 12px;
+$radius-lg: 18px;
+
+$font-display: 'Playfair Display', serif;
+$font-body: 'DM Sans', sans-serif;
+
+// ── Root layout ────────────────────────────────────────────
+.auth-main {
+  font-family: $font-body;
+  background: $gray-50;
+  min-height: 100vh;
+  display: flex;
+
+  .auth-wrapper {
+    width: 100%;
+    min-height: 100vh;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+// ── Left panel ─────────────────────────────────────────────
+.panel-left {
+  background: $green-800;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 48px;
+  position: relative;
+  overflow: hidden;
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: -80px;
+    right: -80px;
+    width: 340px;
+    height: 340px;
+    border-radius: 50%;
+    background: $green-700;
+    opacity: 0.5;
+  }
+
+  &::after {
+    content: '';
+    position: absolute;
+    bottom: -60px;
+    left: -60px;
+    width: 280px;
+    height: 280px;
+    border-radius: 50%;
+    background: $green-900;
+    opacity: 0.6;
+  }
+}
+
+// Brand
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  position: relative;
+  z-index: 2;
+
+  .brand-icon {
+    width: 42px;
+    height: 42px;
+    background: $amber-500;
+    border-radius: $radius-sm;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    svg {
+      width: 22px;
+      height: 22px;
+      fill: $white;
+    }
+  }
+
+  .brand-name {
+    font-family: $font-display;
+    font-size: 22px;
+    color: $white;
+    letter-spacing: -0.3px;
+  }
+}
+
+// Hero text
+.panel-hero {
+  position: relative;
+  z-index: 2;
+
+  h1 {
+    font-family: $font-display;
+    font-size: 38px;
+    line-height: 1.2;
+    color: $white;
+    margin-bottom: 16px;
+
+    em {
+      color: $green-300;
+      font-style: normal;
+    }
+  }
+
+  p {
+    font-size: 15px;
+    color: rgba($white, 0.65);
+    line-height: 1.7;
+    max-width: 360px;
+  }
+}
+
+// Stats row
+.panel-stats {
+  display: flex;
+  gap: 16px;
+  position: relative;
+  z-index: 2;
+
+  .stat {
+    background: rgba($white, 0.08);
+    border: 1px solid rgba($white, 0.14);
+    border-radius: $radius-md;
+    padding: 14px 18px;
+
+    .stat-value {
+      font-family: $font-display;
+      font-size: 24px;
+      color: $amber-500;
+    }
+
+    .stat-label {
+      font-size: 12px;
+      color: rgba($white, 0.55);
+      margin-top: 2px;
+    }
+  }
+}
+
+// ── Right panel ────────────────────────────────────────────
+.panel-right {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 48px 56px;
+}
+
+.login-box {
+  width: 100%;
+  max-width: 420px;
+}
+
+// Header
+.login-header {
+  margin-bottom: 36px;
+
+  h2 {
+    font-family: $font-display;
+    font-size: 28px;
+    color: $gray-900;
+    margin-bottom: 6px;
+  }
+
+  p {
+    font-size: 14px;
+    color: $gray-600;
+  }
+
+  a {
+    color: $green-700;
+    text-decoration: none;
+    font-weight: 500;
+
+    &:hover {
+      text-decoration: underline;
+    }
+  }
+}
+
+// Fields
+.field {
+  margin-bottom: 20px;
+
+  label {
+    display: block;
+    font-size: 13px;
+    font-weight: 500;
+    color: $gray-900;
+    margin-bottom: 7px;
+  }
+
+  input {
+    width: 100%;
+    height: 46px;
+    border: 1.5px solid $gray-200;
+    border-radius: $radius-sm;
+    padding: 0 14px;
+    font-family: $font-body;
+    font-size: 14px;
+    color: $gray-900;
+    background: $white;
+    transition: border-color 0.18s, box-shadow 0.18s;
+    outline: none;
+
+    &:focus {
+      border-color: $green-600;
+      box-shadow: 0 0 0 3px rgba($green-600, 0.12);
+    }
+
+    &::placeholder {
+      color: $gray-200;
+    }
+  }
+}
+
+// Remember me / Forgot password row
+.field-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 28px;
+}
+
+.check-label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  color: $gray-600;
+  cursor: pointer;
+
+  input[type='checkbox'] {
+    width: 16px;
+    height: 16px;
+    accent-color: $green-700;
+    cursor: pointer;
+  }
+}
+
+.forgot-link {
+  font-size: 13px;
+  color: $green-700;
+  text-decoration: none;
+  font-weight: 500;
+
+  &:hover {
+    text-decoration: underline;
+  }
+}
+
+// Login button
+.btn-login {
+  width: 100%;
+  height: 48px;
+  background: $green-700;
+  color: $white;
+  border: none;
+  border-radius: $radius-sm;
+  font-family: $font-body;
+  font-size: 15px;
+  font-weight: 500;
+  cursor: pointer;
+  letter-spacing: 0.2px;
+  transition: background 0.18s, transform 0.1s;
+
+  &:hover {
+    background: $green-800;
+  }
+
+  &:active {
+    transform: scale(0.99);
+  }
+}
+
+// Footer links
+.login-footer {
+  margin-top: 40px;
+  text-align: center;
+  font-size: 12px;
+  color: $gray-200;
+
+  a {
+    color: $gray-600;
+    text-decoration: none;
+
+    &:hover {
+      text-decoration: underline;
+    }
+  }
+
+  .sep {
+    margin: 0 8px;
+    color: $gray-200;
+  }
+}
+
+// ── Responsive ─────────────────────────────────────────────
+@media (max-width: 768px) {
+  .auth-main .auth-wrapper {
+    grid-template-columns: 1fr;
+  }
+
+  .panel-left {
+    display: none;
+  }
+
+  .panel-right {
+    padding: 40px 24px;
+  }
+}

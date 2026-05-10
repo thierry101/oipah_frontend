@@ -1,0 +1,14 @@
+<button [class]="cssClass" [disabled]="loading" (click)="handleClick()">
+  @if (!loading) {
+    @if (icon) {
+      <i [class]="icon"></i>
+    }
+
+    {{ label }}
+  }
+
+  @if (loading) {
+    <span class="spinner-border spinner-border-sm me-2"></span>
+    Traitement...
+  }
+</button>

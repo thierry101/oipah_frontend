@@ -1,0 +1,892 @@
+// ── Variables ──────────────────────────────────────────────
+$green-900: #173404;
+$green-800: #27500A;
+$green-700: #3B6D11;
+$green-600: #639922;
+$green-100: #EAF3DE;
+$amber-500: #EF9F27;
+$amber-100: #FDF3E1;
+$red-500: #DC2626;
+$red-100: #FEE2E2;
+$blue-500: #2563EB;
+$blue-100: #DBEAFE;
+$gray-50: #F9F8F5;
+$gray-100: #F1EFE8;
+$gray-200: #D3D1C7;
+$gray-400: #9B9890;
+$gray-600: #5F5E5A;
+$gray-900: #2C2C2A;
+$white: #FFFFFF;
+
+$radius-sm: 8px;
+$radius-md: 12px;
+$radius-lg: 16px;
+
+$font-display: 'Playfair Display', serif;
+$font-body: 'DM Sans', sans-serif;
+
+$shadow-sm: 0 1px 3px rgba(0, 0, 0, .06), 0 1px 2px rgba(0, 0, 0, .04);
+$shadow-lg: 0 20px 60px rgba(0, 0, 0, .14);
+
+// ── Page ───────────────────────────────────────────────────
+.subsidy-page {
+  font-family: $font-body;
+  background: $gray-50;
+  min-height: 100vh;
+  padding: 32px 40px;
+  color: $gray-900;
+}
+
+// ── Header ─────────────────────────────────────────────────
+.page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 28px;
+
+  .header-left {
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+  }
+
+  .ph-icon {
+    width: 48px;
+    height: 48px;
+    background: $green-100;
+    border-radius: $radius-md;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    color: $green-700;
+
+    svg {
+      width: 22px;
+      height: 22px;
+    }
+  }
+
+  .header-badge {
+    display: inline-block;
+    background: $green-700;
+    color: #C0DD97;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 1.5px;
+    padding: 3px 8px;
+    border-radius: 4px;
+    margin-bottom: 5px;
+  }
+
+  h1 {
+    font-family: $font-display;
+    font-size: 22px;
+    color: $gray-900;
+    margin-bottom: 3px;
+    line-height: 1.2;
+  }
+
+  p {
+    font-size: 13px;
+    color: $gray-600;
+  }
+}
+
+// ── Split layout ───────────────────────────────────────────
+.split-layout {
+  display: grid;
+  grid-template-columns: 30% 1fr;
+  gap: 20px;
+  align-items: start;
+}
+
+// ── Panels ─────────────────────────────────────────────────
+.panel-left,
+.panel-right {
+  background: $white;
+  border: 1px solid $gray-100;
+  border-radius: $radius-lg;
+  overflow: hidden;
+  box-shadow: $shadow-sm;
+}
+
+.panel-left {
+  position: sticky;
+  top: 20px;
+}
+
+// ── Panel title ────────────────────────────────────────────
+.panel-title {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 16px 20px;
+  border-bottom: 1px solid $gray-100;
+  background: $gray-50;
+
+  .panel-title-icon {
+    width: 36px;
+    height: 36px;
+    border-radius: $radius-sm;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+
+    svg {
+      width: 17px;
+      height: 17px;
+    }
+
+    &.amber {
+      background: $amber-100;
+      color: darken($amber-500, 15%);
+    }
+
+    &.green {
+      background: $green-100;
+      color: $green-700;
+    }
+  }
+
+  .panel-title-text {
+    flex: 1;
+    min-width: 0;
+
+    h2 {
+      font-family: $font-display;
+      font-size: 16px;
+      color: $gray-900;
+      margin-bottom: 1px;
+    }
+
+    p {
+      font-size: 11px;
+      color: $gray-600;
+    }
+  }
+}
+
+// ── Donor add button ───────────────────────────────────────
+.btn-add-donor {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: 32px;
+  padding: 0 12px;
+  background: $green-700;
+  color: $white;
+  border: none;
+  border-radius: $radius-sm;
+  font-family: $font-body;
+  font-size: 12.5px;
+  font-weight: 500;
+  cursor: pointer;
+  white-space: nowrap;
+  flex-shrink: 0;
+  transition: background 0.15s;
+
+  svg {
+    width: 13px;
+    height: 13px;
+  }
+
+  &:hover {
+    background: $green-800;
+  }
+}
+
+// ── Donor mini table ───────────────────────────────────────
+.donor-table-wrap {
+  overflow-x: auto;
+}
+
+.donor-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+
+  thead tr {
+    background: $gray-50;
+    border-bottom: 1px solid $gray-100;
+
+    th {
+      padding: 9px 14px;
+      text-align: left;
+      font-size: 10.5px;
+      font-weight: 600;
+      color: $gray-400;
+      letter-spacing: 0.4px;
+      text-transform: uppercase;
+      white-space: nowrap;
+    }
+  }
+
+  tbody tr {
+    border-bottom: 1px solid $gray-100;
+    cursor: pointer;
+    transition: background 0.1s;
+
+    &:last-child {
+      border-bottom: none;
+    }
+
+    &:hover {
+      background: $gray-50;
+    }
+
+    &.selected {
+      background: $green-100;
+      border-left: 3px solid $green-700;
+
+      .dn-main {
+        color: $green-700;
+        font-weight: 600;
+      }
+    }
+  }
+
+  td {
+    padding: 10px 14px;
+    vertical-align: middle;
+  }
+
+  .td-donor-name {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+
+    .donor-avatar {
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      background: $amber-100;
+      color: darken($amber-500, 20%);
+      font-size: 11px;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      text-transform: uppercase;
+    }
+
+    .dn-main {
+      font-size: 13px;
+      font-weight: 500;
+      color: $gray-900;
+      line-height: 1.2;
+    }
+
+    .dn-sub {
+      font-size: 11px;
+      color: $gray-400;
+      margin-top: 1px;
+    }
+  }
+
+  .td-donor-actions {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    opacity: 0;
+    transition: opacity 0.12s;
+
+    tr:hover & {
+      opacity: 1;
+    }
+  }
+
+  .td-donor-empty {
+    text-align: center;
+    padding: 32px 16px;
+    color: $gray-400;
+
+    svg {
+      width: 28px;
+      height: 28px;
+      margin: 0 auto 8px;
+      opacity: 0.35;
+      display: block;
+    }
+
+    p {
+      font-size: 12.5px;
+    }
+  }
+}
+
+// Type badge
+.type-badge {
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: 20px;
+  font-size: 11px;
+  font-weight: 500;
+  background: $blue-100;
+  color: $blue-500;
+  white-space: nowrap;
+}
+
+// Icon buttons
+.icon-btn {
+  width: 26px;
+  height: 26px;
+  border: none;
+  border-radius: 6px;
+  background: $blue-100;
+  color: $blue-500;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background 0.12s;
+
+  svg {
+    width: 13px;
+    height: 13px;
+  }
+
+  &:hover {
+    background: #bfdbfe;
+  }
+
+  &.danger {
+    background: $red-100;
+    color: $red-500;
+
+    &:hover {
+      background: #fecaca;
+    }
+  }
+}
+
+// ── Right panel ────────────────────────────────────────────
+.btn-enrol {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  height: 36px;
+  padding: 0 14px;
+  background: $green-700;
+  color: $white;
+  border: none;
+  border-radius: $radius-sm;
+  font-family: $font-body;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  white-space: nowrap;
+  flex-shrink: 0;
+  transition: background 0.15s;
+
+  svg {
+    width: 15px;
+    height: 15px;
+  }
+
+  &:hover {
+    background: $green-800;
+  }
+}
+
+// Stats
+.subsidy-stats {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  border-bottom: 1px solid $gray-100;
+}
+
+.sstat {
+  padding: 16px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+
+  &+& {
+    border-left: 1px solid $gray-100;
+  }
+
+  .sstat-num {
+    font-family: $font-display;
+    font-size: 22px;
+    color: $green-700;
+    line-height: 1;
+
+    &.pending {
+      color: darken($amber-500, 15%);
+    }
+
+    small {
+      font-size: 11px;
+      font-family: $font-body;
+      color: $gray-400;
+      margin-left: 3px;
+    }
+  }
+
+  .sstat-lbl {
+    font-size: 11.5px;
+    color: $gray-600;
+  }
+}
+
+// Subsidy table
+.table-wrap {
+  overflow-x: auto;
+}
+
+.subsidy-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13.5px;
+
+  thead tr {
+    background: $gray-50;
+    border-bottom: 1px solid $gray-100;
+
+    th {
+      padding: 11px 14px;
+      text-align: left;
+      font-size: 11px;
+      font-weight: 600;
+      color: $gray-600;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+      white-space: nowrap;
+    }
+  }
+
+  tbody tr {
+    border-bottom: 1px solid $gray-100;
+    transition: background 0.1s;
+
+    &:last-child {
+      border-bottom: none;
+    }
+
+    &:hover {
+      background: $gray-50;
+    }
+  }
+
+  td {
+    padding: 12px 14px;
+    vertical-align: middle;
+    color: $gray-900;
+  }
+
+  .td-num {
+    color: $gray-400;
+    font-size: 12px;
+    width: 36px;
+  }
+
+  .td-donor-cell {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+
+    .mini-avatar {
+      width: 26px;
+      height: 26px;
+      border-radius: 50%;
+      background: $amber-100;
+      color: darken($amber-500, 20%);
+      font-size: 10px;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      text-transform: uppercase;
+    }
+  }
+
+  .td-object {
+    max-width: 180px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .td-amount {
+    font-family: $font-display;
+    font-weight: 500;
+    color: $green-700;
+    white-space: nowrap;
+  }
+
+  .td-actions {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+  }
+
+  .td-empty {
+    text-align: center;
+    padding: 52px 16px;
+    color: $gray-400;
+
+    svg {
+      width: 32px;
+      height: 32px;
+      margin: 0 auto 10px;
+      opacity: 0.35;
+      display: block;
+    }
+
+    p {
+      font-size: 13px;
+      line-height: 1.6;
+    }
+  }
+}
+
+.status-badge {
+  display: inline-block;
+  padding: 2px 10px;
+  border-radius: 20px;
+  font-size: 11.5px;
+  font-weight: 500;
+
+  &.status-received {
+    background: $green-100;
+    color: $green-700;
+  }
+
+  &.status-pending {
+    background: $amber-100;
+    color: #9a6300;
+  }
+
+  &.status-partial {
+    background: $blue-100;
+    color: $blue-500;
+  }
+}
+
+.btn-action {
+  width: 30px;
+  height: 30px;
+  border: none;
+  border-radius: $radius-sm;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background 0.14s;
+
+  svg {
+    width: 14px;
+    height: 14px;
+  }
+
+  &.btn-edit {
+    background: $blue-100;
+    color: $blue-500;
+
+    &:hover {
+      background: #bfdbfe;
+    }
+  }
+
+  &.btn-delete {
+    background: $red-100;
+    color: $red-500;
+
+    &:hover {
+      background: #fecaca;
+    }
+  }
+}
+
+// ── Fields ─────────────────────────────────────────────────
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+
+  label {
+    font-size: 12.5px;
+    font-weight: 500;
+    color: $gray-900;
+  }
+
+  .req {
+    color: $amber-500;
+  }
+
+  input,
+  select,
+  textarea {
+    border: 1px solid $gray-200;
+    border-radius: $radius-sm;
+    padding: 0 11px;
+    font-family: $font-body;
+    font-size: 13.5px;
+    color: $gray-900;
+    background: $white;
+    outline: none;
+    width: 100%;
+    transition: border-color 0.18s, box-shadow 0.18s;
+
+    &:focus {
+      border-color: $green-600;
+      box-shadow: 0 0 0 3px rgba(99, 153, 34, 0.1);
+    }
+
+    &::placeholder {
+      color: $gray-400;
+    }
+  }
+
+  input,
+  select {
+    height: 40px;
+  }
+
+  textarea {
+    padding: 9px 11px;
+    resize: vertical;
+    min-height: 80px;
+    line-height: 1.5;
+  }
+
+  select {
+    cursor: pointer;
+  }
+}
+
+.text-danger {
+  font-size: 11.5px;
+  color: $red-500;
+  min-height: 14px;
+}
+
+// ── Modals ─────────────────────────────────────────────────
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(44, 44, 42, 0.5);
+  backdrop-filter: blur(4px);
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  animation: fadeIn 0.18s ease;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+.modal-box {
+  background: $white;
+  border-radius: $radius-lg;
+  box-shadow: $shadow-lg;
+  width: 100%;
+  max-width: 680px;
+  max-height: 90vh;
+  display: flex;
+  flex-direction: column;
+  animation: slideUp 0.22s cubic-bezier(.22, .68, 0, 1.2);
+
+  &.modal-sm {
+    max-width: 500px;
+  }
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px) scale(0.98);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.modal-head {
+  padding: 22px 28px 18px;
+  border-bottom: 1px solid $gray-100;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+
+  .modal-tag {
+    display: inline-block;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 1.2px;
+    text-transform: uppercase;
+    background: $green-100;
+    color: $green-800;
+    padding: 2px 9px;
+    border-radius: 20px;
+    margin-bottom: 5px;
+
+    &.amber {
+      background: $amber-100;
+      color: darken($amber-500, 20%);
+    }
+  }
+
+  h2 {
+    font-family: $font-display;
+    font-size: 19px;
+    color: $gray-900;
+    margin: 0;
+  }
+}
+
+.modal-close {
+  width: 30px;
+  height: 30px;
+  background: $gray-100;
+  border: none;
+  border-radius: $radius-sm;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  color: $gray-600;
+  margin-left: 14px;
+  flex-shrink: 0;
+  transition: background 0.14s;
+
+  svg {
+    width: 15px;
+    height: 15px;
+  }
+
+  &:hover {
+    background: $gray-200;
+  }
+}
+
+.modal-body {
+  padding: 22px 28px;
+  overflow-y: auto;
+  flex: 1;
+}
+
+.form-section {
+  margin-bottom: 24px;
+
+  &:last-child {
+    margin-bottom: 0;
+  }
+}
+
+.section-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 11px;
+  font-weight: 600;
+  color: $green-700;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  margin-bottom: 16px;
+  padding-bottom: 8px;
+  border-bottom: 1.5px solid $green-100;
+
+  svg {
+    width: 14px;
+    height: 14px;
+  }
+}
+
+.form-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+
+  .field.full {
+    grid-column: 1 / -1;
+  }
+}
+
+.modal-footer {
+  padding: 16px 28px;
+  border-top: 1px solid $gray-100;
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+}
+
+.btn-cancel {
+  height: 40px;
+  padding: 0 20px;
+  background: $gray-100;
+  color: $gray-900;
+  border: none;
+  border-radius: $radius-sm;
+  font-family: $font-body;
+  font-size: 14px;
+  cursor: pointer;
+  transition: background 0.14s;
+
+  &:hover {
+    background: $gray-200;
+  }
+}
+
+.btn-save {
+  height: 40px;
+  padding: 0 24px;
+  background: $green-700;
+  color: $white;
+  border: none;
+  border-radius: $radius-sm;
+  font-family: $font-body;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.14s;
+
+  &:hover {
+    background: $green-800;
+  }
+}
+
+// ── Responsive ─────────────────────────────────────────────
+@media (max-width: 1024px) {
+  .split-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .panel-left {
+    position: static;
+  }
+
+  .subsidy-page {
+    padding: 24px 20px;
+  }
+}
+
+@media (max-width: 600px) {
+  .form-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .subsidy-stats {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .page-header {
+    flex-direction: column;
+    gap: 12px;
+  }
+}

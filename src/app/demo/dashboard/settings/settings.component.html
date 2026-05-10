@@ -1,0 +1,281 @@
+<div class="settings-page">
+  <!-- Header -->
+  <div class="page-header">
+    <div class="header-left">
+      <div class="header-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+          <path
+            d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"
+          />
+          <path d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+        </svg>
+      </div>
+
+      <div>
+        <h1>Paramètres de l'organisation</h1>
+        <p>Configurez les informations générales de votre structure OIPAH-CI</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Layout -->
+  <div class="settings-layout">
+    <!-- Navigation horizontale -->
+    <nav class="settings-nav">
+      @for (tab of tabs; track tab?.key) {
+        <button class="nav-item" [class.active]="activeTab === tab.key" (click)="activeTab = tab.key">
+          <span class="nav-icon" [innerHTML]="tab.icon"></span>
+          <span class="nav-label">{{ tab.label }}</span>
+        </button>
+      }
+    </nav>
+
+    <!-- Content -->
+    <div class="settings-content">
+      <!-- ══════════════════════════════
+          ONGLET IDENTITÉ
+      ═══════════════════════════════ -->
+      @if (activeTab === 'identity') {
+        <div class="tab-panel">
+          <div class="panel-header">
+            <h2>Identité de l'organisation</h2>
+            <p>Informations légales et de contact de votre structure</p>
+          </div>
+
+          <!-- Logo -->
+          <div class="logo-section">
+            <div class="logo-preview" (click)="triggerLogoUpload()">
+              @if (logoPreview || form?.logo) {
+                <img [src]="logoPreview || form?.logo" alt="Logo" />
+              }
+
+              @if (!logoPreview) {
+                <div class="logo-placeholder" >
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                    <rect x="3" y="3" width="18" height="18" rx="2" />
+                    <circle cx="8.5" cy="8.5" r="1.5" />
+                    <path d="M21 15l-5-5L5 21" />
+                  </svg>
+                  <span>Logo</span>
+                </div>
+              }
+
+              <div class="logo-overlay">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4" />
+                  <polyline points="17 8 12 3 7 8" />
+                  <line x1="12" y1="3" x2="12" y2="15" />
+                </svg>
+
+                Changer
+              </div>
+            </div>
+
+            <input #logoInput type="file" accept="image/*" (change)="onLogoChange($event)" hidden />
+
+            <div class="logo-info">
+              <p class="logo-title">Logo de l'organisation</p>
+
+              <p class="logo-hint">PNG, JPG ou SVG · Max 20 Mo ·</p>
+
+              <button class="btn-upload" (click)="triggerLogoUpload()">Choisir un fichier</button>
+            </div>
+              <span class="text-danger">{{ errors?.image }}</span>
+          </div>
+
+          <!-- Form -->
+          <div class="form-grid">
+            <div class="field full">
+              <label>
+                Nom de l'organisation
+                <span class="req">*</span>
+              </label>
+
+              <input type="text" [(ngModel)]="form.name" placeholder="Ex : OIPAH-CI" />
+              <span class="text-danger">{{ errors?.oipahName }}</span>
+            </div>
+
+            <div class="field">
+              <label>RCCM</label>
+
+              <div class="input-with-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2" />
+                  <rect x="9" y="3" width="6" height="4" rx="1" />
+                </svg>
+
+                <input type="text" [(ngModel)]="form.rccm" placeholder="Numéro RCCM" />
+              </div>
+            </div>
+
+            <div class="field">
+              <label>NIU</label>
+
+              <div class="input-with-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <rect x="2" y="5" width="20" height="14" rx="2" />
+                  <path d="M2 10h20" />
+                </svg>
+
+                <input type="text" [(ngModel)]="form.niu" placeholder="Numéro d'identification unique" />
+              </div>
+            </div>
+          </div>
+
+          <!-- Actions -->
+          <div class="panel-actions">
+            <app-submit-spinner
+              [loading]="isSaving"
+              label="Enregistrer"
+              icon=""
+              cssClass="btn btn-primary btn-sm"
+              (clicked)="saveSettingsIdentity()"
+            ></app-submit-spinner>
+          </div>
+        </div>
+      }
+
+      <!-- ══════════════════════════════
+          ONGLET COORDONNÉES
+      ═══════════════════════════════ -->
+      @if (activeTab === 'contact') {
+        <div class="tab-panel">
+          <div class="panel-header">
+            <h2>Coordonnées</h2>
+            <p>Adresse, téléphone et e-mail de l'organisation</p>
+          </div>
+
+          <div class="form-grid">
+            <div class="field">
+              <label>
+                Pays
+                <span class="req">*</span>
+              </label>
+
+              <div class="input-with-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <circle cx="12" cy="12" r="10" />
+                  <path d="M2 12h20" />
+                </svg>
+
+                <input type="text" [(ngModel)]="form.country" placeholder="Ex : Côte d'Ivoire" />
+              </div>
+            </div>
+
+            <div class="field">
+              <label>
+                Ville
+                <span class="req">*</span>
+              </label>
+
+              <div class="input-with-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z" />
+                  <circle cx="12" cy="10" r="3" />
+                </svg>
+
+                <input type="text" [(ngModel)]="form.city" placeholder="Ex : Abidjan" />
+              </div>
+            </div>
+
+            <div class="field">
+              <label>Adresse e-mail</label>
+
+              <div class="input-with-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" />
+                  <polyline points="22,6 12,13 2,6" />
+                </svg>
+
+                <input type="email" [(ngModel)]="form.email" placeholder="contact@oipah.ci" />
+                <span class="text-danger">{{ errors?.email }}</span>
+              </div>
+            </div>
+
+            <div class="field">
+              <label>Téléphone</label>
+
+              <div class="input-with-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path
+                    d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.07 9.81 19.79 19.79 0 01.01 1.18 2 2 0 012 0h3a2 2 0 012 1.72 12.84 12.84 0 00.7 2.81 2 2 0 01-.45 2.11L6.09 7.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45 12.84 12.84 0 002.81.7A2 2 0 0122 14v2.92z"
+                  />
+                </svg>
+
+                <input type="tel" [(ngModel)]="form.phone" placeholder="+225 07 00 00 00 00" />
+                <span class="text-danger">{{ errors?.phone }}</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Actions -->
+          <div class="panel-actions">
+            <app-submit-spinner
+              [loading]="isSaving"
+              label="Enregistrer"
+              icon=""
+              cssClass="btn btn-primary btn-sm"
+              (clicked)="saveSettingsContact()"
+            ></app-submit-spinner>
+          </div>
+        </div>
+      }
+
+      <!-- ══════════════════════════════
+          ONGLET PRÉFÉRENCES
+      ═══════════════════════════════ -->
+      @if (activeTab === 'preferences') {
+        <div class="tab-panel">
+          <div class="panel-header">
+            <h2>Préférences système</h2>
+            <p>Devise, pagination et autres paramètres d'affichage</p>
+          </div>
+
+          <div class="form-grid">
+            <div class="field">
+              <label>Devise</label>
+
+              <div class="input-with-icon">
+                <select id="inputState" [(ngModel)]="form.devise" class="form-select">
+                  <option value="0">Sélectionnez...</option>
+                  <option value="FCFA">FCFA</option>
+                  <option value="XOF">XOF</option>
+                </select>
+                <span class="text-danger">{{ errors?.devise }}</span>
+              </div>
+            </div>
+
+            <div class="field">
+              <label>Nombre d'éléments par page</label>
+
+              <div class="input-with-icon">
+                <select id="inputState" [(ngModel)]="form.itemNber" class="form-select">
+                  <option value="0">Sélectionnez...</option>
+                  <option value="15">15</option>
+                  <option value="20">20</option>
+                  <option value="30">30</option>
+                </select>
+                <span class="text-danger">{{ errors?.item_per_page }}</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- <div class="future-section">
+            <p>D'autres paramètres seront disponibles prochainement dans cette section.</p>
+          </div> -->
+
+          <!-- Actions -->
+          <div class="panel-actions">
+            <app-submit-spinner
+              [loading]="isSaving"
+              label="Enregistrer"
+              icon=""
+              cssClass="btn btn-primary btn-sm"
+              (clicked)="saveSettingsPreference()"
+            ></app-submit-spinner>
+          </div>
+        </div>
+      }
+    </div>
+  </div>
+</div>

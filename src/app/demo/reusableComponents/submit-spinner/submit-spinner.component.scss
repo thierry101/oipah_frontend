@@ -1,0 +1,172 @@
+// ── Variables (cohérentes avec le reste de l'app) ──────────
+$green-800: #27500A;
+$green-700: #3B6D11;
+$green-600: #639922;
+$green-100: #EAF3DE;
+$red-500: #DC2626;
+$red-600: #b91c1c;
+$red-100: #FEE2E2;
+$gray-100: #F1EFE8;
+$gray-200: #D3D1C7;
+$gray-600: #5F5E5A;
+$gray-900: #2C2C2A;
+$white: #FFFFFF;
+
+$radius-sm: 8px;
+$font-body: 'DM Sans', sans-serif;
+
+// ── Bouton principal ───────────────────────────────────────
+button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  height: 42px;
+  padding: 0 22px;
+  border: none;
+  border-radius: $radius-sm;
+  font-family: $font-body;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background 0.18s, opacity 0.18s, transform 0.1s;
+  outline: none;
+
+  i {
+    font-size: 16px;
+    line-height: 1;
+    flex-shrink: 0;
+  }
+
+  // ── Variant principal : vert ─────────────────────────────
+  &.btn-primary,
+  &.btn-agri-primary {
+    background: $green-700;
+    color: $white;
+
+    &:hover:not(:disabled) {
+      background: $green-800;
+    }
+
+    &:focus-visible {
+      box-shadow: 0 0 0 3px rgba(99, 153, 34, 0.3);
+    }
+  }
+
+  // ── Variant outline vert ─────────────────────────────────
+  &.btn-outline-primary,
+  &.btn-agri-outline {
+    background: $white;
+    color: $green-700;
+    border: 1.5px solid $green-600;
+
+    &:hover:not(:disabled) {
+      background: $green-100;
+    }
+
+    &:focus-visible {
+      box-shadow: 0 0 0 3px rgba(99, 153, 34, 0.2);
+    }
+  }
+
+  // ── Variant danger ───────────────────────────────────────
+  &.btn-danger,
+  &.btn-agri-danger {
+    background: $red-500;
+    color: $white;
+
+    &:hover:not(:disabled) {
+      background: $red-600;
+    }
+
+    &:focus-visible {
+      box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.3);
+    }
+  }
+
+  // ── Variant ghost / annuler ──────────────────────────────
+  &.btn-ghost,
+  &.btn-agri-ghost {
+    background: $gray-100;
+    color: $gray-900;
+
+    &:hover:not(:disabled) {
+      background: $gray-200;
+    }
+
+    &:focus-visible {
+      box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.08);
+    }
+  }
+
+  // ── État désactivé / chargement ──────────────────────────
+  &:disabled,
+  &[disabled] {
+    opacity: 0.6;
+    cursor: not-allowed;
+    pointer-events: none;
+  }
+
+  &:active:not(:disabled) {
+    transform: scale(0.98);
+  }
+
+  // ── Tailles ───────────────────────────────────────────────
+  &.btn-sm {
+    height: 34px;
+    padding: 0 14px;
+    font-size: 13px;
+    gap: 6px;
+
+    i {
+      font-size: 14px;
+    }
+  }
+
+  &.btn-lg {
+    height: 50px;
+    padding: 0 28px;
+    font-size: 15px;
+    gap: 10px;
+
+    i {
+      font-size: 18px;
+    }
+  }
+
+  &.btn-full {
+    width: 100%;
+  }
+
+  // ── Spinner ───────────────────────────────────────────────
+  .spinner-border {
+    display: inline-block;
+    width: 14px;
+    height: 14px;
+    border: 2px solid rgba($white, 0.3);
+    border-top-color: $white;
+    border-radius: 50%;
+    animation: btn-spin 0.65s linear infinite;
+    flex-shrink: 0;
+  }
+
+  // Sur fond blanc (outline, ghost)
+  &.btn-outline-primary .spinner-border,
+  &.btn-agri-outline .spinner-border {
+    border-color: rgba($green-700, 0.25);
+    border-top-color: $green-700;
+  }
+
+  &.btn-ghost .spinner-border,
+  &.btn-agri-ghost .spinner-border {
+    border-color: rgba($gray-600, 0.25);
+    border-top-color: $gray-600;
+  }
+}
+
+@keyframes btn-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
