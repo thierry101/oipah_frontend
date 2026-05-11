@@ -34,17 +34,9 @@ const routes: Routes = [
         loadComponent: () => import('./demo/pages/grantors/grantors.component').then((c) => c.GrantorsComponent)
       },
       {
-        path: 'typography',
-        loadComponent: () => import('./demo/component/basic-component/typography/typography.component').then((c) => c.TypographyComponent)
+        path: 'plot-of-land',
+        loadComponent: () => import('./demo/pages/plot-land/plot-land.component').then((c) => c.PlotLandComponent)
       },
-      {
-        path: 'color',
-        loadComponent: () => import('./demo/component/basic-component/color/color.component').then((c) => c.ColorComponent)
-      },
-      {
-        path: 'sample-page',
-        loadComponent: () => import('./demo/others/sample-page/sample-page.component').then((c) => c.SamplePageComponent)
-      }
     ]
   },
   {
@@ -68,4 +60,4 @@ const routes: Routes = [
   imports: [RouterModule.forRoot(routes)],
   exports: [RouterModule]
 })
-export class AppRoutingModule {}
+export class AppRoutingModule { }

@@ -6,6 +6,7 @@ import { PublicService } from 'src/app/services/public-service';
 import { showError, toastShow } from 'src/app/share/shared';
 import { SubmitSpinnerComponent } from "../../reusableComponents/submit-spinner/submit-spinner.component";
 import { environment } from 'src/environments/environment.prod';
+import { OthersService } from 'src/app/services/others-service';
 
 export interface OipahAttribute {
   name: string;
@@ -37,6 +38,7 @@ interface NavTab {
 export class SettingsComponent implements OnInit {
 
   private publicService = inject(PublicService)
+  private othersService = inject(OthersService)
 
   @ViewChild('logoInput') logoInput!: ElementRef<HTMLInputElement>;
 
@@ -55,26 +57,35 @@ export class SettingsComponent implements OnInit {
       key: 'identity',
       label: 'Identité',
       icon: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-               <rect x="3" y="3" width="18" height="18" rx="2"/>
-               <path d="M8 12h.01M12 12h.01M16 12h.01"/>
-             </svg>`
+              <rect x="3" y="3" width="18" height="18" rx="2"/>
+              <path d="M8 12h.01M12 12h.01M16 12h.01"/>
+            </svg>`
     },
     {
       key: 'contact',
       label: 'Coordonnées',
       icon: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-               <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/>
-               <circle cx="12" cy="10" r="3"/>
-             </svg>`
+              <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/>
+              <circle cx="12" cy="10" r="3"/>
+            </svg>`
     },
     {
       key: 'preferences',
       label: 'Préférences',
       icon: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-               <line x1="3" y1="12" x2="21" y2="12"/>
-               <line x1="3" y1="6"  x2="21" y2="6"/>
-               <line x1="3" y1="18" x2="21" y2="18"/>
-             </svg>`
+              <line x1="3" y1="12" x2="21" y2="12"/>
+              <line x1="3" y1="6"  x2="21" y2="6"/>
+              <line x1="3" y1="18" x2="21" y2="18"/>
+            </svg>`
+    },
+    {
+      key: 'filiere',
+      label: 'Filières',
+      icon: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+              <path d="M12 2L2 7l10 5 10-5-10-5z"/>
+              <path d="M2 17l10 5 10-5"/>
+              <path d="M2 12l10 5 10-5"/>
+            </svg>`
     }
     // Ajouter d'autres onglets ici selon les besoins
   ];
@@ -82,6 +93,13 @@ export class SettingsComponent implements OnInit {
   // ── Form model ────────────────────────────────────────────
   form: OipahAttribute = this.defaultForm();
   private _original!: OipahAttribute;
+
+  // ── Filières ──
+  filieres: {id:number; name: string; description: string }[] = [];
+  showFiliereModal = false;
+  editingFiliere: { name: string; description: string } = { name: '', description: '' };
+  editingIndex: number | null = null;
+
 
   ngOnInit(): void {
     this.publicService.getSettingOipah().subscribe({
@@ -100,6 +118,12 @@ export class SettingsComponent implements OnInit {
           updated: new Date('2025-03-12T10:30:00')
         };
         this._original = { ...this.form };
+      }
+    })
+
+    this.othersService.getAgricultural().subscribe({
+      next: (res: any) => {
+        this.filieres = res?.result
       }
     })
   }
@@ -211,6 +235,80 @@ export class SettingsComponent implements OnInit {
       next: () => {
         toastShow("success", "Paramètres mis à jour")
         this.errors = []
+      },
+      error: (err) => {
+        this.errors = err.error.errors || {};
+        this.isSaving = false
+        showError(err, err.status, this.errors, err.error, document.getElementById('a'));
+      }
+    })
+  }
+
+
+  openFiliereModal(): void {
+    this.editingFiliere = { name: '', description: '' };
+    this.editingIndex = null;
+    this.errors = {};
+    this.showFiliereModal = true;
+  }
+
+  editFiliere(item:any): void {
+    this.editingFiliere = item
+    this.editingIndex = item?.id;
+    this.errors = {};
+    this.showFiliereModal = true;
+  }
+
+  closeFiliereModal(): void {
+    this.showFiliereModal = false;
+    this.editingFiliere = { name: '', description: '' };
+    this.editingIndex = null;
+  }
+
+  saveFiliere(): void {
+    console.log(this.editingFiliere)
+    this.othersService.postAgricultural(this.editingFiliere).subscribe({
+      next: (res: any) => {
+        this.filieres.unshift(res?.result)
+        this.closeFiliereModal();
+        toastShow('success', 'Filière créée avec succès')
+
+      },
+      error: (err) => {
+        this.errors = err.error.errors || {};
+        this.isSaving = false
+        showError(err, err.status, this.errors, err.error, document.getElementById('a'));
+      }
+    })
+
+  }
+
+
+  saveEditFiliere() {
+    this.othersService.putAgricultural(this.editingIndex, this.editingFiliere).subscribe({
+      next: (res: any) => {
+        this.filieres = this.filieres.filter((e: any) => e.id !== this.editingIndex);
+        this.filieres.unshift(res?.result)
+        this.closeFiliereModal();
+        toastShow('success', 'Filière mis à jour avec succès')
+
+      },
+      error: (err) => {
+        this.errors = err.error.errors || {};
+        this.isSaving = false
+        showError(err, err.status, this.errors, err.error, document.getElementById('a'));
+      }
+    })
+  }
+
+
+  deleteFiliere(index: number): void {
+    this.othersService.deleteAgricultural(index).subscribe({
+      next: () => {
+        this.filieres = this.filieres.filter((e: any) => e.id !== index);
+        this.closeFiliereModal();
+        toastShow('success', 'Filière supprimée avec succès')
+
       },
       error: (err) => {
         this.errors = err.error.errors || {};

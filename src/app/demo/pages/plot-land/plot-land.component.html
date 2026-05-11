@@ -1,0 +1,522 @@
+<div class="parcelle-page">
+  <!-- Header -->
+  <div class="page-header">
+    <div class="header-left">
+      <div class="ph-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+          <path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z" />
+          <path d="M9 22V12h6v10" />
+        </svg>
+      </div>
+      <div>
+        <div class="header-badge">PDC2V</div>
+        <h1>Gestion des Parcelles</h1>
+        <p>Enregistrement et suivi des parcelles de terre agricoles</p>
+      </div>
+    </div>
+    <button class="btn-enrol" (click)="openModal()" type="button">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+        <path d="M12 5v14M5 12h14" />
+      </svg>
+      Nouvelle parcelle
+    </button>
+  </div>
+
+  <!-- Stats -->
+  <div class="stats-bar">
+    <div class="stat-card">
+      <div class="stat-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+          <rect x="3" y="3" width="18" height="18" rx="1" />
+          <path d="M3 9h18M9 3v18" />
+        </svg>
+      </div>
+      <div>
+        <span class="stat-num">{{ pagination?.nberItems ?? parcelles.length }}</span>
+        <span class="stat-lbl">Parcelles enregistrées</span>
+      </div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-icon amber">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+          <path d="M12 2a10 10 0 100 20A10 10 0 0012 2z" />
+          <path d="M12 6v6l4 2" />
+        </svg>
+      </div>
+      <div>
+        <span class="stat-num">
+          {{ totalSuperficie | number: '1.0-2' }}
+          <small>ha</small>
+        </span>
+        <span class="stat-lbl">Superficie totale</span>
+      </div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-icon green">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+          <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+        </svg>
+      </div>
+      <div>
+        <span class="stat-num">{{ countByStatus('active') }}</span>
+        <span class="stat-lbl">Parcelles actives</span>
+      </div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-icon blue">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+          <path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2" />
+          <circle cx="9" cy="7" r="4" />
+          <path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75" />
+        </svg>
+      </div>
+      <div>
+        <span class="stat-num">{{ uniqueOwners }}</span>
+        <span class="stat-lbl">Propriétaires</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toolbar -->
+  <div class="toolbar">
+    <div class="search-wrap">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <circle cx="11" cy="11" r="8" />
+        <path d="M21 21l-4.35-4.35" />
+      </svg>
+      <input type="text" placeholder="Rechercher par nom, village, propriétaire…" [(ngModel)]="searchTerm" />
+    </div>
+    <select class="filter-select" [(ngModel)]="filterStatus">
+      <option value="">Tous les statuts</option>
+      <option value="active">Active</option>
+      <option value="inactive">Inactive</option>
+      <option value="litige">En litige</option>
+    </select>
+    <select class="filter-select" [(ngModel)]="filterFiliere">
+      <option value="">Toutes les filières</option>
+      <option value="Manioc">Manioc</option>
+      <option value="Maraîchère">Maraîchère</option>
+      <option value="Aquacole">Aquacole</option>
+    </select>
+  </div>
+
+  <!-- Table -->
+  <div class="table-wrap">
+    <table class="parcelle-table">
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>Identifiant</th>
+          <th>Propriétaire</th>
+          <th>Localisation</th>
+          <th>Superficie (ha)</th>
+          <th>Filière</th>
+          <th>Type sol</th>
+          <th>Statut</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (item of filteredParcelles(); track item.id; let i = $index) {
+          <tr>
+            <td class="td-num">{{ i + 1 }}</td>
+            <td class="td-id">
+              <span class="parcelle-code">{{ item.code }}</span>
+            </td>
+            <td class="td-owner">
+              <div class="avatar">{{ item.owner[0] }}</div>
+              <div>
+                <div class="owner-name">{{ item.owner }}</div>
+                <div class="owner-contact">{{ item.ownerContact }}</div>
+              </div>
+            </td>
+            <td class="td-location">
+              <div class="loc-main">{{ item.village }}</div>
+              <div class="loc-sub">{{ item.departement }}</div>
+            </td>
+            <td class="td-superficie">{{ item.superficie | number: '1.0-2' }}</td>
+            <td>
+              <!-- <span class="filiere-badge f-{{ item.filiere | lowercase | replace: ' ' : '' | replace: 'è' : 'e' }}"> -->
+              <span class="filiere-badge f-{{ item.filiere | lowercase }}">
+                {{ item.filiere }}
+              </span>
+            </td>
+            <td>{{ item.typeSol || '—' }}</td>
+            <td>
+              <span class="status-badge status-{{ item.status }}">
+                {{ getStatusName(item.status) }}
+              </span>
+            </td>
+            <td class="td-actions">
+              <button class="btn-action btn-view" (click)="openDetailModal(item)" title="Détails">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
+                  <circle cx="12" cy="12" r="3" />
+                </svg>
+              </button>
+              <button class="btn-action btn-edit" (click)="openModal(item)" title="Modifier">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path
+                    d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"
+                  />
+                </svg>
+              </button>
+              <button class="btn-action btn-delete" (click)="confirmDelete(item)" title="Supprimer">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <polyline points="3 6 5 6 21 6" />
+                  <path d="M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6" />
+                  <path d="M10 11v6M14 11v6" />
+                  <path d="M9 6V4a1 1 0 011-1h4a1 1 0 011 1v2" />
+                </svg>
+              </button>
+            </td>
+          </tr>
+        } @empty {
+          <tr>
+            <td colspan="9" class="td-empty">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                <rect x="3" y="3" width="18" height="18" rx="1" />
+                <path d="M3 9h18M9 3v18" />
+              </svg>
+              <p>
+                Aucune parcelle enregistrée.
+                <br />
+                Cliquez sur "Nouvelle parcelle" pour commencer.
+              </p>
+            </td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  </div>
+
+  <app-set-pagination
+    [currentPage]="pagination?.currentPage"
+    [totalPages]="pagination?.nber_pages"
+    [previousPage]="pagination?.previousPage"
+    [nextPage]="pagination?.nextPage"
+    (pageChange)="onPageChange($event)"
+  ></app-set-pagination>
+</div>
+
+<!-- ═══════════════════════════════════════════
+     MODAL : Enregistrement / Modification
+════════════════════════════════════════════ -->
+@if (showModal) {
+  <div class="modal-backdrop" (click)="closeModal()">
+    <div class="modal-box" (click)="$event.stopPropagation()">
+      <div class="modal-head">
+        <div>
+          <span class="modal-tag">{{ editMode ? 'Modification' : 'Nouvelle parcelle' }}</span>
+          <h2>{{ editMode ? 'Modifier la parcelle' : 'Enregistrer une parcelle' }}</h2>
+        </div>
+        <button class="modal-close" (click)="closeModal()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M18 6L6 18M6 6l12 12" />
+          </svg>
+        </button>
+      </div>
+
+      <div class="modal-body">
+        <!-- Section : Identification -->
+        <div class="form-section">
+          <div class="section-title">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <rect x="3" y="3" width="18" height="18" rx="1" />
+              <path d="M3 9h18M9 3v18" />
+            </svg>
+            Identification de la parcelle
+          </div>
+          <div class="form-grid">
+            <div class="field">
+              <label>
+                Code / Référence
+                <span class="req">*</span>
+              </label>
+              <input type="text" [(ngModel)]="form.code" placeholder="Ex : PARC-2025-001" />
+              <span class="text-danger">{{ errors?.code }}</span>
+            </div>
+            <div class="field">
+              <label>Statut</label>
+              <select [(ngModel)]="form.status">
+                <option value="active">Active</option>
+                <option value="inactive">Inactive</option>
+                <option value="litige">En litige</option>
+              </select>
+            </div>
+            <div class="field">
+              <label>
+                Filière
+                <span class="req">*</span>
+              </label>
+              <select [(ngModel)]="form.filiere">
+                <option value="">Sélectionner</option>
+                <option value="Manioc">Manioc</option>
+                <option value="Maraîchère">Maraîchère</option>
+                <option value="Aquacole">Aquacole</option>
+              </select>
+              <span class="text-danger">{{ errors?.filiere }}</span>
+            </div>
+            <div class="field">
+              <label>
+                Superficie (ha)
+                <span class="req">*</span>
+              </label>
+              <input type="number" [(ngModel)]="form.superficie" placeholder="Ex : 2.5" min="0" step="0.01" />
+              <span class="text-danger">{{ errors?.superficie }}</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Section : Localisation -->
+        <div class="form-section">
+          <div class="section-title">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z" />
+              <circle cx="12" cy="10" r="3" />
+            </svg>
+            Localisation
+          </div>
+          <div class="form-grid">
+            <div class="field">
+              <label>
+                Département
+                <span class="req">*</span>
+              </label>
+              <input type="text" [(ngModel)]="form.departement" placeholder="Ex : Bouaké" />
+              <span class="text-danger">{{ errors?.departement }}</span>
+            </div>
+            <div class="field">
+              <label>Sous-préfecture</label>
+              <input type="text" [(ngModel)]="form.sousPrefecture" placeholder="Sous-préfecture" />
+            </div>
+            <div class="field">
+              <label>
+                Village / Quartier
+                <span class="req">*</span>
+              </label>
+              <input type="text" [(ngModel)]="form.village" placeholder="Ex : Niakara" />
+              <span class="text-danger">{{ errors?.village }}</span>
+            </div>
+            <div class="field">
+              <label>Coordonnées GPS</label>
+              <input type="text" [(ngModel)]="form.gps" placeholder="Ex : 7.7333, -5.0667" />
+            </div>
+          </div>
+        </div>
+
+        <!-- Section : Propriétaire -->
+        <div class="form-section">
+          <div class="section-title">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2" />
+              <circle cx="12" cy="7" r="4" />
+            </svg>
+            Propriétaire / Exploitant
+          </div>
+          <div class="form-grid">
+            <div class="field">
+              <label>
+                Nom & Prénoms
+                <span class="req">*</span>
+              </label>
+              <input type="text" [(ngModel)]="form.owner" placeholder="Nom complet du propriétaire" />
+              <span class="text-danger">{{ errors?.owner }}</span>
+            </div>
+            <div class="field">
+              <label>Contact</label>
+              <input type="tel" [(ngModel)]="form.ownerContact" placeholder="07 00 00 00 00" />
+            </div>
+            <div class="field">
+              <label>Type de tenure foncière</label>
+              <select [(ngModel)]="form.tenureFonciere">
+                <option value="">Sélectionner</option>
+                <option value="proprietaire">Propriétaire</option>
+                <option value="locataire">Locataire</option>
+                <option value="metayage">Métayage</option>
+                <option value="communautaire">Communautaire</option>
+              </select>
+            </div>
+            <div class="field">
+              <label>N° titre foncier / document</label>
+              <input type="text" [(ngModel)]="form.titreFoncier" placeholder="Ex : TF-2021-00456" />
+            </div>
+          </div>
+        </div>
+
+        <!-- Section : Caractéristiques -->
+        <div class="form-section">
+          <div class="section-title">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+            </svg>
+            Caractéristiques agronomiques
+          </div>
+          <div class="form-grid">
+            <div class="field">
+              <label>Type de sol</label>
+              <select [(ngModel)]="form.typeSol">
+                <option value="">Sélectionner</option>
+                <option value="Argileux">Argileux</option>
+                <option value="Sableux">Sableux</option>
+                <option value="Limoneux">Limoneux</option>
+                <option value="Latéritique">Latéritique</option>
+                <option value="Hydromorphe">Hydromorphe</option>
+              </select>
+            </div>
+            <div class="field">
+              <label>Source d'eau</label>
+              <select [(ngModel)]="form.sourceEau">
+                <option value="">Sélectionner</option>
+                <option value="Pluie">Pluie (pluvial)</option>
+                <option value="Irrigation">Irrigation</option>
+                <option value="Marigot">Marigot / Cours d'eau</option>
+                <option value="Puits">Puits / Forage</option>
+              </select>
+            </div>
+            <div class="field">
+              <label>Date d'acquisition</label>
+              <input type="date" [(ngModel)]="form.dateAcquisition" />
+            </div>
+            <div class="field">
+              <label>Culture en cours</label>
+              <input type="text" [(ngModel)]="form.culture" placeholder="Ex : Manioc, Tomate…" />
+            </div>
+            <div class="field full">
+              <label>Observations</label>
+              <textarea [(ngModel)]="form.notes" placeholder="Informations complémentaires sur la parcelle…" rows="3"></textarea>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="modal-footer">
+        <button class="btn-cancel" (click)="closeModal()">Annuler</button>
+        <button class="btn-save" (click)="saveParcelle()">
+          {{ editMode ? 'Enregistrer les modifications' : 'Enregistrer la parcelle' }}
+        </button>
+      </div>
+    </div>
+  </div>
+}
+
+<!-- ═══════════════════════════════════════════
+     MODAL : Détail parcelle
+════════════════════════════════════════════ -->
+@if (showDetailModal && selectedItem) {
+  <div class="modal-backdrop" (click)="closeDetailModal()">
+    <div class="modal-box modal-sm" (click)="$event.stopPropagation()">
+      <div class="modal-head">
+        <div>
+          <span class="modal-tag">Détails</span>
+          <h2>{{ selectedItem.code }}</h2>
+        </div>
+        <button class="modal-close" (click)="closeDetailModal()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M18 6L6 18M6 6l12 12" />
+          </svg>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="detail-grid">
+          <div class="detail-row">
+            <span class="dl">Propriétaire</span>
+            <span class="dv">{{ selectedItem.owner }}</span>
+          </div>
+          <div class="detail-row">
+            <span class="dl">Contact</span>
+            <span class="dv">{{ selectedItem.ownerContact || '—' }}</span>
+          </div>
+          <div class="detail-row">
+            <span class="dl">Localisation</span>
+            <span class="dv">{{ selectedItem.village }}, {{ selectedItem.departement }}</span>
+          </div>
+          <div class="detail-row">
+            <span class="dl">Superficie</span>
+            <span class="dv dv-green">{{ selectedItem.superficie | number: '1.0-2' }} ha</span>
+          </div>
+          <div class="detail-row">
+            <span class="dl">Filière</span>
+            <span class="dv">{{ selectedItem.filiere || '—' }}</span>
+          </div>
+          <div class="detail-row">
+            <span class="dl">Type de sol</span>
+            <span class="dv">{{ selectedItem.typeSol || '—' }}</span>
+          </div>
+          <div class="detail-row">
+            <span class="dl">Source d'eau</span>
+            <span class="dv">{{ selectedItem.sourceEau || '—' }}</span>
+          </div>
+          <div class="detail-row">
+            <span class="dl">Tenure foncière</span>
+            <span class="dv">{{ selectedItem.tenureFonciere || '—' }}</span>
+          </div>
+          <div class="detail-row">
+            <span class="dl">Titre foncier</span>
+            <span class="dv">{{ selectedItem.titreFoncier || '—' }}</span>
+          </div>
+          <div class="detail-row">
+            <span class="dl">GPS</span>
+            <span class="dv">{{ selectedItem.gps || '—' }}</span>
+          </div>
+          <div class="detail-row">
+            <span class="dl">Culture en cours</span>
+            <span class="dv">{{ selectedItem.culture || '—' }}</span>
+          </div>
+          <div class="detail-row">
+            <span class="dl">Statut</span>
+            <span class="dv">
+              <span class="status-badge status-{{ selectedItem.status }}">
+                {{ getStatusName(selectedItem.status) }}
+              </span>
+            </span>
+          </div>
+          @if (selectedItem.notes) {
+            <div class="detail-row full">
+              <span class="dl">Observations</span>
+              <span class="dv">{{ selectedItem.notes }}</span>
+            </div>
+          }
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-cancel" (click)="closeDetailModal()">Fermer</button>
+        <button class="btn-save" (click)="closeDetailModal(); openModal(selectedItem!)">Modifier</button>
+      </div>
+    </div>
+  </div>
+}
+
+<!-- ═══════════════════════════════════════════
+     MODAL : Confirmation suppression
+════════════════════════════════════════════ -->
+@if (showDeleteModal) {
+  <div class="modal-backdrop" (click)="closeDeleteModal()">
+    <div class="modal-box modal-xs" (click)="$event.stopPropagation()">
+      <div class="modal-head danger">
+        <div>
+          <span class="modal-tag danger">Suppression</span>
+          <h2>Confirmer la suppression</h2>
+        </div>
+        <button class="modal-close" (click)="closeDeleteModal()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M18 6L6 18M6 6l12 12" />
+          </svg>
+        </button>
+      </div>
+      <div class="modal-body">
+        <p class="delete-msg">
+          Vous êtes sur le point de supprimer la parcelle
+          <strong>{{ selectedItem?.code }}</strong>
+          appartenant à
+          <strong>{{ selectedItem?.owner }}</strong>
+          . Cette action est irréversible.
+        </p>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-cancel" (click)="closeDeleteModal()">Annuler</button>
+        <button class="btn-danger" (click)="deleteParcelle()">Supprimer définitivement</button>
+      </div>
+    </div>
+  </div>
+}

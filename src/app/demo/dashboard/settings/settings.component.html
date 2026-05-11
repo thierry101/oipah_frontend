@@ -50,7 +50,7 @@
               }
 
               @if (!logoPreview) {
-                <div class="logo-placeholder" >
+                <div class="logo-placeholder">
                   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
                     <rect x="3" y="3" width="18" height="18" rx="2" />
                     <circle cx="8.5" cy="8.5" r="1.5" />
@@ -80,7 +80,7 @@
 
               <button class="btn-upload" (click)="triggerLogoUpload()">Choisir un fichier</button>
             </div>
-              <span class="text-danger">{{ errors?.image }}</span>
+            <span class="text-danger">{{ errors?.image }}</span>
           </div>
 
           <!-- Form -->
@@ -273,6 +273,123 @@
               cssClass="btn btn-primary btn-sm"
               (clicked)="saveSettingsPreference()"
             ></app-submit-spinner>
+          </div>
+        </div>
+      }
+      <!-- ══════════════════════════════
+    ONGLET FILIÈRES
+═══════════════════════════════ -->
+      @if (activeTab === 'filiere') {
+        <div class="tab-panel">
+          <div class="panel-header">
+            <h2>Gestion des filières</h2>
+            <p>Définissez les filières disponibles dans votre organisation</p>
+          </div>
+
+          <!-- Barre d'outils -->
+          <div class="filiere-toolbar">
+            <span class="filiere-count">
+              {{ filieres.length }} filière{{ filieres.length > 1 ? 's' : '' }} enregistrée{{ filieres.length > 1 ? 's' : '' }}
+            </span>
+            <button class="btn-add" (click)="openFiliereModal()">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="width: 14px; height: 14px">
+                <line x1="12" y1="5" x2="12" y2="19" />
+                <line x1="5" y1="12" x2="19" y2="12" />
+              </svg>
+              Ajouter une filière
+            </button>
+          </div>
+
+          <!-- Liste des filières -->
+          <div class="filiere-list">
+            @if (filieres.length === 0) {
+              <div class="filiere-empty">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                  <path d="M12 2L2 7l10 5 10-5-10-5z" />
+                  <path d="M2 17l10 5 10-5" />
+                  <path d="M2 12l10 5 10-5" />
+                </svg>
+                <p>Aucune filière enregistrée. Cliquez sur « Ajouter » pour commencer.</p>
+              </div>
+            }
+
+            @for (f of filieres; track f?.id) {
+              <div class="filiere-item">
+                <div class="filiere-item-left">
+                  <div class="filiere-dot"></div>
+                  <div>
+                    <div class="filiere-name">{{ f?.name }}</div>
+                    @if (f?.description) {
+                      <div class="filiere-code">{{ f?.description }}</div>
+                    }
+                  </div>
+                </div>
+                <div class="filiere-right">
+                  <!-- @if (f.code) {
+                    <span class="filiere-badge">{{ f.code }}</span>
+                  } -->
+                  <div class="filiere-actions">
+                    <button class="btn-icon" title="Modifier" (click)="editFiliere(f)">
+                      <svg style="width: 13px; height: 13px" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7" />
+                        <path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z" />
+                      </svg>
+                    </button>
+                    <button class="btn-icon danger" title="Supprimer" (click)="deleteFiliere(f?.id)">
+                      <svg style="width: 13px; height: 13px" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <polyline points="3 6 5 6 21 6" />
+                        <path d="M19 6l-1 14H6L5 6" />
+                        <path d="M10 11v6M14 11v6" />
+                      </svg>
+                    </button>
+                  </div>
+                </div>
+              </div>
+            }
+          </div>
+
+          <!-- Pas de panel-actions ici -->
+        </div>
+      }
+
+      <!-- ══ Modal Filière ══ -->
+      @if (showFiliereModal) {
+        <div class="modal-backdrop" (click)="closeFiliereModal()">
+          <div class="modal-box" (click)="$event.stopPropagation()">
+            <div class="modal-header">
+              <h3>{{ editingIndex !== null ? 'Modifier la filière' : 'Nouvelle filière' }}</h3>
+              <button class="modal-close" (click)="closeFiliereModal()">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width: 16px; height: 16px">
+                  <line x1="18" y1="6" x2="6" y2="18" />
+                  <line x1="6" y1="6" x2="18" y2="18" />
+                </svg>
+              </button>
+            </div>
+
+            <div class="modal-body">
+              <div class="field">
+                <label>
+                  Nom de la filière
+                  <span class="req">*</span>
+                </label>
+                <input type="text" [(ngModel)]="editingFiliere.name" placeholder="Ex : Manioc" />
+                <span class="text-danger">{{ errors?.name }}</span>
+              </div>
+              <div class="field">
+                <label>Description</label>
+                <input type="text" [(ngModel)]="editingFiliere.description" placeholder="Brève description (optionnel)" />
+              </div>
+            </div>
+
+            <div class="modal-footer">
+              <button class="btn-reset" (click)="closeFiliereModal()">Annuler</button>
+
+              @if(editingIndex !== null) {
+                <button class="btn btn-warning" (click)="saveEditFiliere()">Mettre à jour</button>
+              }@else {
+                <button class="btn-save" (click)="saveFiliere()">Enregistrer</button>
+              }
+            </div>
           </div>
         </div>
       }
