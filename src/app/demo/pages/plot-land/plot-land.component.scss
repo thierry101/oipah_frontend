@@ -558,6 +558,13 @@ $shadow-lg: 0 20px 60px rgba(0, 0, 0, .14);
 
   select {
     cursor: pointer;
+    &:disabled {
+      background: #F9F8F5;
+      color: #9B9890;
+      cursor: not-allowed;
+      opacity: 1; // override navigateur
+      border-color: #F1EFE8;
+    }
   }
 }
 

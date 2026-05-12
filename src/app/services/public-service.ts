@@ -12,16 +12,16 @@ export class PublicService {
   private http = inject(HttpClient);
 
   private userSubject = new BehaviorSubject<any>(null);
+  private allSectorsSubject = new BehaviorSubject<any>(null);
   // Observable accessible partout
   user$ = this.userSubject.asObservable();
+  allSectors$ = this.allSectorsSubject.asObservable();
 
 
   // Appel API
   getUser(): Observable<any> {
     return this.http.get(`${environment.apiUrl}/state-user`).pipe(
-      tap((user) => {
-        this.userSubject.next(user); // mise à jour globale
-      })
+      tap(user => this.userSubject.next(user))
     );
   }
 
@@ -63,6 +63,19 @@ export class PublicService {
     const queryString = params.join('&');
 
     return this.http.get(`${environment.apiUrl}/register-grantor?${queryString}&pagination=${pagination}`, { withCredentials: true });
+  }
+
+
+  getAllSectors(): Observable<any> {
+    return this.http.get(`${environment.apiUrl}/retrieve-agricultural`).pipe(
+      tap(user => this.allSectorsSubject.next(user))
+    );
+  }
+
+
+  // Accès instantané à la valeur actuelle
+  get allSectors() {
+    return this.allSectorsSubject.value;
   }
 
 }

@@ -31,4 +31,9 @@ export class OthersService {
   }
 
 
+  postLand(data: any) {
+    return this.http.post(`${environment.apiUrl}/plot-of-land`, data, { withCredentials: true });
+  }
+
+
 }

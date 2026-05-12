@@ -21,5 +21,6 @@ export class AppComponent implements OnInit {
 
   ngOnInit(): void {
     this.publicService.getUser().subscribe();
+    this.publicService.getAllSectors().subscribe();
   }
 }

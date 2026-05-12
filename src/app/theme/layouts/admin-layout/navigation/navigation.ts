@@ -74,7 +74,7 @@ export const NavigationItems: NavigationItem[] = [
         type: 'item',
         classes: 'nav-item',
         url: '/plot-of-land',
-        icon: 'money-bag'
+        icon: 'user'
       },
       {
         id: 'grantors',
@@ -82,7 +82,7 @@ export const NavigationItems: NavigationItem[] = [
         type: 'item',
         classes: 'nav-item',
         url: '/grantors',
-        icon: 'money-bag'
+        icon: 'user'
       }
     ]
   }

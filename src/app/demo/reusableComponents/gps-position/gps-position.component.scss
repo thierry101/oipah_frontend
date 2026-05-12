@@ -1,0 +1,140 @@
+// ── Variables ──────────────────────────────────────────────
+$green-800: #27500A;
+$green-700: #3B6D11;
+$green-600: #639922;
+$green-100: #EAF3DE;
+$red-500: #DC2626;
+$red-100: #FEE2E2;
+$gray-200: #D3D1C7;
+$gray-400: #9B9890;
+$gray-600: #5F5E5A;
+$gray-900: #2C2C2A;
+$white: #FFFFFF;
+$radius-sm: 8px;
+$font-body: 'DM Sans', sans-serif;
+
+// ── Label (hérité du parent via .field) ───────────────────
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+
+  label {
+    font-size: 12.5px;
+    font-weight: 500;
+    color: $gray-900;
+  }
+}
+
+// ── Wrapper input + bouton ─────────────────────────────────
+.gps-wrap {
+  display: flex;
+  align-items: stretch;
+
+  input {
+    flex: 1;
+    height: 40px;
+    border: 1px solid $gray-200;
+    border-right: none;
+    border-radius: $radius-sm 0 0 $radius-sm;
+    padding: 0 11px;
+    font-family: $font-body;
+    font-size: 13.5px;
+    color: $gray-900;
+    background: #fafafa;
+    cursor: default;
+    outline: none;
+    transition: border-color 0.18s, background 0.18s, color 0.18s;
+
+    &::placeholder {
+      color: $gray-400;
+    }
+
+    &.gps-ok {
+      border-color: $green-600;
+      background: $green-100;
+      color: $green-700;
+      font-weight: 500;
+    }
+
+    &.gps-error {
+      border-color: $red-500;
+      background: $red-100;
+    }
+  }
+}
+
+// ── Bouton déclencheur ─────────────────────────────────────
+.btn-gps {
+  flex-shrink: 0;
+  width: 42px;
+  height: 40px;
+  background: $green-700;
+  color: $white;
+  border: none;
+  border-radius: 0 $radius-sm $radius-sm 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background 0.15s;
+
+  svg {
+    width: 16px;
+    height: 16px;
+  }
+
+  &:hover:not(.loading) {
+    background: $green-800;
+  }
+
+  &.loading {
+    background: $gray-400;
+    cursor: not-allowed;
+    pointer-events: none;
+  }
+}
+
+// ── Spinner dans le bouton ─────────────────────────────────
+.gps-spinner {
+  display: inline-block;
+  width: 15px;
+  height: 15px;
+  border: 2px solid rgba($white, 0.3);
+  border-top-color: $white;
+  border-radius: 50%;
+  animation: gps-spin 0.65s linear infinite;
+}
+
+@keyframes gps-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+// ── Message d'aide ─────────────────────────────────────────
+.gps-hint {
+  display: block;
+  font-size: 11.5px;
+  line-height: 1.4;
+  min-height: 15px;
+  transition: color 0.18s;
+
+  &.idle {
+    color: $gray-400;
+  }
+
+  &.loading {
+    color: $gray-600;
+    font-style: italic;
+  }
+
+  &.ok {
+    color: $green-700;
+    font-weight: 500;
+  }
+
+  &.error {
+    color: $red-500;
+  }
+}

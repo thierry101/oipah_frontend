@@ -126,9 +126,7 @@ export class GrantorsComponent implements OnInit {
     this.isLoading = true;
     setPagination(this.publicService.getDonors.bind(this.publicService), page, this.searchTerm, (data: any) => {
       this.pagination = data;
-      console.log("the data is ", data)
       this.donors = data?.listItems;
-      console.log(this.donors)
       this.isLoading = false;
       this.pages = Array.from({ length: data.nber_pages }, (_, i) => i + 1);
     })

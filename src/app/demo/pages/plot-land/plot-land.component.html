@@ -106,7 +106,6 @@
       <thead>
         <tr>
           <th>#</th>
-          <th>Identifiant</th>
           <th>Propriétaire</th>
           <th>Localisation</th>
           <th>Superficie (ha)</th>
@@ -121,7 +120,6 @@
           <tr>
             <td class="td-num">{{ i + 1 }}</td>
             <td class="td-id">
-              <span class="parcelle-code">{{ item.code }}</span>
             </td>
             <td class="td-owner">
               <div class="avatar">{{ item.owner[0] }}</div>
@@ -217,7 +215,7 @@
         </button>
       </div>
 
-      <div class="modal-body">
+      <div class="modal-body" (click)="clearUser()">
         <!-- Section : Identification -->
         <div class="form-section">
           <div class="section-title">
@@ -228,14 +226,14 @@
             Identification de la parcelle
           </div>
           <div class="form-grid">
-            <div class="field">
+            <!-- <div class="field">
               <label>
                 Code / Référence
                 <span class="req">*</span>
               </label>
               <input type="text" [(ngModel)]="form.code" placeholder="Ex : PARC-2025-001" />
               <span class="text-danger">{{ errors?.code }}</span>
-            </div>
+            </div> -->
             <div class="field">
               <label>Statut</label>
               <select [(ngModel)]="form.status">
@@ -251,9 +249,9 @@
               </label>
               <select [(ngModel)]="form.filiere">
                 <option value="">Sélectionner</option>
-                <option value="Manioc">Manioc</option>
-                <option value="Maraîchère">Maraîchère</option>
-                <option value="Aquacole">Aquacole</option>
+                @for (fil of allFilieres; track fil?.id) {
+                  <option value="{{ fil?.name }}">{{ fil?.name }}</option>
+                }
               </select>
               <span class="text-danger">{{ errors?.filiere }}</span>
             </div>
@@ -278,18 +276,36 @@
             Localisation
           </div>
           <div class="form-grid">
+            <!-- Département -->
             <div class="field">
               <label>
                 Département
                 <span class="req">*</span>
               </label>
-              <input type="text" [(ngModel)]="form.departement" placeholder="Ex : Bouaké" />
+              <select [(ngModel)]="form.departement" (ngModelChange)="onDepartementChange($event)">
+                <option value="">Sélectionner un département</option>
+                @for (dept of departements; track dept.value) {
+                  <option [value]="dept.value">{{ dept.name }}</option>
+                }
+              </select>
               <span class="text-danger">{{ errors?.departement }}</span>
             </div>
+
+            <!-- Sous-préfecture (chargée dynamiquement) -->
             <div class="field">
               <label>Sous-préfecture</label>
-              <input type="text" [(ngModel)]="form.sousPrefecture" placeholder="Sous-préfecture" />
+              <select [(ngModel)]="form.sousPrefecture" [disabled]="!sousPrefectures.length">
+                <option value="">
+                  {{ form.departement ? 'Sélectionner une sous-préfecture' : "Choisir d'abord un département" }}
+                </option>
+                @for (sp of sousPrefectures; track sp) {
+                  <option [value]="sp">{{ sp }}</option>
+                }
+              </select>
+              <span class="text-danger">{{ errors?.sousPrefecture }}</span>
             </div>
+
+            <!-- Village / Quartier -->
             <div class="field">
               <label>
                 Village / Quartier
@@ -298,9 +314,11 @@
               <input type="text" [(ngModel)]="form.village" placeholder="Ex : Niakara" />
               <span class="text-danger">{{ errors?.village }}</span>
             </div>
+
+            <!-- GPS -->
             <div class="field">
               <label>Coordonnées GPS</label>
-              <input type="text" [(ngModel)]="form.gps" placeholder="Ex : 7.7333, -5.0667" />
+              <app-gps-position [(value)]="form.gps" #gpsRef></app-gps-position>
             </div>
           </div>
         </div>
@@ -315,18 +333,28 @@
             Propriétaire / Exploitant
           </div>
           <div class="form-grid">
-            <div class="field">
-              <label>
-                Nom & Prénoms
+            @if (role === 'Admin') {
+              <div class="field">
+                <label>Nom & Prénoms
                 <span class="req">*</span>
-              </label>
-              <input type="text" [(ngModel)]="form.owner" placeholder="Nom complet du propriétaire" />
-              <span class="text-danger">{{ errors?.owner }}</span>
-            </div>
-            <div class="field">
-              <label>Contact</label>
-              <input type="tel" [(ngModel)]="form.ownerContact" placeholder="07 00 00 00 00" />
-            </div>
+                </label>
+                <app-selected
+                  [placeholder]="'Choisir l\'article...'"
+                  [(searchTerm)]="searchTermOwner"
+                  [results]="listUsers"
+                  [displayField]="'name'"
+                  [error]="errors?.owner"
+                  [showResults]="!!listUsers?.length"
+                  (search)="searchUser($event)"
+                  (select)="selectProduct($event)"
+                ></app-selected>
+              </div>
+              <div class="field">
+                <label>Contact</label>
+                <input readonly type="tel" [(ngModel)]="form.ownerContact" placeholder="07 00 00 00 00" />
+              </div>
+            }
+
             <div class="field">
               <label>Type de tenure foncière</label>
               <select [(ngModel)]="form.tenureFonciere">
@@ -336,6 +364,7 @@
                 <option value="metayage">Métayage</option>
                 <option value="communautaire">Communautaire</option>
               </select>
+              <span class="text-danger">{{ errors?.tenureFonciere }}</span>
             </div>
             <div class="field">
               <label>N° titre foncier / document</label>
@@ -363,6 +392,7 @@
                 <option value="Latéritique">Latéritique</option>
                 <option value="Hydromorphe">Hydromorphe</option>
               </select>
+              <span class="text-danger">{{ errors?.typeSol }}</span>
             </div>
             <div class="field">
               <label>Source d'eau</label>
@@ -373,14 +403,11 @@
                 <option value="Marigot">Marigot / Cours d'eau</option>
                 <option value="Puits">Puits / Forage</option>
               </select>
+              <span class="text-danger">{{ errors?.sourceEau }}</span>
             </div>
             <div class="field">
               <label>Date d'acquisition</label>
               <input type="date" [(ngModel)]="form.dateAcquisition" />
-            </div>
-            <div class="field">
-              <label>Culture en cours</label>
-              <input type="text" [(ngModel)]="form.culture" placeholder="Ex : Manioc, Tomate…" />
             </div>
             <div class="field full">
               <label>Observations</label>
@@ -407,10 +434,10 @@
   <div class="modal-backdrop" (click)="closeDetailModal()">
     <div class="modal-box modal-sm" (click)="$event.stopPropagation()">
       <div class="modal-head">
-        <div>
+        <!-- <div>
           <span class="modal-tag">Détails</span>
           <h2>{{ selectedItem.code }}</h2>
-        </div>
+        </div> -->
         <button class="modal-close" (click)="closeDetailModal()">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
             <path d="M18 6L6 18M6 6l12 12" />
@@ -460,10 +487,6 @@
             <span class="dv">{{ selectedItem.gps || '—' }}</span>
           </div>
           <div class="detail-row">
-            <span class="dl">Culture en cours</span>
-            <span class="dv">{{ selectedItem.culture || '—' }}</span>
-          </div>
-          <div class="detail-row">
             <span class="dl">Statut</span>
             <span class="dv">
               <span class="status-badge status-{{ selectedItem.status }}">
@@ -507,7 +530,6 @@
       <div class="modal-body">
         <p class="delete-msg">
           Vous êtes sur le point de supprimer la parcelle
-          <strong>{{ selectedItem?.code }}</strong>
           appartenant à
           <strong>{{ selectedItem?.owner }}</strong>
           . Cette action est irréversible.
