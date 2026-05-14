@@ -21,18 +21,44 @@ export class OthersService {
   }
 
 
-  putAgricultural(id_sector:any, data: any) {
+  putAgricultural(id_sector: any, data: any) {
     return this.http.put(`${environment.apiUrl}/edit-agricultural/${id_sector}`, data, { withCredentials: true });
   }
 
 
-  deleteAgricultural(id_sector:any) {
+  deleteAgricultural(id_sector: any) {
     return this.http.delete(`${environment.apiUrl}/edit-agricultural/${id_sector}`, { withCredentials: true });
   }
 
 
   postLand(data: any) {
     return this.http.post(`${environment.apiUrl}/plot-of-land`, data, { withCredentials: true });
+  }
+
+
+  getLands(page: number = 1, search: any = '', statutLand: any = '', pagination: boolean = true) {
+    const params: string[] = [];
+    params.push(`page=${page}`);
+
+    if (search) {
+      params.push(`search=${encodeURIComponent(search)}`);
+    }
+    if (statutLand) {
+      params.push(`statut_land=${encodeURIComponent(statutLand)}`);
+    }
+    const queryString = params.join('&');
+
+    return this.http.get(`${environment.apiUrl}/plot-of-land?${queryString}&pagination=${pagination}`, { withCredentials: true });
+  }
+
+
+  putLand(id_land: number, data: any) {
+    return this.http.put(`${environment.apiUrl}/edit-plot-of-land/${id_land}`, data, { withCredentials: true });
+  }
+
+
+  deleteLand(id_land: number) {
+    return this.http.delete(`${environment.apiUrl}/edit-plot-of-land/${id_land}`, { withCredentials: true });
   }
 
 

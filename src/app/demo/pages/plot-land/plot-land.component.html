@@ -32,7 +32,7 @@
         </svg>
       </div>
       <div>
-        <span class="stat-num">{{ pagination?.nberItems ?? parcelles.length }}</span>
+        <span class="stat-num">{{ pagination?.nberItems }}</span>
         <span class="stat-lbl">Parcelles enregistrées</span>
       </div>
     </div>
@@ -45,7 +45,7 @@
       </div>
       <div>
         <span class="stat-num">
-          {{ totalSuperficie | number: '1.0-2' }}
+          {{ pagination?.otherParams?.total_area }}
           <small>ha</small>
         </span>
         <span class="stat-lbl">Superficie totale</span>
@@ -58,7 +58,7 @@
         </svg>
       </div>
       <div>
-        <span class="stat-num">{{ countByStatus('active') }}</span>
+        <span class="stat-num">{{ pagination?.otherParams?.total_active }}</span>
         <span class="stat-lbl">Parcelles actives</span>
       </div>
     </div>
@@ -71,7 +71,7 @@
         </svg>
       </div>
       <div>
-        <span class="stat-num">{{ uniqueOwners }}</span>
+        <span class="stat-num">{{ pagination?.otherParams?.total_unique_owners }} Propriétaires</span>
         <span class="stat-lbl">Propriétaires</span>
       </div>
     </div>
@@ -84,19 +84,15 @@
         <circle cx="11" cy="11" r="8" />
         <path d="M21 21l-4.35-4.35" />
       </svg>
-      <input type="text" placeholder="Rechercher par nom, village, propriétaire…" [(ngModel)]="searchTerm" />
+      <app-search-list [searchTerm]="searchTerm" (searchChange)="onSearchPloat($event)"></app-search-list>
+
+      <!-- <input type="text" placeholder="Rechercher par nom, village, propriétaire…" [(ngModel)]="searchTerm" /> -->
     </div>
-    <select class="filter-select" [(ngModel)]="filterStatus">
+    <select (click)="filterPloat()" class="filter-select" [(ngModel)]="filterStatus">
       <option value="">Tous les statuts</option>
       <option value="active">Active</option>
       <option value="inactive">Inactive</option>
       <option value="litige">En litige</option>
-    </select>
-    <select class="filter-select" [(ngModel)]="filterFiliere">
-      <option value="">Toutes les filières</option>
-      <option value="Manioc">Manioc</option>
-      <option value="Maraîchère">Maraîchère</option>
-      <option value="Aquacole">Aquacole</option>
     </select>
   </div>
 
@@ -116,33 +112,31 @@
         </tr>
       </thead>
       <tbody>
-        @for (item of filteredParcelles(); track item.id; let i = $index) {
+        @for (item of parcelles; track item?.id; let i = $index) {
           <tr>
             <td class="td-num">{{ i + 1 }}</td>
-            <td class="td-id">
-            </td>
             <td class="td-owner">
-              <div class="avatar">{{ item.owner[0] }}</div>
+              <div class="avatar">{{ item?.owner_land?.name[0] }}</div>
               <div>
-                <div class="owner-name">{{ item.owner }}</div>
-                <div class="owner-contact">{{ item.ownerContact }}</div>
+                <div class="owner-name">{{ item?.owner_land?.name }}</div>
+                <div class="owner-contact">{{ item?.ownerContact }}</div>
               </div>
             </td>
             <td class="td-location">
-              <div class="loc-main">{{ item.village }}</div>
-              <div class="loc-sub">{{ item.departement }}</div>
+              <div class="loc-main">{{ item?.quater }}</div>
+              <div class="loc-sub">{{ item?.department }}</div>
             </td>
-            <td class="td-superficie">{{ item.superficie | number: '1.0-2' }}</td>
+            <td class="td-superficie">{{ item?.area | number: '1.0-2' }}</td>
             <td>
-              <!-- <span class="filiere-badge f-{{ item.filiere | lowercase | replace: ' ' : '' | replace: 'è' : 'e' }}"> -->
-              <span class="filiere-badge f-{{ item.filiere | lowercase }}">
-                {{ item.filiere }}
+              <!-- <span class="filiere-badge f-{{ item?.filiere | lowercase | replace: ' ' : '' | replace: 'è' : 'e' }}"> -->
+              <span class="filiere-badge f-filiere">
+                {{ item?.filiere?.name }}
               </span>
             </td>
-            <td>{{ item.typeSol || '—' }}</td>
+            <td>{{ item?.type_ground || '—' }}</td>
             <td>
-              <span class="status-badge status-{{ item.status }}">
-                {{ getStatusName(item.status) }}
+              <span class="status-badge status-{{ item?.statut_land }}">
+                {{ getStatusName(item?.statut_land) }}
               </span>
             </td>
             <td class="td-actions">
@@ -236,11 +230,12 @@
             </div> -->
             <div class="field">
               <label>Statut</label>
-              <select [(ngModel)]="form.status">
+              <select [(ngModel)]="form.statut_land">
                 <option value="active">Active</option>
                 <option value="inactive">Inactive</option>
                 <option value="litige">En litige</option>
               </select>
+              <span class="text-danger">{{ errors?.statut_land }}</span>
             </div>
             <div class="field">
               <label>
@@ -250,7 +245,7 @@
               <select [(ngModel)]="form.filiere">
                 <option value="">Sélectionner</option>
                 @for (fil of allFilieres; track fil?.id) {
-                  <option value="{{ fil?.name }}">{{ fil?.name }}</option>
+                  <option value="{{ fil?.id }}">{{ fil?.name }}</option>
                 }
               </select>
               <span class="text-danger">{{ errors?.filiere }}</span>
@@ -260,8 +255,8 @@
                 Superficie (ha)
                 <span class="req">*</span>
               </label>
-              <input type="number" [(ngModel)]="form.superficie" placeholder="Ex : 2.5" min="0" step="0.01" />
-              <span class="text-danger">{{ errors?.superficie }}</span>
+              <input type="number" [(ngModel)]="form.area" placeholder="Ex : 2.5" min="0" step="0.01" />
+              <span class="text-danger">{{ errors?.area }}</span>
             </div>
           </div>
         </div>
@@ -282,27 +277,27 @@
                 Département
                 <span class="req">*</span>
               </label>
-              <select [(ngModel)]="form.departement" (ngModelChange)="onDepartementChange($event)">
+              <select [(ngModel)]="form.department" (ngModelChange)="onDepartementChange($event)">
                 <option value="">Sélectionner un département</option>
                 @for (dept of departements; track dept.value) {
                   <option [value]="dept.value">{{ dept.name }}</option>
                 }
               </select>
-              <span class="text-danger">{{ errors?.departement }}</span>
+              <span class="text-danger">{{ errors?.department }}</span>
             </div>
 
             <!-- Sous-préfecture (chargée dynamiquement) -->
             <div class="field">
               <label>Sous-préfecture</label>
-              <select [(ngModel)]="form.sousPrefecture" [disabled]="!sousPrefectures.length">
+              <select [(ngModel)]="form.sub_prefecture" [disabled]="!sousPrefectures.length">
                 <option value="">
-                  {{ form.departement ? 'Sélectionner une sous-préfecture' : "Choisir d'abord un département" }}
+                  {{ form.department ? 'Sélectionner une sous-préfecture' : "Choisir d'abord un département" }}
                 </option>
                 @for (sp of sousPrefectures; track sp) {
                   <option [value]="sp">{{ sp }}</option>
                 }
               </select>
-              <span class="text-danger">{{ errors?.sousPrefecture }}</span>
+              <span class="text-danger">{{ errors?.sub_prefecture }}</span>
             </div>
 
             <!-- Village / Quartier -->
@@ -311,8 +306,8 @@
                 Village / Quartier
                 <span class="req">*</span>
               </label>
-              <input type="text" [(ngModel)]="form.village" placeholder="Ex : Niakara" />
-              <span class="text-danger">{{ errors?.village }}</span>
+              <input type="text" [(ngModel)]="form.quater" placeholder="Ex : Niakara" />
+              <span class="text-danger">{{ errors?.quater }}</span>
             </div>
 
             <!-- GPS -->
@@ -335,8 +330,9 @@
           <div class="form-grid">
             @if (role === 'Admin') {
               <div class="field">
-                <label>Nom & Prénoms
-                <span class="req">*</span>
+                <label>
+                  Nom & Prénoms
+                  <span class="req">*</span>
                 </label>
                 <app-selected
                   [placeholder]="'Choisir l\'article...'"
@@ -357,18 +353,18 @@
 
             <div class="field">
               <label>Type de tenure foncière</label>
-              <select [(ngModel)]="form.tenureFonciere">
+              <select [(ngModel)]="form.land_ownership">
                 <option value="">Sélectionner</option>
                 <option value="proprietaire">Propriétaire</option>
                 <option value="locataire">Locataire</option>
                 <option value="metayage">Métayage</option>
                 <option value="communautaire">Communautaire</option>
               </select>
-              <span class="text-danger">{{ errors?.tenureFonciere }}</span>
+              <span class="text-danger">{{ errors?.land_ownership }}</span>
             </div>
             <div class="field">
               <label>N° titre foncier / document</label>
-              <input type="text" [(ngModel)]="form.titreFoncier" placeholder="Ex : TF-2021-00456" />
+              <input type="text" [(ngModel)]="form.acd_number" placeholder="Ex : TF-2021-00456" />
             </div>
           </div>
         </div>
@@ -384,7 +380,7 @@
           <div class="form-grid">
             <div class="field">
               <label>Type de sol</label>
-              <select [(ngModel)]="form.typeSol">
+              <select [(ngModel)]="form.type_ground">
                 <option value="">Sélectionner</option>
                 <option value="Argileux">Argileux</option>
                 <option value="Sableux">Sableux</option>
@@ -392,26 +388,27 @@
                 <option value="Latéritique">Latéritique</option>
                 <option value="Hydromorphe">Hydromorphe</option>
               </select>
-              <span class="text-danger">{{ errors?.typeSol }}</span>
+              <span class="text-danger">{{ errors?.type_ground }}</span>
             </div>
             <div class="field">
               <label>Source d'eau</label>
-              <select [(ngModel)]="form.sourceEau">
+              <select [(ngModel)]="form.source_water">
                 <option value="">Sélectionner</option>
                 <option value="Pluie">Pluie (pluvial)</option>
                 <option value="Irrigation">Irrigation</option>
                 <option value="Marigot">Marigot / Cours d'eau</option>
                 <option value="Puits">Puits / Forage</option>
               </select>
-              <span class="text-danger">{{ errors?.sourceEau }}</span>
+              <span class="text-danger">{{ errors?.source_water }}</span>
             </div>
             <div class="field">
               <label>Date d'acquisition</label>
               <input type="date" [(ngModel)]="form.dateAcquisition" />
+              <span class="text-danger">{{ errors?.dateAcquisition }}</span>
             </div>
             <div class="field full">
               <label>Observations</label>
-              <textarea [(ngModel)]="form.notes" placeholder="Informations complémentaires sur la parcelle…" rows="3"></textarea>
+              <textarea [(ngModel)]="form.description" placeholder="Informations complémentaires sur la parcelle…" rows="3"></textarea>
             </div>
           </div>
         </div>
@@ -419,9 +416,23 @@
 
       <div class="modal-footer">
         <button class="btn-cancel" (click)="closeModal()">Annuler</button>
-        <button class="btn-save" (click)="saveParcelle()">
-          {{ editMode ? 'Enregistrer les modifications' : 'Enregistrer la parcelle' }}
-        </button>
+        @if (!editMode) {
+          <app-submit-spinner
+            [loading]="isSaving"
+            label="Enregistrer la parcelle"
+            icon=""
+            cssClass="btn btn-primary btn-sm"
+            (clicked)="saveParcelle()"
+          ></app-submit-spinner>
+        } @else {
+          <app-submit-spinner
+            [loading]="isSaving"
+            label="Mettre à jour la parcelle"
+            icon=""
+            cssClass="btn btn-primary btn-sm"
+            (clicked)="saveEditParcelle()"
+          ></app-submit-spinner>
+        }
       </div>
     </div>
   </div>
@@ -448,39 +459,42 @@
         <div class="detail-grid">
           <div class="detail-row">
             <span class="dl">Propriétaire</span>
-            <span class="dv">{{ selectedItem.owner }}</span>
+            <span class="dv">
+              {{ selectedItem?.owner_land?.name }}
+              {{ selectedItem?.owner_land?.name }}
+            </span>
           </div>
           <div class="detail-row">
             <span class="dl">Contact</span>
-            <span class="dv">{{ selectedItem.ownerContact || '—' }}</span>
+            <span class="dv">{{ selectedItem?.owner_land?.phone || '—' }}</span>
           </div>
           <div class="detail-row">
             <span class="dl">Localisation</span>
-            <span class="dv">{{ selectedItem.village }}, {{ selectedItem.departement }}</span>
+            <span class="dv">{{ selectedItem.quater }}, {{ selectedItem.department }}</span>
           </div>
           <div class="detail-row">
             <span class="dl">Superficie</span>
-            <span class="dv dv-green">{{ selectedItem.superficie | number: '1.0-2' }} ha</span>
+            <span class="dv dv-green">{{ selectedItem.area | number: '1.0-2' }} ha</span>
           </div>
           <div class="detail-row">
             <span class="dl">Filière</span>
-            <span class="dv">{{ selectedItem.filiere || '—' }}</span>
+            <span class="dv">{{ selectedItem.filiere?.name || '—' }}</span>
           </div>
           <div class="detail-row">
             <span class="dl">Type de sol</span>
-            <span class="dv">{{ selectedItem.typeSol || '—' }}</span>
+            <span class="dv">{{ selectedItem.type_ground || '—' }}</span>
           </div>
           <div class="detail-row">
             <span class="dl">Source d'eau</span>
-            <span class="dv">{{ selectedItem.sourceEau || '—' }}</span>
+            <span class="dv">{{ selectedItem?.source_water || '—' }}</span>
           </div>
           <div class="detail-row">
             <span class="dl">Tenure foncière</span>
-            <span class="dv">{{ selectedItem.tenureFonciere || '—' }}</span>
+            <span class="dv">{{ selectedItem.land_ownership || '—' }}</span>
           </div>
           <div class="detail-row">
             <span class="dl">Titre foncier</span>
-            <span class="dv">{{ selectedItem.titreFoncier || '—' }}</span>
+            <span class="dv">{{ selectedItem.acd_number || '—' }}</span>
           </div>
           <div class="detail-row">
             <span class="dl">GPS</span>
@@ -489,15 +503,15 @@
           <div class="detail-row">
             <span class="dl">Statut</span>
             <span class="dv">
-              <span class="status-badge status-{{ selectedItem.status }}">
-                {{ getStatusName(selectedItem.status) }}
+              <span class="status-badge status-{{ selectedItem.statut_land }}">
+                {{ getStatusName(selectedItem.statut_land) }}
               </span>
             </span>
           </div>
-          @if (selectedItem.notes) {
+          @if (selectedItem.description) {
             <div class="detail-row full">
               <span class="dl">Observations</span>
-              <span class="dv">{{ selectedItem.notes }}</span>
+              <span class="dv">{{ selectedItem.description }}</span>
             </div>
           }
         </div>
@@ -529,9 +543,8 @@
       </div>
       <div class="modal-body">
         <p class="delete-msg">
-          Vous êtes sur le point de supprimer la parcelle
-          appartenant à
-          <strong>{{ selectedItem?.owner }}</strong>
+          Vous êtes sur le point de supprimer la parcelle appartenant à
+          <!-- <strong>{{ selectedItem?.owner }}</strong> -->
           . Cette action est irréversible.
         </p>
       </div>

@@ -63,9 +63,10 @@
                   </div>
                 </td>
                 <td>
-                  <span class="type-badge">{{ getDonorType(donor?.type_donor) }}</span>
+                  <span class="type-badge text-wrap">{{ getDonorType(donor?.type_donor) }}</span>
                 </td>
-                <td class="td-donor-actions">
+                <td>
+                <!-- <td class="td-donor-actions"> -->
                   <button class="icon-btn" (click)="openDonorModal(donor); $event.stopPropagation()" title="Modifier">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                       <path
@@ -269,9 +270,9 @@
                 <span class="req">*</span>
               </label>
               <select [(ngModel)]="donorForm.type_donor">
-                <option value="">Sélectionner</option>
+                <option value="0">Sélectionner</option>
                 @for (typeDonor of typesDonor ; track typeDonor?.value) {
-                <option value="typeDonor?.value">{{typeDonor?.name}}</option>
+                <option [value]="typeDonor?.value">{{typeDonor?.name}}</option>
                 }
               </select>
               <span class="text-danger">{{ errors?.type_donor }}</span>
@@ -279,7 +280,7 @@
             <div class="field">
               <label>Pays d'origine</label>
               <select [(ngModel)]="donorForm.country">
-                <option value="">Sélectionner</option>
+                <option value="0">Sélectionner</option>
                 @for (country of countries; track country?.value) {
                   <option value="{{ country?.name }}">{{ country?.name }}</option>
                 }
@@ -302,9 +303,23 @@
 
       <div class="modal-footer">
         <button class="btn-cancel" (click)="closeDonorModal()">Annuler</button>
-        <button class="btn-save" (click)="saveDonor()">
-          {{ editingDonor ? 'Enregistrer les modifications' : 'Ajouter le subventionneur' }}
-        </button>
+        @if (!editingDonor) {
+          <app-submit-spinner
+            [loading]="isSaving"
+            label="Ajouter le subventionneur"
+            icon=""
+            cssClass="btn btn-primary btn-sm"
+            (clicked)="saveDonor()"
+          ></app-submit-spinner>
+        } @else {
+          <app-submit-spinner
+            [loading]="isSaving"
+            label="Mettre à jour"
+            icon=""
+            cssClass="btn btn-primary btn-sm"
+            (clicked)="saveEditDonor()"
+          ></app-submit-spinner>
+        }
       </div>
     </div>
   </div>

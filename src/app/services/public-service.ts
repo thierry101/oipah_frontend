@@ -66,6 +66,16 @@ export class PublicService {
   }
 
 
+  putDonor(idDonor: any, data: any) {
+    return this.http.put(`${environment.apiUrl}/edit-grantor/${idDonor}`, data, { withCredentials: true });
+  }
+
+
+  deleteDonor(idDonor: any) {
+    return this.http.delete(`${environment.apiUrl}/edit-grantor/${idDonor}`, { withCredentials: true });
+  }
+
+
   getAllSectors(): Observable<any> {
     return this.http.get(`${environment.apiUrl}/retrieve-agricultural`).pipe(
       tap(user => this.allSectorsSubject.next(user))

@@ -6,6 +6,7 @@ import { SetPaginationComponent } from "../../reusableComponents/set-pagination/
 import { PublicService } from 'src/app/services/public-service';
 import { listDonors, setPagination, showError, toastShow } from 'src/app/share/shared';
 import { countries } from '../../../share/countries'
+import { SubmitSpinnerComponent } from "../../reusableComponents/submit-spinner/submit-spinner.component";
 
 
 export interface Donor {
@@ -33,7 +34,7 @@ export interface Subsidy {
 
 @Component({
   selector: 'app-grantors',
-  imports: [CommonModule, FormsModule, SetPaginationComponent],
+  imports: [CommonModule, FormsModule, SetPaginationComponent, SubmitSpinnerComponent],
   templateUrl: './grantors.component.html',
   styleUrl: './grantors.component.scss',
 })
@@ -46,6 +47,7 @@ export class GrantorsComponent implements OnInit {
   isLoading: boolean = false
   donors: Donor[] = [];
   subsidies: Subsidy[] = [];
+  idDonor!: any
 
   selectedDonor: Donor | null = null;
   editingDonor: Donor | null = null;
@@ -74,7 +76,7 @@ export class GrantorsComponent implements OnInit {
   subsidyForm: Partial<Subsidy> = this.emptySubsidyForm();
 
   private emptyDonorForm(): Partial<Donor> {
-    return { name: '', type_donor: '', country: '', email: '', phone: '' };
+    return { name: '', type_donor: '0', country: '0', email: '', phone: '' };
   }
 
   private emptySubsidyForm(): Partial<Subsidy> {
@@ -110,7 +112,16 @@ export class GrantorsComponent implements OnInit {
   // ── Donor modal ───────────────────────────────────────────
   openDonorModal(donor?: Donor): void {
     this.editingDonor = donor || null;
-    this.donorForm = donor ? { ...donor } : this.emptyDonorForm();
+    if (this.editingDonor) {
+      this.idDonor = donor?.id
+      this.donorForm = {
+        name: donor?.name || '',
+        country: donor?.country || '0',
+        email: donor?.email || '',
+        phone: donor?.phone || '',
+        type_donor: donor?.type_donor || '0'
+      }
+    }
     this.errors = {};
     this.showDonorModal = true;
   }
@@ -139,14 +150,27 @@ export class GrantorsComponent implements OnInit {
 
 
   saveDonor(): void {
-    this.errors = {};
-
     this.publicService.postDonor(this.donorForm).subscribe({
-      next: (res: any) => {
-        console.log(res)
+      next: () => {
         this.closeDonorModal();
         this.fetchDonors(1)
         toastShow('success', "Subventionneur créé")
+      },
+      error: (err) => {
+        this.errors = err.error.errors || {};
+        this.isSaving = false
+        showError(err, err.status, this.errors, err.error, document.getElementById('a'));
+      }
+    })
+  }
+
+
+  saveEditDonor() {
+    this.publicService.putDonor(this.idDonor, this.donorForm).subscribe({
+      next: () => {
+        this.closeDonorModal();
+        this.fetchDonors(1)
+        toastShow('success', "Subventionneur mis à jour")
       },
       error: (err) => {
         this.errors = err.error.errors || {};
@@ -163,8 +187,18 @@ export class GrantorsComponent implements OnInit {
 
 
   deleteDonor(donor: Donor): void {
-    this.donors = this.donors.filter(d => d.id !== donor.id);
-    if (this.selectedDonor?.id === donor.id) this.selectedDonor = null;
+    this.publicService.deleteDonor(donor?.id).subscribe({
+      next: () => {
+        this.donors = this.donors.filter(d => d.id !== donor.id);
+        if (this.selectedDonor?.id === donor.id) this.selectedDonor = null;
+        toastShow('success', "Subventionneur supprimé")
+      },
+      error: (err) => {
+        this.errors = err.error.errors || {};
+        this.isSaving = false
+        showError(err, err.status, this.errors, err.error, document.getElementById('a'));
+      }
+    })
   }
 
   // ── Subsidy modal ─────────────────────────────────────────

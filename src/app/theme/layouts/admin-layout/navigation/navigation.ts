@@ -83,6 +83,14 @@ export const NavigationItems: NavigationItem[] = [
         classes: 'nav-item',
         url: '/grantors',
         icon: 'user'
+      },
+        {
+        id: 'Projects',
+        title: 'Projet',
+        type: 'item',
+        classes: 'nav-item',
+        url: '/project',
+        icon: 'user'
       }
     ]
   }
