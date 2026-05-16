@@ -1,0 +1,714 @@
+<div class="project-page">
+  <!-- Header -->
+  <div class="page-header">
+    <div class="header-left">
+      <div class="ph-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+          <path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2" />
+          <rect x="9" y="3" width="6" height="4" rx="1" />
+          <path d="M9 12h6M9 16h4" />
+        </svg>
+      </div>
+      <div>
+        <div class="header-badge">PDC2V</div>
+        <h1>Gestion des Projets</h1>
+        <p>Création et suivi des projets agricoles soumis au programme</p>
+      </div>
+    </div>
+    <button class="btn-enrol" (click)="openModal()" type="button">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+        <path d="M12 5v14M5 12h14" />
+      </svg>
+      Nouveau projet
+    </button>
+  </div>
+
+  <!-- Stats -->
+  <div class="stats-bar">
+    <div class="stat-card">
+      <div class="stat-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+          <path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2" />
+          <rect x="9" y="3" width="6" height="4" rx="1" />
+        </svg>
+      </div>
+      <div>
+        <span class="stat-num">{{ pagination?.nberItems ?? projects.length }}</span>
+        <span class="stat-lbl">Total projets</span>
+      </div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-icon amber">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+          <circle cx="12" cy="12" r="10" />
+          <path d="M12 6v6l4 2" />
+        </svg>
+      </div>
+      <div>
+        <span class="stat-num amber">{{ countByStatus('en_cours') }}</span>
+        <span class="stat-lbl">En cours</span>
+      </div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-icon green">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+          <path d="M22 11.08V12a10 10 0 11-5.93-9.14" />
+          <polyline points="22 4 12 14.01 9 11.01" />
+        </svg>
+      </div>
+      <div>
+        <span class="stat-num green">{{ countByStatus('termine') }}</span>
+        <span class="stat-lbl">Terminés</span>
+      </div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-icon blue">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+          <circle cx="12" cy="12" r="10" />
+          <path d="M12 8v4M12 16h.01" />
+        </svg>
+      </div>
+      <div>
+        <span class="stat-num blue">{{ countByStatus('soumis') }}</span>
+        <span class="stat-lbl">Soumis</span>
+      </div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-icon red">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+          <circle cx="12" cy="12" r="10" />
+          <path d="M15 9l-6 6M9 9l6 6" />
+        </svg>
+      </div>
+      <div>
+        <span class="stat-num red">{{ countByStatus('rejete') }}</span>
+        <span class="stat-lbl">Rejetés</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toolbar -->
+  <div class="toolbar">
+    <div class="search-wrap">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <circle cx="11" cy="11" r="8" />
+        <path d="M21 21l-4.35-4.35" />
+      </svg>
+      <input type="text" placeholder="Rechercher par titre, porteur, filière…" [(ngModel)]="searchTerm" />
+    </div>
+    <select class="filter-select" [(ngModel)]="filterStatus">
+      <option value="">Tous les statuts</option>
+      <option value="brouillon">Brouillon</option>
+      <option value="soumis">Soumis</option>
+      <option value="approuve">Approuvé</option>
+      <option value="en_cours">En cours</option>
+      <option value="termine">Terminé</option>
+      <option value="rejete">Rejeté</option>
+    </select>
+    <select class="filter-select" [(ngModel)]="filterFiliere">
+      <option value="">Toutes les filières</option>
+      <option value="Manioc">Manioc</option>
+      <option value="Maraîchère">Maraîchère</option>
+      <option value="Aquacole">Aquacole</option>
+    </select>
+    <select class="filter-select" [(ngModel)]="filterType">
+      <option value="">Tous les types</option>
+      <option value="Communautaire">Communautaire</option>
+      <option value="Individuel">Individuel</option>
+    </select>
+  </div>
+
+  <!-- Tableau -->
+  <div class="table-wrap">
+    <table class="project-table">
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>Projet</th>
+          <th>Porteur</th>
+          <th>Filière</th>
+          <th>Type</th>
+          <th>Budget (FCFA)</th>
+          <th>Superficie (ha)</th>
+          <th>Département</th>
+          <th>Statut</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (item of filteredProjects(); track item.id; let i = $index) {
+          <tr>
+            <td class="td-num">{{ i + 1 }}</td>
+            <td class="td-project">
+              <div class="project-title">{{ item.titre }}</div>
+              <div class="project-ref">{{ item.reference }}</div>
+            </td>
+            <td class="td-owner">
+              <div class="avatar">{{ item.porteur[0] }}</div>
+              <div>
+                <div class="owner-name">{{ item.porteur }}</div>
+                <div class="owner-sub">{{ item.porteurContact }}</div>
+              </div>
+            </td>
+            <td>
+              <span class="filiere-badge f-{{ item.filiere | lowercase | slice: 0 : 6 }}">
+                {{ item.filiere }}
+              </span>
+            </td>
+            <td>
+              <span class="type-badge">{{ item.typeProjet }}</span>
+            </td>
+            <td class="td-budget">{{ item.budget | number }}</td>
+            <td class="td-superficie">{{ item.superficie | number: '1.0-2' }}</td>
+            <td>{{ item.departement }}</td>
+            <td>
+              <span class="status-badge status-{{ item.status }}">
+                <span class="status-dot"></span>
+                {{ getStatusName(item.status) }}
+              </span>
+            </td>
+            <td class="td-actions">
+              <button class="btn-action btn-view" (click)="openDetailModal(item)" title="Voir détails">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
+                  <circle cx="12" cy="12" r="3" />
+                </svg>
+              </button>
+              <button class="btn-action btn-edit" (click)="openModal(item)" title="Modifier">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path
+                    d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"
+                  />
+                </svg>
+              </button>
+              <button class="btn-action btn-status" (click)="openStatusModal(item)" title="Changer le statut">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <polyline points="17 1 21 5 17 9" />
+                  <path d="M3 11V9a4 4 0 014-4h14M7 23l-4-4 4-4" />
+                  <path d="M21 13v2a4 4 0 01-4 4H3" />
+                </svg>
+              </button>
+              <button class="btn-action btn-delete" (click)="confirmDelete(item)" title="Supprimer">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <polyline points="3 6 5 6 21 6" />
+                  <path d="M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6" />
+                  <path d="M10 11v6M14 11v6" />
+                  <path d="M9 6V4a1 1 0 011-1h4a1 1 0 011 1v2" />
+                </svg>
+              </button>
+            </td>
+          </tr>
+        } @empty {
+          <tr>
+            <td colspan="10" class="td-empty">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                <path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2" />
+                <rect x="9" y="3" width="6" height="4" rx="1" />
+              </svg>
+              <p>
+                Aucun projet enregistré.
+                <br />
+                Cliquez sur "Nouveau projet" pour commencer.
+              </p>
+            </td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  </div>
+
+  <app-set-pagination
+    [currentPage]="pagination?.currentPage"
+    [totalPages]="pagination?.nber_pages"
+    [previousPage]="pagination?.previousPage"
+    [nextPage]="pagination?.nextPage"
+    (pageChange)="onPageChange($event)"
+  ></app-set-pagination>
+</div>
+
+<!-- ═══════════════════════════════════════════
+     MODAL : Création / Modification projet
+════════════════════════════════════════════ -->
+@if (showModal) {
+  <div class="modal-backdrop" (click)="closeModal()">
+    <div class="modal-box modal-lg" (click)="$event.stopPropagation()">
+      <div class="modal-head">
+        <div>
+          <span class="modal-tag">{{ editMode ? 'Modification' : 'Nouveau projet' }}</span>
+          <h2>{{ editMode ? 'Modifier le projet' : 'Créer un projet' }}</h2>
+        </div>
+        <button class="modal-close" (click)="closeModal()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M18 6L6 18M6 6l12 12" />
+          </svg>
+        </button>
+      </div>
+
+      <div class="modal-body">
+        <!-- Section : Identification -->
+        <div class="form-section">
+          <div class="section-title">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2" />
+              <rect x="9" y="3" width="6" height="4" rx="1" />
+              <path d="M9 12h6M9 16h4" />
+            </svg>
+            Identification du projet
+          </div>
+          <div class="form-grid">
+            <div class="field full">
+              <label>
+                Titre du projet
+                <span class="req">*</span>
+              </label>
+              <input type="text" [(ngModel)]="form.titre" placeholder="Ex : Développement de la culture manioc à Bouaké" />
+              <span class="text-danger">{{ errors?.titre }}</span>
+            </div>
+            <div class="field">
+              <label>Référence</label>
+              <input type="text" [(ngModel)]="form.reference" placeholder="Ex : PROJ-2025-001" />
+            </div>
+            <div class="field">
+              <label>
+                Filière
+                <span class="req">*</span>
+              </label>
+              <select [(ngModel)]="form.filiere">
+                <option value="">Sélectionner</option>
+                <option value="Manioc">Manioc</option>
+                <option value="Maraîchère">Maraîchère</option>
+                <option value="Aquacole">Aquacole</option>
+              </select>
+              <span class="text-danger">{{ errors?.filiere }}</span>
+            </div>
+            <div class="field">
+              <label>Type de projet</label>
+              <select [(ngModel)]="form.typeProjet">
+                <option value="Communautaire">Communautaire</option>
+                <option value="Individuel">Individuel</option>
+              </select>
+            </div>
+            <div class="field">
+              <label>Mode d'exécution</label>
+              <select [(ngModel)]="form.modeExecution">
+                <option value="Individuel">Individuel</option>
+                <option value="Groupement">Groupement</option>
+              </select>
+            </div>
+            <div class="field">
+              <label>Statut initial</label>
+              <select [(ngModel)]="form.status">
+                <option value="brouillon">Brouillon</option>
+                <option value="soumis">Soumis</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <!-- Section : Porteur du projet -->
+        <div class="form-section">
+          <div class="section-title">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2" />
+              <circle cx="12" cy="7" r="4" />
+            </svg>
+            Porteur du projet
+          </div>
+          <div class="form-grid">
+            <div class="field">
+              <label>
+                Nom & Prénoms
+                <span class="req">*</span>
+              </label>
+              <input type="text" [(ngModel)]="form.porteur" placeholder="Nom complet" />
+              <span class="text-danger">{{ errors?.porteur }}</span>
+            </div>
+            <div class="field">
+              <label>Contact</label>
+              <input type="tel" [(ngModel)]="form.porteurContact" placeholder="07 00 00 00 00" />
+            </div>
+            <div class="field">
+              <label>Organisation / OPA</label>
+              <input type="text" [(ngModel)]="form.organisation" placeholder="Ex : COOP Agri Nord" />
+            </div>
+            <div class="field">
+              <label>Email</label>
+              <input type="email" [(ngModel)]="form.porteurEmail" placeholder="porteur@email.ci" />
+            </div>
+          </div>
+        </div>
+
+        <!-- Section : Localisation -->
+        <div class="form-section">
+          <div class="section-title">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z" />
+              <circle cx="12" cy="10" r="3" />
+            </svg>
+            Localisation du projet
+          </div>
+          <div class="form-grid">
+            <div class="field">
+              <label>
+                Département
+                <span class="req">*</span>
+              </label>
+              <select [(ngModel)]="form.departement" (ngModelChange)="onDepartementChange($event)">
+                <option value="">Sélectionner</option>
+                @for (dept of departements; track dept.value) {
+                  <option [value]="dept.value">{{ dept.name }}</option>
+                }
+              </select>
+              <span class="text-danger">{{ errors?.departement }}</span>
+            </div>
+            <div class="field">
+              <label>Sous-préfecture</label>
+              <select [(ngModel)]="form.sousPrefecture" [disabled]="!sousPrefectures.length">
+                <option value="">
+                  {{ form.departement ? 'Sélectionner' : "Choisir d'abord un département" }}
+                </option>
+                @for (sp of sousPrefectures; track sp) {
+                  <option [value]="sp">{{ sp }}</option>
+                }
+              </select>
+            </div>
+            <div class="field">
+              <label>
+                Village / Lieu d'exécution
+                <span class="req">*</span>
+              </label>
+              <input type="text" [(ngModel)]="form.lieuExecution" placeholder="Ex : Niakara" />
+              <span class="text-danger">{{ errors?.lieuExecution }}</span>
+            </div>
+            <div class="field">
+              <label>GPS</label>
+              <app-gps-position [(value)]="form.gps" #gpsRef></app-gps-position>
+            </div>
+          </div>
+        </div>
+
+        <!-- Section : Financements -->
+        <div class="form-section">
+          <div class="section-title">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <line x1="12" y1="1" x2="12" y2="23" />
+              <path d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6" />
+            </svg>
+            Budget &amp; Superficie
+          </div>
+          <div class="form-grid">
+            <div class="field">
+              <label>
+                Budget total (FCFA)
+                <span class="req">*</span>
+              </label>
+              <input type="number" [(ngModel)]="form.budget" placeholder="Ex : 2500000" min="0" (ngModelChange)="calcBudget()" />
+              <span class="text-danger">{{ errors?.budget }}</span>
+            </div>
+            <div class="field">
+              <label>
+                Superficie (ha)
+                <span class="req">*</span>
+              </label>
+              <input type="number" [(ngModel)]="form.superficie" placeholder="Ex : 2.5" min="0" step="0.01" />
+              <span class="text-danger">{{ errors?.superficie }}</span>
+            </div>
+            <div class="field">
+              <label>Coût / ha (FCFA)</label>
+              <input type="text" [value]="coutParHa | number" readonly class="readonly" placeholder="Calculé automatiquement" />
+            </div>
+            <div class="field">
+              <label>Nombre d'étangs piscicoles</label>
+              <input type="number" [(ngModel)]="form.nbEtangs" placeholder="0" min="0" />
+            </div>
+          </div>
+        </div>
+
+        <!-- Section : Dates -->
+        <div class="form-section">
+          <div class="section-title">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <rect x="3" y="4" width="18" height="18" rx="2" ry="2" />
+              <line x1="16" y1="2" x2="16" y2="6" />
+              <line x1="8" y1="2" x2="8" y2="6" />
+              <line x1="3" y1="10" x2="21" y2="10" />
+            </svg>
+            Dates du projet
+          </div>
+          <div class="form-grid">
+            <div class="field">
+              <label>Date de soumission</label>
+              <input type="date" [(ngModel)]="form.dateSoumission" />
+            </div>
+            <div class="field">
+              <label>Date de démarrage prévue</label>
+              <input type="date" [(ngModel)]="form.dateDemarrage" />
+            </div>
+            <div class="field">
+              <label>Date de fin prévue</label>
+              <input type="date" [(ngModel)]="form.dateFin" />
+            </div>
+            <div class="field">
+              <label>Durée (mois)</label>
+              <input type="number" [(ngModel)]="form.duree" placeholder="Ex : 12" min="1" />
+            </div>
+          </div>
+        </div>
+
+        <!-- Section : Description -->
+        <div class="form-section">
+          <div class="section-title">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z" />
+              <polyline points="14 2 14 8 20 8" />
+              <line x1="16" y1="13" x2="8" y2="13" />
+              <line x1="16" y1="17" x2="8" y2="17" />
+              <polyline points="10 9 9 9 8 9" />
+            </svg>
+            Description &amp; Objectifs
+          </div>
+          <div class="form-grid">
+            <div class="field full">
+              <label>Description du projet</label>
+              <textarea [(ngModel)]="form.description" placeholder="Décrivez le contexte et les activités prévues…" rows="3"></textarea>
+            </div>
+            <div class="field full">
+              <label>Objectifs attendus</label>
+              <textarea [(ngModel)]="form.objectifs" placeholder="Résultats attendus et indicateurs de succès…" rows="3"></textarea>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="modal-footer">
+        <button class="btn-cancel" (click)="closeModal()">Annuler</button>
+        <button class="btn-ghost" (click)="saveProject('brouillon')" type="button">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M17 3a2.828 2.828 0 114 4L7.5 20.5 2 22l1.5-5.5L17 3z" />
+          </svg>
+          Enregistrer en brouillon
+        </button>
+        <button class="btn-save" (click)="saveProject('soumis')">
+          {{ editMode ? 'Enregistrer les modifications' : 'Soumettre le projet' }}
+        </button>
+      </div>
+    </div>
+  </div>
+}
+
+<!-- ═══════════════════════════════════════════
+     MODAL : Changement de statut
+════════════════════════════════════════════ -->
+@if (showStatusModal && selectedItem) {
+  <div class="modal-backdrop" (click)="closeStatusModal()">
+    <div class="modal-box modal-xs" (click)="$event.stopPropagation()">
+      <div class="modal-head">
+        <div>
+          <span class="modal-tag">Statut</span>
+          <h2>Mettre à jour le statut</h2>
+        </div>
+        <button class="modal-close" (click)="closeStatusModal()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M18 6L6 18M6 6l12 12" />
+          </svg>
+        </button>
+      </div>
+      <div class="modal-body">
+        <!-- Projet concerné -->
+        <div class="status-project-name">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2" />
+            <rect x="9" y="3" width="6" height="4" rx="1" />
+          </svg>
+          {{ selectedItem.titre }}
+        </div>
+
+        <!-- Statut actuel → nouveau -->
+        <div class="status-flow">
+          <span class="status-badge status-{{ selectedItem.status }}">
+            <span class="status-dot"></span>
+            {{ getStatusName(selectedItem.status) }}
+          </span>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="status-arrow">
+            <path d="M5 12h14M12 5l7 7-7 7" />
+          </svg>
+          <span class="status-badge status-{{ newStatus }}" *ngIf="newStatus">
+            <span class="status-dot"></span>
+            {{ getStatusName(newStatus) }}
+          </span>
+        </div>
+
+        <!-- Sélection du nouveau statut -->
+        <div class="field" style="margin-top: 16px">
+          <label>
+            Nouveau statut
+            <span class="req">*</span>
+          </label>
+          <select [(ngModel)]="newStatus">
+            <option value="">Sélectionner</option>
+            @for (s of availableStatuses(selectedItem.status); track s.value) {
+              <option [value]="s.value">{{ s.label }}</option>
+            }
+          </select>
+        </div>
+
+        <div class="field" style="margin-top: 12px">
+          <label>Commentaire (optionnel)</label>
+          <textarea [(ngModel)]="statusComment" placeholder="Motif du changement de statut…" rows="2"></textarea>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-cancel" (click)="closeStatusModal()">Annuler</button>
+        <button class="btn-save" (click)="updateStatus()" [disabled]="!newStatus">Confirmer</button>
+      </div>
+    </div>
+  </div>
+}
+
+<!-- ═══════════════════════════════════════════
+     MODAL : Détail projet
+════════════════════════════════════════════ -->
+@if (showDetailModal && selectedItem) {
+  <div class="modal-backdrop" (click)="closeDetailModal()">
+    <div class="modal-box" (click)="$event.stopPropagation()">
+      <div class="modal-head">
+        <div>
+          <span class="modal-tag">Détails</span>
+          <h2>{{ selectedItem.titre }}</h2>
+        </div>
+        <button class="modal-close" (click)="closeDetailModal()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M18 6L6 18M6 6l12 12" />
+          </svg>
+        </button>
+      </div>
+      <div class="modal-body">
+        <!-- Statut + historique -->
+        <div class="detail-status-row">
+          <span class="status-badge status-{{ selectedItem.status }}">
+            <span class="status-dot"></span>
+            {{ getStatusName(selectedItem.status) }}
+          </span>
+          <span class="detail-ref">{{ selectedItem.reference }}</span>
+        </div>
+
+        <!-- Timeline des statuts -->
+        @if (selectedItem.statusHistory?.length) {
+          <div class="status-timeline">
+            @for (h of selectedItem.statusHistory; track h.date) {
+              <div class="timeline-item">
+                <div class="tl-dot status-{{ h.status }}"></div>
+                <div class="tl-content">
+                  <span class="tl-status">{{ getStatusName(h.status) }}</span>
+                  <span class="tl-date">{{ h.date | date: 'dd/MM/yyyy' }}</span>
+                  @if (h.comment) {
+                    <span class="tl-comment">{{ h.comment }}</span>
+                  }
+                </div>
+              </div>
+            }
+          </div>
+        }
+
+        <div class="detail-grid">
+          <div class="detail-row">
+            <span class="dl">Porteur</span>
+            <span class="dv">{{ selectedItem.porteur }}</span>
+          </div>
+          <div class="detail-row">
+            <span class="dl">Contact</span>
+            <span class="dv">{{ selectedItem.porteurContact || '—' }}</span>
+          </div>
+          <div class="detail-row">
+            <span class="dl">Organisation</span>
+            <span class="dv">{{ selectedItem.organisation || '—' }}</span>
+          </div>
+          <div class="detail-row">
+            <span class="dl">Filière</span>
+            <span class="dv">{{ selectedItem.filiere }}</span>
+          </div>
+          <div class="detail-row">
+            <span class="dl">Type</span>
+            <span class="dv">{{ selectedItem.typeProjet }}</span>
+          </div>
+          <div class="detail-row">
+            <span class="dl">Département</span>
+            <span class="dv">{{ getDepartementName(selectedItem.departement) }}</span>
+          </div>
+          <div class="detail-row">
+            <span class="dl">Lieu</span>
+            <span class="dv">{{ selectedItem.lieuExecution }}</span>
+          </div>
+          <div class="detail-row">
+            <span class="dl">Budget</span>
+            <span class="dv dv-green">{{ selectedItem.budget | number }} FCFA</span>
+          </div>
+          <div class="detail-row">
+            <span class="dl">Superficie</span>
+            <span class="dv">{{ selectedItem.superficie | number: '1.0-2' }} ha</span>
+          </div>
+          <div class="detail-row">
+            <span class="dl">Démarrage</span>
+            <span class="dv">{{ (selectedItem.dateDemarrage | date: 'dd/MM/yyyy') || '—' }}</span>
+          </div>
+          <div class="detail-row">
+            <span class="dl">Fin prévue</span>
+            <span class="dv">{{ (selectedItem.dateFin | date: 'dd/MM/yyyy') || '—' }}</span>
+          </div>
+          <div class="detail-row">
+            <span class="dl">Durée</span>
+            <span class="dv">{{ selectedItem.duree ? selectedItem.duree + ' mois' : '—' }}</span>
+          </div>
+          @if (selectedItem.description) {
+            <div class="detail-row full">
+              <span class="dl">Description</span>
+              <span class="dv">{{ selectedItem.description }}</span>
+            </div>
+          }
+          @if (selectedItem.objectifs) {
+            <div class="detail-row full">
+              <span class="dl">Objectifs</span>
+              <span class="dv">{{ selectedItem.objectifs }}</span>
+            </div>
+          }
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-cancel" (click)="closeDetailModal()">Fermer</button>
+        <button class="btn-save" (click)="closeDetailModal(); openModal(selectedItem!)">Modifier</button>
+      </div>
+    </div>
+  </div>
+}
+
+<!-- ═══════════════════════════════════════════
+     MODAL : Suppression
+════════════════════════════════════════════ -->
+@if (showDeleteModal) {
+  <div class="modal-backdrop" (click)="closeDeleteModal()">
+    <div class="modal-box modal-xs" (click)="$event.stopPropagation()">
+      <div class="modal-head danger">
+        <div>
+          <span class="modal-tag danger">Suppression</span>
+          <h2>Confirmer la suppression</h2>
+        </div>
+        <button class="modal-close" (click)="closeDeleteModal()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M18 6L6 18M6 6l12 12" />
+          </svg>
+        </button>
+      </div>
+      <div class="modal-body">
+        <p class="delete-msg">
+          Vous êtes sur le point de supprimer le projet
+          <strong>{{ selectedItem?.titre }}</strong>
+          . Cette action est irréversible.
+        </p>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-cancel" (click)="closeDeleteModal()">Annuler</button>
+        <button class="btn-danger" (click)="deleteProject()">Supprimer définitivement</button>
+      </div>
+    </div>
+  </div>
+}

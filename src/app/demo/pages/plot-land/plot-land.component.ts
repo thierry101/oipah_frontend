@@ -249,7 +249,9 @@ export class PlotLandComponent implements OnInit {
     this.showDeleteModal = true;
   }
 
+
   closeDeleteModal(): void { this.showDeleteModal = false; }
+
 
   deleteParcelle(): void {
     if (!this.selectedItem) return;

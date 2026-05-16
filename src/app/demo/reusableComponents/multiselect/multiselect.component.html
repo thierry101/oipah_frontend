@@ -1,0 +1,80 @@
+<div class="multi-select" [class.open]="isOpen">
+  <!-- Trigger -->
+  <div class="ms-trigger" (click)="toggle()">
+    @if (selectedValues.length) {
+      <div class="ms-tags">
+        @for (val of selectedValues; track val) {
+          <span class="ms-tag">
+            {{ getLabel(val) }}
+
+            <button
+              type="button"
+              class="ms-tag-remove"
+              (click)="remove(val); $event.stopPropagation()"
+              [attr.aria-label]="'Retirer ' + getLabel(val)"
+            >
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                <path d="M18 6L6 18M6 6l12 12" />
+              </svg>
+            </button>
+          </span>
+        }
+      </div>
+    } @else {
+      <span class="ms-placeholder">
+        {{ placeholder }}
+      </span>
+    }
+
+    <svg
+      class="ms-chevron"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      stroke-width="2"
+      [class.rotated]="isOpen"
+      aria-hidden="true"
+    >
+      <path d="M6 9l6 6 6-6" />
+    </svg>
+  </div>
+
+  <!-- Dropdown -->
+  @if (isOpen) {
+    <div class="ms-dropdown" role="listbox" aria-multiselectable="true">
+      <ul class="ms-list">
+        @for (opt of options; track opt[valueKey]) {
+          <li
+            class="ms-item"
+            role="option"
+            [attr.aria-selected]="isSelected(opt[valueKey])"
+            [class.ms-item-checked]="isSelected(opt[valueKey])"
+            (click)="toggleOption(opt[valueKey])"
+          >
+            <div class="ms-checkbox" [class.checked]="isSelected(opt[valueKey])" aria-hidden="true">
+              @if (isSelected(opt[valueKey])) {
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                  <path d="M20 6L9 17l-5-5" />
+                </svg>
+              }
+            </div>
+
+            <span class="ms-item-label">
+              {{ opt[labelKey] }}
+            </span>
+          </li>
+        } @empty {
+          <li class="ms-empty">Aucune option disponible</li>
+        }
+      </ul>
+
+      <div class="ms-footer">
+        <button type="button" class="ms-action" (click)="selectAll()">Tout sélectionner</button>
+
+        <button type="button" class="ms-action ms-action-clear" (click)="clearAll()" [disabled]="!selectedValues.length">
+          Tout effacer
+        </button>
+      </div>
+    </div>
+  }
+</div>

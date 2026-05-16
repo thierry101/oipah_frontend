@@ -66,7 +66,7 @@
                   <span class="type-badge text-wrap">{{ getDonorType(donor?.type_donor) }}</span>
                 </td>
                 <td>
-                <!-- <td class="td-donor-actions"> -->
+                  <!-- <td class="td-donor-actions"> -->
                   <button class="icon-btn" (click)="openDonorModal(donor); $event.stopPropagation()" title="Modifier">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                       <path
@@ -134,20 +134,90 @@
       <!-- Stats -->
       <div class="subsidy-stats">
         <div class="sstat">
-          <span class="sstat-num">{{ subsidies.length }}</span>
+          <span class="sstat-num">{{ paginationSub?.nberItems }}</span>
           <span class="sstat-lbl">Total subventions</span>
         </div>
         <div class="sstat">
           <span class="sstat-num">
-            {{ totalAmount | number }}
-            <small>FCFA</small>
+            {{ paginationSub?.otherParams?.total_received | number }}
+            <small>{{ devise }}</small>
           </span>
           <span class="sstat-lbl">Montant reçu</span>
         </div>
         <div class="sstat">
-          <span class="sstat-num pending">{{ pendingCount }}</span>
-          <span class="sstat-lbl">En attente</span>
+          <span class="sstat-num">
+            {{ paginationSub?.otherParams?.total_pending | number }}
+            <small>{{ devise }}</small>
+          </span>
+          <span class="sstat-lbl">Montant en attente</span>
         </div>
+      </div>
+
+      <!-- Toolbar filtres — à insérer entre les stats et le tableau -->
+      <div class="subsidy-toolbar">
+        <!-- Recherche -->
+        <div class="search-wrap">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="11" cy="11" r="8" />
+            <path d="M21 21l-4.35-4.35" />
+          </svg>
+          <input
+            type="text"
+            placeholder="Rechercher par objet, subventionneur…"
+            [(ngModel)]="subsidySearch"
+
+          />
+          @if (subsidySearch) {
+            <button class="search-clear" type="button" (click)="subsidySearch = ''; onSubsidyFilterChange()">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M18 6L6 18M6 6l12 12" />
+              </svg>
+            </button>
+          }
+        </div>
+
+        <!-- Filtre statut -->
+        <select class="filter-select" [(ngModel)]="subsidyFilterStatus" >
+          <option value="">Tous les statuts</option>
+          <option value="received">Reçu</option>
+          <option value="pending">En attente</option>
+          <option value="partial">Partiel</option>
+        </select>
+
+        <!-- Date début -->
+        <div class="date-field">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <rect x="3" y="4" width="18" height="18" rx="2" ry="2" />
+            <line x1="16" y1="2" x2="16" y2="6" />
+            <line x1="8" y1="2" x2="8" y2="6" />
+            <line x1="3" y1="10" x2="21" y2="10" />
+          </svg>
+          <input type="date" [(ngModel)]="subsidyDateFrom"  title="Date de début" />
+        </div>
+
+        <!-- Séparateur -->
+        <span class="date-sep">→</span>
+
+        <!-- Date fin -->
+        <div class="date-field">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <rect x="3" y="4" width="18" height="18" rx="2" ry="2" />
+            <line x1="16" y1="2" x2="16" y2="6" />
+            <line x1="8" y1="2" x2="8" y2="6" />
+            <line x1="3" y1="10" x2="21" y2="10" />
+          </svg>
+          <input type="date" [(ngModel)]="subsidyDateTo"  title="Date de fin" />
+        </div>
+
+        <!-- Reset filtres -->
+        @if (hasActiveFilters()) {
+          <button class="btn-reset-filters" type="button" (click)="resetSubsidyFilters()">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M3 6h18M8 6V4h8v2M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6" />
+            </svg>
+            Réinitialiser
+          </button>
+        }
       </div>
 
       <!-- Tableau subventions -->
@@ -158,7 +228,7 @@
               <th>#</th>
               <th>Subventionneur</th>
               <th>Objet</th>
-              <th>Montant (FCFA)</th>
+              <th>Montant</th>
               <th>Date réception</th>
               <th>Statut</th>
               <th>Actions</th>
@@ -169,12 +239,12 @@
               <tr>
                 <td class="td-num">{{ i + 1 }}</td>
                 <td class="td-donor-cell">
-                  <div class="mini-avatar">{{ getDonorById(item.donorId)?.name[0] || '?' }}</div>
-                  <span>{{ getDonorById(item.donorId)?.name || '—' }}</span>
+                  <div class="mini-avatar">{{ item?.grantor.name[0] || '?' }}</div>
+                  <span>{{ item?.grantor?.name }}</span>
                 </td>
-                <td class="td-object">{{ item.object }}</td>
-                <td class="td-amount">{{ item.amount | number }}</td>
-                <td>{{ item.receivedDate | date: 'dd/MM/yyyy' }}</td>
+                <td class="text-wrap">{{ item.object }}</td>
+                <td class="td-amount">{{ item.amount | number }} {{ devise }}</td>
+                <td>{{ item.received_date | date: 'dd/MM/yyyy' }}</td>
                 <td>
                   <span class="status-badge" [ngClass]="'status-' + item.status">
                     {{ getStatusName(item.status) }}
@@ -218,11 +288,11 @@
       </div>
 
       <app-set-pagination
-        [currentPage]="pagination?.currentPage"
-        [totalPages]="pagination?.nber_pages"
-        [previousPage]="pagination?.previousPage"
-        [nextPage]="pagination?.nextPage"
-        (pageChange)="onPageChange($event)"
+        [currentPage]="paginationSub?.currentPage"
+        [totalPages]="paginationSub?.nber_pages"
+        [previousPage]="paginationSub?.previousPage"
+        [nextPage]="paginationSub?.nextPage"
+        (pageChange)="onPageChangeSubsidies($event)"
       ></app-set-pagination>
     </div>
   </div>
@@ -271,8 +341,8 @@
               </label>
               <select [(ngModel)]="donorForm.type_donor">
                 <option value="0">Sélectionner</option>
-                @for (typeDonor of typesDonor ; track typeDonor?.value) {
-                <option [value]="typeDonor?.value">{{typeDonor?.name}}</option>
+                @for (typeDonor of typesDonor; track typeDonor?.value) {
+                  <option [value]="typeDonor?.value">{{ typeDonor?.name }}</option>
                 }
               </select>
               <span class="text-danger">{{ errors?.type_donor }}</span>
@@ -343,7 +413,7 @@
         </button>
       </div>
 
-      <div class="modal-body">
+      <div class="modal-body" (click)="clearDonors()">
         <!-- Section : Origine -->
         <div class="form-section">
           <div class="section-title">
@@ -359,12 +429,17 @@
                 Subventionneur
                 <span class="req">*</span>
               </label>
-              <select [(ngModel)]="subsidyForm.donorId">
-                <option value="">Sélectionner un subventionneur</option>
-                @for (donor of donors; track donor?.id) {
-                  <option [value]="donor?.id">{{ donor?.name }}</option>
-                }
-              </select>
+              <app-selected
+                [placeholder]="'Choisir le subventionneur...'"
+                [(searchTerm)]="searchTerm"
+                [results]="donors"
+                [displayField]="'name'"
+                [error]="errors?.owner"
+                [showResults]="!!donors?.length"
+                (search)="searchDonor($event)"
+                (select)="selectDonor($event)"
+              ></app-selected>
+              <span class="text-danger">{{ errors?.donorId }}</span>
             </div>
             <div class="field full">
               <label>
@@ -372,7 +447,7 @@
                 <span class="req">*</span>
               </label>
               <input type="text" [(ngModel)]="subsidyForm.object" placeholder="Ex : Financement campagne manioc 2025" />
-              <span class="text-danger">{{ subsidyErrors?.object }}</span>
+              <span class="text-danger">{{ errors?.object }}</span>
             </div>
           </div>
         </div>
@@ -389,11 +464,11 @@
           <div class="form-grid">
             <div class="field">
               <label>
-                Montant (FCFA)
+                Montant
                 <span class="req">*</span>
               </label>
               <input type="number" [(ngModel)]="subsidyForm.amount" placeholder="Ex : 5000000" min="0" />
-              <span class="text-danger">{{ subsidyErrors?.amount }}</span>
+              <span class="text-danger">{{ errors?.amount }}</span>
             </div>
             <div class="field">
               <label>Statut</label>
@@ -402,19 +477,30 @@
                 <option value="pending">En attente</option>
                 <option value="partial">Partiel</option>
               </select>
+              <span class="text-danger">{{ errors?.status }}</span>
             </div>
+            @if (subsidyForm.status === 'partial') {
+              <div class="field">
+                <label>
+                  Montant partiel
+                  <span class="req">*</span>
+                </label>
+                <input type="number" [(ngModel)]="subsidyForm.advanced_amnt" placeholder="Ex : 5000000" min="0" />
+                <span class="text-danger">{{ errors?.advancedAmnt }}</span>
+              </div>
+            }
             <div class="field">
               <label>
                 Date de réception
                 <span class="req">*</span>
               </label>
-              <input type="date" [(ngModel)]="subsidyForm.receivedDate" />
-              <span class="text-danger">{{ subsidyErrors?.receivedDate }}</span>
+              <input type="date" [(ngModel)]="subsidyForm.received_date" />
+              <span class="text-danger">{{ errors?.receivedDate }}</span>
             </div>
-            <div class="field">
+            <!-- <div class="field">
               <label>Date d'expiration</label>
               <input type="date" [(ngModel)]="subsidyForm.expiryDate" />
-            </div>
+            </div> -->
           </div>
         </div>
 
@@ -434,12 +520,21 @@
             </div>
             <div class="field">
               <label>Filière concernée</label>
-              <select [(ngModel)]="subsidyForm.filiere">
-                <option value="">Toutes filières</option>
-                <option value="Manioc">Manioc</option>
-                <option value="Maraîchère">Maraîchère</option>
-                <option value="Aquacole">Aquacole</option>
-              </select>
+              <app-multiselect
+                [options]="allFilieres"
+                valueKey="id"
+                labelKey="name"
+                placeholder="Sélectionner une ou plusieurs filières…"
+                [(ngModel)]="subsidyForm.filiere"
+              ></app-multiselect>
+
+              <!-- <select [(ngModel)]="subsidyForm.filiere" multiple>
+                <option value="">Choisir la filière</option>
+                @for (fil of allFilieres; track fil?.id) {
+                  <option [value]="fil?.name">{{ fil?.name }}</option>
+                }
+              </select> -->
+              <span class="text-danger">{{ errors?.filiere }}</span>
             </div>
             <div class="field full">
               <label>Observations</label>
@@ -451,9 +546,23 @@
 
       <div class="modal-footer">
         <button class="btn-cancel" (click)="closeSubsidyModal()">Annuler</button>
-        <button class="btn-save" (click)="saveSubsidy()">
-          {{ subsidyEditMode ? 'Enregistrer les modifications' : 'Enregistrer la subvention' }}
-        </button>
+        @if (!subsidyEditMode) {
+          <app-submit-spinner
+            [loading]="isSaving"
+            label="Enregistrer la subvention"
+            icon=""
+            cssClass="btn btn-primary btn-sm"
+            (clicked)="saveSubsidy()"
+          ></app-submit-spinner>
+        } @else {
+          <app-submit-spinner
+            [loading]="isSaving"
+            label="Mettre à jour la subvention"
+            icon=""
+            cssClass="btn btn-primary btn-sm"
+            (clicked)="saveEditSubsidy()"
+          ></app-submit-spinner>
+        }
       </div>
     </div>
   </div>

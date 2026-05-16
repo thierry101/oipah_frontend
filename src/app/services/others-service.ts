@@ -62,4 +62,30 @@ export class OthersService {
   }
 
 
+  postSubsidy(data: any) {
+    return this.http.post(`${environment.apiUrl}/register-subsidy`, data, { withCredentials: true });
+  }
+
+
+  getSubsidies(page: number = 1, search: any = '', statutLand: any = '', pagination: boolean = true) {
+    const params: string[] = [];
+    params.push(`page=${page}`);
+
+    if (search) {
+      params.push(`search=${encodeURIComponent(search)}`);
+    }
+    if (statutLand) {
+      params.push(`statut_land=${encodeURIComponent(statutLand)}`);
+    }
+    const queryString = params.join('&');
+
+    return this.http.get(`${environment.apiUrl}/register-subsidy?${queryString}&pagination=${pagination}`, { withCredentials: true });
+  }
+
+
+  putSubsidy(idSubsidy: any, data: any) {
+    return this.http.put(`${environment.apiUrl}/edit-subsidy/${idSubsidy}`, data, { withCredentials: true });
+  }
+
+
 }

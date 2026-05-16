@@ -37,6 +37,10 @@ const routes: Routes = [
         path: 'plot-of-land',
         loadComponent: () => import('./demo/pages/plot-land/plot-land.component').then((c) => c.PlotLandComponent)
       },
+      {
+        path: 'project',
+        loadComponent: () => import('./demo/pages/project-agri/project-agri.component').then((c) => c.ProjectAgriComponent)
+      },
     ]
   },
   {
