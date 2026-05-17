@@ -67,7 +67,7 @@ export class OthersService {
   }
 
 
-  getSubsidies(page: number = 1, search: any = '', statutLand: any = '', pagination: boolean = true) {
+  getSubsidies(page: number = 1, search: any = '', statutLand: any = '', startDate: string = '', endDate: string = '', pagination: boolean = true) {
     const params: string[] = [];
     params.push(`page=${page}`);
 
@@ -76,6 +76,12 @@ export class OthersService {
     }
     if (statutLand) {
       params.push(`statut_land=${encodeURIComponent(statutLand)}`);
+    }
+    if (startDate) {
+      params.push(`start_date=${encodeURIComponent(startDate)}`);
+    }
+    if (endDate) {
+      params.push(`end_date=${encodeURIComponent(endDate)}`);
     }
     const queryString = params.join('&');
 

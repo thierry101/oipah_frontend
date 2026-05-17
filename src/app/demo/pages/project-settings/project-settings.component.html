@@ -1,0 +1,402 @@
+<div class="project-settings-page">
+  <!-- Header -->
+  <div class="page-header">
+    <div class="header-left">
+      <div class="ph-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+          <path
+            d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"
+          />
+          <path d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+        </svg>
+      </div>
+      <div>
+        <div class="header-badge">PDC2V</div>
+        <h1>Paramètres des projets</h1>
+        <p>Gestion des subventionneurs, filières et configurations générales</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Onglets horizontaux -->
+  <div class="tabs-nav">
+    @for (tab of tabs; track tab.key) {
+      <button
+        class="tab-item"
+        [class.active]="activeTab === tab.key"
+        [class.disabled]="tab.disabled"
+        (click)="!tab.disabled && (activeTab = tab.key)"
+        type="button"
+      >
+        <span class="tab-icon" [innerHTML]="tab.icon"></span>
+        <span class="tab-label">{{ tab.label }}</span>
+        @if (tab.disabled) {
+          <span class="tab-soon">Bientôt</span>
+        }
+      </button>
+    }
+  </div>
+
+  <!-- Contenu des onglets -->
+  <div class="tab-content">
+    <!-- ══════════════════════════════
+         Onglet : Subventionneurs
+    ═══════════════════════════════ -->
+    @if (activeTab === 'donors') {
+      <div class="tab-panel">
+        <div class="panel-header">
+          <div>
+            <h2>Subventionneurs</h2>
+            <p>Organismes et institutions finançant les projets agricoles</p>
+          </div>
+          <button class="btn-add" (click)="openDonorModal()" type="button">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+              <path d="M12 5v14M5 12h14" />
+            </svg>
+            Ajouter un subventionneur
+          </button>
+        </div>
+
+        <!-- Toolbar -->
+        <div class="toolbar">
+          <div class="search-wrap">
+            <app-search-list [searchTerm]="donorSearch" (searchChange)="searchDonor($event)"></app-search-list>
+          </div>
+        </div>
+
+        <!-- Tableau -->
+        <div class="table-wrap">
+          <table class="settings-table">
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>Nom</th>
+                <th>Type</th>
+                <th>Pays</th>
+                <th>Contact</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (donor of donors; track donor.id; let i = $index) {
+                <tr>
+                  <td class="td-num">{{ i + 1 }}</td>
+                  <td class="td-name">
+                    <div class="item-avatar amber">{{ donor.name[0] }}</div>
+                    <div>
+                      <div class="item-main">{{ donor.name }}</div>
+                      @if (donor.email) {
+                        <div class="item-sub">{{ donor.email }}</div>
+                      }
+                    </div>
+                  </td>
+                  <td>
+                    <span class="type-badge">{{ getDonorTypeName(donor.type_donor) }}</span>
+                  </td>
+                  <td>{{ donor.country || '—' }}</td>
+                  <td>{{ donor.phone || '—' }}</td>
+                  <td class="td-actions">
+                    <button class="btn-action btn-edit" (click)="openDonorModal(donor)" title="Modifier">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path
+                          d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"
+                        />
+                      </svg>
+                    </button>
+                    <button class="btn-action btn-delete" (click)="confirmDeleteDonor(donor)" title="Supprimer">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <polyline points="3 6 5 6 21 6" />
+                        <path d="M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6" />
+                        <path d="M10 11v6M14 11v6" />
+                        <path d="M9 6V4a1 1 0 011-1h4a1 1 0 011 1v2" />
+                      </svg>
+                    </button>
+                  </td>
+                </tr>
+              } @empty {
+                <tr>
+                  <td colspan="6" class="td-empty">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                      <path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2" />
+                      <circle cx="9" cy="7" r="4" />
+                    </svg>
+                    <p>Aucun subventionneur enregistré</p>
+                  </td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+        <app-set-pagination
+          [currentPage]="donorPagination?.currentPage"
+          [totalPages]="donorPagination?.nber_pages"
+          [previousPage]="donorPagination?.previousPage"
+          [nextPage]="donorPagination?.nextPage"
+          (pageChange)="onDonorPageChange($event)"
+        ></app-set-pagination>
+      </div>
+    }
+
+    <!-- ══════════════════════════════
+        Onglet : Filières
+    ═══════════════════════════════ -->
+    @if (activeTab === 'filieres') {
+      <div class="tab-panel">
+        <div class="panel-header">
+          <div>
+            <h2>Filières agricoles</h2>
+            <p>Domaines de production couverts par le programme</p>
+          </div>
+          <button class="btn-add" (click)="openFiliereModal()" type="button">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+              <path d="M12 5v14M5 12h14" />
+            </svg>
+            Ajouter une filière
+          </button>
+        </div>
+
+        <div class="toolbar">
+          <div class="search-wrap">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="11" cy="11" r="8" />
+              <path d="M21 21l-4.35-4.35" />
+            </svg>
+            <input type="text" placeholder="Rechercher une filière…" [(ngModel)]="filiereSearch" />
+          </div>
+        </div>
+
+        <!-- Grille cartes filières -->
+        <div class="filiere-grid">
+          @for (fil of filieres; track fil.id) {
+            <div class="filiere-card">
+              <div class="filiere-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+                  <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+                </svg>
+              </div>
+              <div class="filiere-info">
+                <div class="filiere-name">{{ fil.name }}</div>
+                @if (fil.description) {
+                  <div class="filiere-desc">{{ fil.description }}</div>
+                }
+              </div>
+              <div class="filiere-actions">
+                <button class="btn-action btn-edit" (click)="openFiliereModal(fil)" title="Modifier">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path
+                      d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"
+                    />
+                  </svg>
+                </button>
+                <button class="btn-action btn-delete" (click)="confirmDeleteFiliere(fil)" title="Supprimer">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <polyline points="3 6 5 6 21 6" />
+                    <path d="M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6" />
+                    <path d="M10 11v6M14 11v6" />
+                    <path d="M9 6V4a1 1 0 011-1h4a1 1 0 011 1v2" />
+                  </svg>
+                </button>
+              </div>
+            </div>
+          } @empty {
+            <div class="filiere-empty">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+              </svg>
+              <p>Aucune filière enregistrée</p>
+            </div>
+          }
+        </div>
+      </div>
+    }
+
+    <!-- ══════════════════════════════
+         Onglets futurs (désactivés)
+    ═══════════════════════════════ -->
+    @if (activeTab === 'coming1' || activeTab === 'coming2') {
+      <div class="tab-panel coming-soon">
+        <div class="coming-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+            <circle cx="12" cy="12" r="10" />
+            <path d="M12 6v6l4 2" />
+          </svg>
+        </div>
+        <h3>Fonctionnalité à venir</h3>
+        <p>Cette section sera disponible dans une prochaine version du programme.</p>
+      </div>
+    }
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════
+     MODAL : Subventionneur
+════════════════════════════════════════════ -->
+@if (showDonorModal) {
+  <div class="modal-backdrop" (click)="closeDonorModal()">
+    <div class="modal-box" (click)="$event.stopPropagation()">
+      <div class="modal-head">
+        <div>
+          <span class="modal-tag amber">{{ editingDonor ? 'Modification' : 'Nouveau' }}</span>
+          <h2>{{ editingDonor ? 'Modifier le subventionneur' : 'Ajouter un subventionneur' }}</h2>
+        </div>
+        <button class="modal-close" (click)="closeDonorModal()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M18 6L6 18M6 6l12 12" />
+          </svg>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="form-grid">
+          <div class="field full">
+            <label>
+              Nom
+              <span class="req">*</span>
+            </label>
+            <input type="text" [(ngModel)]="donorForm.name" placeholder="Ex : Banque Mondiale" />
+            <span class="text-danger">{{ errors?.name }}</span>
+          </div>
+          <div class="field">
+            <label>
+              Type
+              <span class="req">*</span>
+            </label>
+            <select [(ngModel)]="donorForm.type_donor">
+              <option value="">Sélectionner</option>
+              @for (t of typesDonor; track t.value) {
+                <option [value]="t.value">{{ t.name }}</option>
+              }
+            </select>
+            <span class="text-danger">{{ errors?.type_donor }}</span>
+          </div>
+          <div class="field">
+            <label>Pays d'origine</label>
+            <select [(ngModel)]="donorForm.country">
+              <option value="">Sélectionner</option>
+              @for (c of countries; track c.value) {
+                <option [value]="c.name">{{ c.name }}</option>
+              }
+            </select>
+            <span class="text-danger">{{ errors?.country }}</span>
+          </div>
+          <div class="field">
+            <label>Email</label>
+            <input type="email" [(ngModel)]="donorForm.email" placeholder="contact@organisme.org" />
+            <span class="text-danger">{{ errors?.email }}</span>
+          </div>
+          <div class="field">
+            <label>Téléphone</label>
+            <input type="tel" [(ngModel)]="donorForm.phone" placeholder="+225 07 00 00 00" />
+            <span class="text-danger">{{ errors?.phone }}</span>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-cancel" (click)="closeDonorModal()">Annuler</button>
+        @if (!editingDonor) {
+          <app-submit-spinner
+            [loading]="isSaving"
+            label="Ajouter le subventionneur"
+            icon=""
+            cssClass="btn btn-primary btn-sm"
+            (clicked)="saveDonor()"
+          ></app-submit-spinner>
+        } @else {
+          <app-submit-spinner
+            [loading]="isSaving"
+            label="Mettre à jour"
+            icon=""
+            cssClass="btn btn-primary btn-sm"
+            (clicked)="saveEditDonor()"
+          ></app-submit-spinner>
+        }
+      </div>
+    </div>
+  </div>
+}
+
+<!-- ═══════════════════════════════════════════
+     MODAL : Filière
+════════════════════════════════════════════ -->
+@if (showFiliereModal) {
+  <div class="modal-backdrop" (click)="closeFiliereModal()">
+    <div class="modal-box modal-sm" (click)="$event.stopPropagation()">
+      <div class="modal-head">
+        <div>
+          <span class="modal-tag">{{ editingFiliere ? 'Modification' : 'Nouvelle filière' }}</span>
+          <h2>{{ editingFiliere ? 'Modifier la filière' : 'Ajouter une filière' }}</h2>
+        </div>
+        <button class="modal-close" (click)="closeFiliereModal()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M18 6L6 18M6 6l12 12" />
+          </svg>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="form-grid">
+          <div class="field full">
+            <label>
+              Nom de la filière
+              <span class="req">*</span>
+            </label>
+            <input type="text" [(ngModel)]="filiereForm.name" placeholder="Ex : Manioc, Maraîchère, Aquacole…" />
+            <span class="text-danger">{{ errors?.name }}</span>
+          </div>
+          <div class="field full">
+            <label>Description</label>
+            <textarea [(ngModel)]="filiereForm.description" placeholder="Brève description de la filière…" rows="3"></textarea>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-cancel" (click)="closeFiliereModal()">Annuler</button>
+        @if (editingFiliere !== null) {
+          <app-submit-spinner
+            [loading]="isSaving"
+            [label]="editingFiliere ? 'Mettre à jour' : 'Ajouter la filière'"
+            cssClass="btn btn-primary btn-sm"
+            (clicked)="saveEditFiliere()"
+          ></app-submit-spinner>
+        } @else {
+          <app-submit-spinner
+            [loading]="isSaving"
+            [label]="editingFiliere ? 'Mettre à jour' : 'Ajouter la filière'"
+            cssClass="btn btn-primary btn-sm"
+            (clicked)="saveFiliere()"
+          ></app-submit-spinner>
+        }
+      </div>
+    </div>
+  </div>
+}
+
+<!-- ═══════════════════════════════════════════
+     MODAL : Confirmation suppression
+════════════════════════════════════════════ -->
+@if (showDeleteModal) {
+  <div class="modal-backdrop" (click)="closeDeleteModal()">
+    <div class="modal-box modal-xs" (click)="$event.stopPropagation()">
+      <div class="modal-head danger">
+        <div>
+          <span class="modal-tag danger">Suppression</span>
+          <h2>Confirmer la suppression</h2>
+        </div>
+        <button class="modal-close" (click)="closeDeleteModal()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M18 6L6 18M6 6l12 12" />
+          </svg>
+        </button>
+      </div>
+      <div class="modal-body">
+        <p class="delete-msg">
+          Vous êtes sur le point de supprimer
+          <strong>{{ deleteTarget?.name }}</strong>
+          . Cette action est irréversible.
+        </p>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-cancel" (click)="closeDeleteModal()">Annuler</button>
+        <button class="btn-danger" (click)="confirmDelete()">Supprimer définitivement</button>
+      </div>
+    </div>
+  </div>
+}

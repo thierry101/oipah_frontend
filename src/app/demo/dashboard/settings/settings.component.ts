@@ -77,15 +77,6 @@ export class SettingsComponent implements OnInit {
               <line x1="3" y1="6"  x2="21" y2="6"/>
               <line x1="3" y1="18" x2="21" y2="18"/>
             </svg>`
-    },
-    {
-      key: 'filiere',
-      label: 'Filières',
-      icon: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
-              <path d="M12 2L2 7l10 5 10-5-10-5z"/>
-              <path d="M2 17l10 5 10-5"/>
-              <path d="M2 12l10 5 10-5"/>
-            </svg>`
     }
     // Ajouter d'autres onglets ici selon les besoins
   ];
@@ -95,9 +86,6 @@ export class SettingsComponent implements OnInit {
   private _original!: OipahAttribute;
 
   // ── Filières ──
-  filieres: {id:number; name: string; description: string }[] = [];
-  showFiliereModal = false;
-  editingFiliere: { name: string; description: string } = { name: '', description: '' };
   editingIndex: number | null = null;
 
 
@@ -118,12 +106,6 @@ export class SettingsComponent implements OnInit {
           updated: new Date('2025-03-12T10:30:00')
         };
         this._original = { ...this.form };
-      }
-    })
-
-    this.othersService.getAgricultural().subscribe({
-      next: (res: any) => {
-        this.filieres = res?.result
       }
     })
   }
@@ -243,82 +225,6 @@ export class SettingsComponent implements OnInit {
       }
     })
   }
-
-
-  openFiliereModal(): void {
-    this.editingFiliere = { name: '', description: '' };
-    this.editingIndex = null;
-    this.errors = {};
-    this.showFiliereModal = true;
-  }
-
-  editFiliere(item:any): void {
-    this.editingFiliere = item
-    this.editingIndex = item?.id;
-    this.errors = {};
-    this.showFiliereModal = true;
-  }
-
-  closeFiliereModal(): void {
-    this.showFiliereModal = false;
-    this.editingFiliere = { name: '', description: '' };
-    this.editingIndex = null;
-  }
-
-  saveFiliere(): void {
-    console.log(this.editingFiliere)
-    this.othersService.postAgricultural(this.editingFiliere).subscribe({
-      next: (res: any) => {
-        this.filieres.unshift(res?.result)
-        this.closeFiliereModal();
-        toastShow('success', 'Filière créée avec succès')
-
-      },
-      error: (err) => {
-        this.errors = err.error.errors || {};
-        this.isSaving = false
-        showError(err, err.status, this.errors, err.error, document.getElementById('a'));
-      }
-    })
-
-  }
-
-
-  saveEditFiliere() {
-    this.othersService.putAgricultural(this.editingIndex, this.editingFiliere).subscribe({
-      next: (res: any) => {
-        this.filieres = this.filieres.filter((e: any) => e.id !== this.editingIndex);
-        this.filieres.unshift(res?.result)
-        this.closeFiliereModal();
-        toastShow('success', 'Filière mis à jour avec succès')
-
-      },
-      error: (err) => {
-        this.errors = err.error.errors || {};
-        this.isSaving = false
-        showError(err, err.status, this.errors, err.error, document.getElementById('a'));
-      }
-    })
-  }
-
-
-  deleteFiliere(index: number): void {
-    this.othersService.deleteAgricultural(index).subscribe({
-      next: () => {
-        this.filieres = this.filieres.filter((e: any) => e.id !== index);
-        this.closeFiliereModal();
-        toastShow('success', 'Filière supprimée avec succès')
-
-      },
-      error: (err) => {
-        this.errors = err.error.errors || {};
-        this.isSaving = false
-        showError(err, err.status, this.errors, err.error, document.getElementById('a'));
-      }
-    })
-  }
-
-
 
 
   // ── Toast ─────────────────────────────────────────────────

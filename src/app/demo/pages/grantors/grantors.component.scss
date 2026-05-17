@@ -29,179 +29,6 @@ $shadow-sm: 0 1px 3px rgba(0, 0, 0, .06), 0 1px 2px rgba(0, 0, 0, .04);
 $shadow-lg: 0 20px 60px rgba(0, 0, 0, .14);
 
 
-
-
-// ── search ───────────────────────────────────────────────────
-.subsidy-toolbar {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  padding: 14px 16px;
-  border-bottom: 1px solid $gray-100;
-  background: $gray-50;
-  flex-wrap: wrap;
-}
-
-// Champ de recherche
-.search-wrap {
-  position: relative;
-  flex: 1;
-  min-width: 180px;
-  max-width: 280px;
-
-  svg:first-child {
-    position: absolute;
-    left: 10px;
-    top: 50%;
-    transform: translateY(-50%);
-    width: 14px;
-    height: 14px;
-    color: $gray-400;
-    pointer-events: none;
-  }
-
-  input {
-    width: 100%;
-    height: 36px;
-    border: 1px solid $gray-200;
-    border-radius: $radius-sm;
-    padding: 0 32px 0 32px;
-    font-family: $font-body;
-    font-size: 13px;
-    color: $gray-900;
-    background: $white;
-    outline: none;
-    transition: border-color 0.18s, box-shadow 0.18s;
-
-    &:focus {
-      border-color: $green-600;
-      box-shadow: 0 0 0 3px rgba(99, 153, 34, 0.1);
-    }
-
-    &::placeholder { color: $gray-400; }
-  }
-
-  .search-clear {
-    position: absolute;
-    right: 8px;
-    top: 50%;
-    transform: translateY(-50%);
-    width: 18px;
-    height: 18px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background: $gray-200;
-    border: none;
-    border-radius: 50%;
-    cursor: pointer;
-    color: $gray-600;
-    padding: 0;
-    transition: background 0.12s;
-
-    svg { width: 10px; height: 10px; }
-    &:hover { background: $gray-400; color: $white; }
-  }
-}
-
-// Select statut
-.filter-select {
-  height: 36px;
-  padding: 0 10px;
-  border: 1px solid $gray-200;
-  border-radius: $radius-sm;
-  font-family: $font-body;
-  font-size: 13px;
-  color: $gray-900;
-  background: $white;
-  outline: none;
-  cursor: pointer;
-  transition: border-color 0.18s;
-  flex-shrink: 0;
-
-  &:focus { border-color: $green-600; }
-}
-
-// Champ date avec icône
-.date-field {
-  position: relative;
-  flex-shrink: 0;
-
-  svg {
-    position: absolute;
-    left: 9px;
-    top: 50%;
-    transform: translateY(-50%);
-    width: 13px;
-    height: 13px;
-    color: $gray-400;
-    pointer-events: none;
-    z-index: 1;
-  }
-
-  input[type="date"] {
-    height: 36px;
-    border: 1px solid $gray-200;
-    border-radius: $radius-sm;
-    padding: 0 10px 0 30px;
-    font-family: $font-body;
-    font-size: 13px;
-    color: $gray-900;
-    background: $white;
-    outline: none;
-    cursor: pointer;
-    transition: border-color 0.18s, box-shadow 0.18s;
-    width: 150px;
-
-    &:focus {
-      border-color: $green-600;
-      box-shadow: 0 0 0 3px rgba(99, 153, 34, 0.1);
-    }
-
-    // Masquer l'icône native du navigateur pour garder la nôtre
-    &::-webkit-calendar-picker-indicator {
-      opacity: 0;
-      position: absolute;
-      right: 0;
-      top: 0;
-      width: 100%;
-      height: 100%;
-      cursor: pointer;
-    }
-  }
-}
-
-// Séparateur flèche entre les deux dates
-.date-sep {
-  font-size: 13px;
-  color: $gray-400;
-  flex-shrink: 0;
-  user-select: none;
-}
-
-// Bouton reset filtres
-.btn-reset-filters {
-  display: inline-flex;
-  align-items: center;
-  gap: 5px;
-  height: 36px;
-  padding: 0 12px;
-  background: $white;
-  color: $red-500;
-  border: 1px solid $red-100;
-  border-radius: $radius-sm;
-  font-family: $font-body;
-  font-size: 12.5px;
-  font-weight: 500;
-  cursor: pointer;
-  white-space: nowrap;
-  flex-shrink: 0;
-  transition: background 0.14s;
-
-  svg { width: 13px; height: 13px; }
-  &:hover { background: $red-100; }
-}
-
 // ── Page ───────────────────────────────────────────────────
 .subsidy-page {
   font-family: $font-body;
@@ -267,27 +94,13 @@ $shadow-lg: 0 20px 60px rgba(0, 0, 0, .14);
   }
 }
 
-// ── Split layout ───────────────────────────────────────────
-.split-layout {
-  display: grid;
-  grid-template-columns: 30% 1fr;
-  gap: 20px;
-  align-items: start;
-}
-
-// ── Panels ─────────────────────────────────────────────────
-.panel-left,
+// ── Panel ──────────────────────────────────────────────────
 .panel-right {
   background: $white;
   border: 1px solid $gray-100;
   border-radius: $radius-lg;
   overflow: hidden;
   box-shadow: $shadow-sm;
-}
-
-.panel-left {
-  position: sticky;
-  top: 20px;
 }
 
 // ── Panel title ────────────────────────────────────────────
@@ -311,11 +124,6 @@ $shadow-lg: 0 20px 60px rgba(0, 0, 0, .14);
     svg {
       width: 17px;
       height: 17px;
-    }
-
-    &.amber {
-      background: $amber-100;
-      color: darken($amber-500, 15%);
     }
 
     &.green {
@@ -342,16 +150,104 @@ $shadow-lg: 0 20px 60px rgba(0, 0, 0, .14);
   }
 }
 
-// ── Donor add button ───────────────────────────────────────
-.btn-add-donor {
+// ── Toolbar filtres ────────────────────────────────────────
+.subsidy-toolbar {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 14px 16px;
+  border-bottom: 1px solid $gray-100;
+  background: $gray-50;
+  flex-wrap: wrap;
+}
+
+.search-wrap {
+  position: relative;
+  flex: 1;
+  min-width: 180px;
+  max-width: 280px;
+}
+
+.filter-select {
+  height: 36px;
+  padding: 0 10px;
+  border: 1px solid $gray-200;
+  border-radius: $radius-sm;
+  font-family: $font-body;
+  font-size: 13px;
+  color: $gray-900;
+  background: $white;
+  outline: none;
+  cursor: pointer;
+  transition: border-color 0.18s;
+  flex-shrink: 0;
+
+  &:focus { border-color: $green-600; }
+}
+
+.date-field {
+  position: relative;
+  flex-shrink: 0;
+
+  svg {
+    position: absolute;
+    left: 9px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 13px;
+    height: 13px;
+    color: $gray-400;
+    pointer-events: none;
+    z-index: 1;
+  }
+
+  input[type="date"] {
+    height: 36px;
+    border: 1px solid $gray-200;
+    border-radius: $radius-sm;
+    padding: 0 10px 0 30px;
+    font-family: $font-body;
+    font-size: 13px;
+    color: $gray-900;
+    background: $white;
+    outline: none;
+    cursor: pointer;
+    transition: border-color 0.18s, box-shadow 0.18s;
+    width: 150px;
+
+    &:focus {
+      border-color: $green-600;
+      box-shadow: 0 0 0 3px rgba(99, 153, 34, 0.1);
+    }
+
+    &::-webkit-calendar-picker-indicator {
+      opacity: 0;
+      position: absolute;
+      right: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      cursor: pointer;
+    }
+  }
+}
+
+.date-sep {
+  font-size: 13px;
+  color: $gray-400;
+  flex-shrink: 0;
+  user-select: none;
+}
+
+.btn-reset-filters {
   display: inline-flex;
   align-items: center;
-  gap: 6px;
-  height: 32px;
+  gap: 5px;
+  height: 36px;
   padding: 0 12px;
-  background: $green-700;
-  color: $white;
-  border: none;
+  background: $white;
+  color: $green-600;
+  border: 1px solid $green-600;
   border-radius: $radius-sm;
   font-family: $font-body;
   font-size: 12.5px;
@@ -359,184 +255,13 @@ $shadow-lg: 0 20px 60px rgba(0, 0, 0, .14);
   cursor: pointer;
   white-space: nowrap;
   flex-shrink: 0;
-  transition: background 0.15s;
+  transition: background 0.14s;
 
-  svg {
-    width: 13px;
-    height: 13px;
-  }
-
-  &:hover {
-    background: $green-800;
-  }
+  svg { width: 13px; height: 13px; }
+  &:hover { background: $green-900; }
 }
 
-// ── Donor mini table ───────────────────────────────────────
-.donor-table-wrap {
-  overflow-x: auto;
-}
-
-.donor-table {
-  width: 100%;
-  border-collapse: collapse;
-  font-size: 13px;
-
-  thead tr {
-    background: $gray-50;
-    border-bottom: 1px solid $gray-100;
-
-    th {
-      padding: 9px 14px;
-      text-align: left;
-      font-size: 10.5px;
-      font-weight: 600;
-      color: $gray-400;
-      letter-spacing: 0.4px;
-      text-transform: uppercase;
-      white-space: nowrap;
-    }
-  }
-
-  tbody tr {
-    border-bottom: 1px solid $gray-100;
-    cursor: pointer;
-    transition: background 0.1s;
-
-    &:last-child {
-      border-bottom: none;
-    }
-
-    &:hover {
-      background: $gray-50;
-    }
-
-    &.selected {
-      background: $green-100;
-      border-left: 3px solid $green-700;
-
-      .dn-main {
-        color: $green-700;
-        font-weight: 600;
-      }
-    }
-  }
-
-  td {
-    padding: 10px 14px;
-    vertical-align: middle;
-  }
-
-  .td-donor-name {
-    display: flex;
-    align-items: center;
-    gap: 9px;
-
-    .donor-avatar {
-      width: 28px;
-      height: 28px;
-      border-radius: 50%;
-      background: $amber-100;
-      color: darken($amber-500, 20%);
-      font-size: 11px;
-      font-weight: 700;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      flex-shrink: 0;
-      text-transform: uppercase;
-    }
-
-    .dn-main {
-      font-size: 13px;
-      font-weight: 500;
-      color: $gray-900;
-      line-height: 1.2;
-    }
-
-    .dn-sub {
-      font-size: 11px;
-      color: $gray-400;
-      margin-top: 1px;
-    }
-  }
-
-  .td-donor-actions {
-    display: flex;
-    align-items: center;
-    gap: 4px;
-    opacity: 0;
-    transition: opacity 0.12s;
-
-    tr:hover & {
-      opacity: 1;
-    }
-  }
-
-  .td-donor-empty {
-    text-align: center;
-    padding: 32px 16px;
-    color: $gray-400;
-
-    svg {
-      width: 28px;
-      height: 28px;
-      margin: 0 auto 8px;
-      opacity: 0.35;
-      display: block;
-    }
-
-    p {
-      font-size: 12.5px;
-    }
-  }
-}
-
-// Type badge
-.type-badge {
-  display: inline-block;
-  padding: 2px 8px;
-  border-radius: 20px;
-  font-size: 11px;
-  font-weight: 500;
-  background: $blue-100;
-  color: $blue-500;
-  white-space: nowrap;
-}
-
-// Icon buttons
-.icon-btn {
-  width: 26px;
-  height: 26px;
-  border: none;
-  border-radius: 6px;
-  background: $blue-100;
-  color: $blue-500;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  transition: background 0.12s;
-
-  svg {
-    width: 13px;
-    height: 13px;
-  }
-
-  &:hover {
-    background: #bfdbfe;
-  }
-
-  &.danger {
-    background: $red-100;
-    color: $red-500;
-
-    &:hover {
-      background: #fecaca;
-    }
-  }
-}
-
-// ── Right panel ────────────────────────────────────────────
+// ── Bouton nouvelle subvention ─────────────────────────────
 .btn-enrol {
   display: inline-flex;
   align-items: center;
@@ -560,12 +285,10 @@ $shadow-lg: 0 20px 60px rgba(0, 0, 0, .14);
     height: 15px;
   }
 
-  &:hover {
-    background: $green-800;
-  }
+  &:hover { background: $green-800; }
 }
 
-// Stats
+// ── Stats ──────────────────────────────────────────────────
 .subsidy-stats {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
@@ -578,19 +301,13 @@ $shadow-lg: 0 20px 60px rgba(0, 0, 0, .14);
   flex-direction: column;
   gap: 3px;
 
-  &+& {
-    border-left: 1px solid $gray-100;
-  }
+  & + & { border-left: 1px solid $gray-100; }
 
   .sstat-num {
     font-family: $font-display;
     font-size: 22px;
     color: $green-700;
     line-height: 1;
-
-    &.pending {
-      color: darken($amber-500, 15%);
-    }
 
     small {
       font-size: 11px;
@@ -606,7 +323,7 @@ $shadow-lg: 0 20px 60px rgba(0, 0, 0, .14);
   }
 }
 
-// Subsidy table
+// ── Tableau subventions ────────────────────────────────────
 .table-wrap {
   overflow-x: auto;
 }
@@ -636,13 +353,8 @@ $shadow-lg: 0 20px 60px rgba(0, 0, 0, .14);
     border-bottom: 1px solid $gray-100;
     transition: background 0.1s;
 
-    &:last-child {
-      border-bottom: none;
-    }
-
-    &:hover {
-      background: $gray-50;
-    }
+    &:last-child { border-bottom: none; }
+    &:hover { background: $gray-50; }
   }
 
   td {
@@ -676,13 +388,6 @@ $shadow-lg: 0 20px 60px rgba(0, 0, 0, .14);
       flex-shrink: 0;
       text-transform: uppercase;
     }
-  }
-
-  .td-object {
-    max-width: 180px;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
   }
 
   .td-amount {
@@ -761,22 +466,18 @@ $shadow-lg: 0 20px 60px rgba(0, 0, 0, .14);
     background: $blue-100;
     color: $blue-500;
 
-    &:hover {
-      background: #bfdbfe;
-    }
+    &:hover { background: #bfdbfe; }
   }
 
   &.btn-delete {
     background: $red-100;
     color: $red-500;
 
-    &:hover {
-      background: #fecaca;
-    }
+    &:hover { background: #fecaca; }
   }
 }
 
-// ── Fields ─────────────────────────────────────────────────
+// ── Formulaire modal ───────────────────────────────────────
 .field {
   display: flex;
   flex-direction: column;
@@ -788,9 +489,7 @@ $shadow-lg: 0 20px 60px rgba(0, 0, 0, .14);
     color: $gray-900;
   }
 
-  .req {
-    color: $amber-500;
-  }
+  .req { color: $amber-500; }
 
   input,
   select,
@@ -811,15 +510,10 @@ $shadow-lg: 0 20px 60px rgba(0, 0, 0, .14);
       box-shadow: 0 0 0 3px rgba(99, 153, 34, 0.1);
     }
 
-    &::placeholder {
-      color: $gray-400;
-    }
+    &::placeholder { color: $gray-400; }
   }
 
-  input,
-  select {
-    height: 40px;
-  }
+  input, select { height: 40px; }
 
   textarea {
     padding: 9px 11px;
@@ -828,9 +522,7 @@ $shadow-lg: 0 20px 60px rgba(0, 0, 0, .14);
     line-height: 1.5;
   }
 
-  select {
-    cursor: pointer;
-  }
+  select { cursor: pointer; }
 }
 
 .text-danger {
@@ -839,7 +531,7 @@ $shadow-lg: 0 20px 60px rgba(0, 0, 0, .14);
   min-height: 14px;
 }
 
-// ── Modals ─────────────────────────────────────────────────
+// ── Modal ──────────────────────────────────────────────────
 .modal-backdrop {
   position: fixed;
   inset: 0;
@@ -854,13 +546,8 @@ $shadow-lg: 0 20px 60px rgba(0, 0, 0, .14);
 }
 
 @keyframes fadeIn {
-  from {
-    opacity: 0;
-  }
-
-  to {
-    opacity: 1;
-  }
+  from { opacity: 0; }
+  to   { opacity: 1; }
 }
 
 .modal-box {
@@ -873,22 +560,11 @@ $shadow-lg: 0 20px 60px rgba(0, 0, 0, .14);
   display: flex;
   flex-direction: column;
   animation: slideUp 0.22s cubic-bezier(.22, .68, 0, 1.2);
-
-  &.modal-sm {
-    max-width: 500px;
-  }
 }
 
 @keyframes slideUp {
-  from {
-    opacity: 0;
-    transform: translateY(20px) scale(0.98);
-  }
-
-  to {
-    opacity: 1;
-    transform: translateY(0) scale(1);
-  }
+  from { opacity: 0; transform: translateY(20px) scale(0.98); }
+  to   { opacity: 1; transform: translateY(0) scale(1); }
 }
 
 .modal-head {
@@ -909,11 +585,6 @@ $shadow-lg: 0 20px 60px rgba(0, 0, 0, .14);
     padding: 2px 9px;
     border-radius: 20px;
     margin-bottom: 5px;
-
-    &.amber {
-      background: $amber-100;
-      color: darken($amber-500, 20%);
-    }
   }
 
   h2 {
@@ -939,14 +610,8 @@ $shadow-lg: 0 20px 60px rgba(0, 0, 0, .14);
   flex-shrink: 0;
   transition: background 0.14s;
 
-  svg {
-    width: 15px;
-    height: 15px;
-  }
-
-  &:hover {
-    background: $gray-200;
-  }
+  svg { width: 15px; height: 15px; }
+  &:hover { background: $gray-200; }
 }
 
 .modal-body {
@@ -957,10 +622,7 @@ $shadow-lg: 0 20px 60px rgba(0, 0, 0, .14);
 
 .form-section {
   margin-bottom: 24px;
-
-  &:last-child {
-    margin-bottom: 0;
-  }
+  &:last-child { margin-bottom: 0; }
 }
 
 .section-title {
@@ -976,10 +638,7 @@ $shadow-lg: 0 20px 60px rgba(0, 0, 0, .14);
   padding-bottom: 8px;
   border-bottom: 1.5px solid $green-100;
 
-  svg {
-    width: 14px;
-    height: 14px;
-  }
+  svg { width: 14px; height: 14px; }
 }
 
 .form-grid {
@@ -987,9 +646,7 @@ $shadow-lg: 0 20px 60px rgba(0, 0, 0, .14);
   grid-template-columns: 1fr 1fr;
   gap: 16px;
 
-  .field.full {
-    grid-column: 1 / -1;
-  }
+  .field.full { grid-column: 1 / -1; }
 }
 
 .modal-footer {
@@ -1012,52 +669,16 @@ $shadow-lg: 0 20px 60px rgba(0, 0, 0, .14);
   cursor: pointer;
   transition: background 0.14s;
 
-  &:hover {
-    background: $gray-200;
-  }
-}
-
-.btn-save {
-  height: 40px;
-  padding: 0 24px;
-  background: $green-700;
-  color: $white;
-  border: none;
-  border-radius: $radius-sm;
-  font-family: $font-body;
-  font-size: 14px;
-  font-weight: 500;
-  cursor: pointer;
-  transition: background 0.14s;
-
-  &:hover {
-    background: $green-800;
-  }
+  &:hover { background: $gray-200; }
 }
 
 // ── Responsive ─────────────────────────────────────────────
-@media (max-width: 1024px) {
-  .split-layout {
-    grid-template-columns: 1fr;
-  }
-
-  .panel-left {
-    position: static;
-  }
-
-  .subsidy-page {
-    padding: 24px 20px;
-  }
-}
-
 @media (max-width: 600px) {
-  .form-grid {
-    grid-template-columns: 1fr;
-  }
+  .subsidy-page { padding: 24px 20px; }
 
-  .subsidy-stats {
-    grid-template-columns: 1fr 1fr;
-  }
+  .form-grid { grid-template-columns: 1fr; }
+
+  .subsidy-stats { grid-template-columns: 1fr 1fr; }
 
   .page-header {
     flex-direction: column;

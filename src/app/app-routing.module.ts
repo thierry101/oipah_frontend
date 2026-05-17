@@ -41,6 +41,10 @@ const routes: Routes = [
         path: 'project',
         loadComponent: () => import('./demo/pages/project-agri/project-agri.component').then((c) => c.ProjectAgriComponent)
       },
+      {
+        path: 'settings-projet',
+        loadComponent: () => import('./demo/pages/project-settings/project-settings.component').then((c) => c.ProjectSettingsComponent)
+      },
     ]
   },
   {

@@ -1,0 +1,890 @@
+// ── Variables ──────────────────────────────────────────────
+$green-900: #173404;
+$green-800: #27500A;
+$green-700: #3B6D11;
+$green-600: #639922;
+$green-100: #EAF3DE;
+$amber-500: #EF9F27;
+$amber-100: #FDF3E1;
+$red-500: #DC2626;
+$red-100: #FEE2E2;
+$blue-500: #2563EB;
+$blue-100: #DBEAFE;
+$gray-50: #F9F8F5;
+$gray-100: #F1EFE8;
+$gray-200: #D3D1C7;
+$gray-400: #9B9890;
+$gray-600: #5F5E5A;
+$gray-900: #2C2C2A;
+$white: #FFFFFF;
+
+$radius-sm: 8px;
+$radius-md: 12px;
+$radius-lg: 16px;
+
+$font-display: 'Playfair Display', serif;
+$font-body: 'DM Sans', sans-serif;
+
+$shadow-sm: 0 1px 3px rgba(0, 0, 0, .06), 0 1px 2px rgba(0, 0, 0, .04);
+$shadow-lg: 0 20px 60px rgba(0, 0, 0, .14);
+
+// ── Page ───────────────────────────────────────────────────
+.project-settings-page {
+  font-family: $font-body;
+  background: $gray-50;
+  min-height: 100vh;
+  padding: 32px 40px;
+  color: $gray-900;
+}
+
+// ── Header ─────────────────────────────────────────────────
+.page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 28px;
+
+  .header-left {
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+  }
+
+  .ph-icon {
+    width: 48px;
+    height: 48px;
+    background: $green-100;
+    border-radius: $radius-md;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    color: $green-700;
+
+    svg {
+      width: 22px;
+      height: 22px;
+    }
+  }
+
+  .header-badge {
+    display: inline-block;
+    background: $green-700;
+    color: #C0DD97;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 1.5px;
+    padding: 3px 8px;
+    border-radius: 4px;
+    margin-bottom: 5px;
+  }
+
+  h1 {
+    font-family: $font-display;
+    font-size: 22px;
+    color: $gray-900;
+    margin-bottom: 3px;
+    line-height: 1.2;
+  }
+
+  p {
+    font-size: 13px;
+    color: $gray-600;
+  }
+}
+
+// ── Tabs nav ───────────────────────────────────────────────
+.tabs-nav {
+  display: flex;
+  align-items: stretch;
+  gap: 4px;
+  background: $white;
+  border: 1px solid $gray-100;
+  border-radius: $radius-md;
+  padding: 6px;
+  margin-bottom: 20px;
+  box-shadow: $shadow-sm;
+  overflow-x: auto;
+
+  &::-webkit-scrollbar {
+    height: 3px;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: $gray-200;
+    border-radius: 10px;
+  }
+}
+
+.tab-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  height: 38px;
+  padding: 0 16px;
+  background: transparent;
+  color: $gray-600;
+  border: none;
+  border-radius: $radius-sm;
+  font-family: $font-body;
+  font-size: 13.5px;
+  font-weight: 500;
+  cursor: pointer;
+  white-space: nowrap;
+  position: relative;
+  transition: background 0.14s, color 0.14s;
+
+  .tab-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 16px;
+    height: 16px;
+
+    ::ng-deep svg {
+      width: 15px;
+      height: 15px;
+    }
+  }
+
+  .tab-soon {
+    font-size: 9.5px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    background: $amber-100;
+    color: darken($amber-500, 15%);
+    padding: 1px 6px;
+    border-radius: 20px;
+    margin-left: 2px;
+  }
+
+  &:hover:not(.disabled):not(.active) {
+    background: $gray-50;
+    color: $green-700;
+  }
+
+  &.active {
+    background: $green-100;
+    color: $green-700;
+    font-weight: 600;
+  }
+
+  &.disabled {
+    opacity: 0.55;
+    cursor: not-allowed;
+  }
+}
+
+// ── Tab content container ──────────────────────────────────
+.tab-content {
+  background: $white;
+  border: 1px solid $gray-100;
+  border-radius: $radius-lg;
+  overflow: hidden;
+  box-shadow: $shadow-sm;
+}
+
+// ── Tab panel ──────────────────────────────────────────────
+.tab-panel {
+  animation: fadeSlide 0.2s ease;
+}
+
+@keyframes fadeSlide {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+// ── Panel header ───────────────────────────────────────────
+.panel-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  padding: 24px 28px 18px;
+  border-bottom: 1px solid $gray-100;
+
+  h2 {
+    font-family: $font-display;
+    font-size: 19px;
+    color: $gray-900;
+    margin-bottom: 3px;
+  }
+
+  p {
+    font-size: 13px;
+    color: $gray-600;
+  }
+}
+
+// Bouton ajouter
+.btn-add {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  height: 38px;
+  padding: 0 16px;
+  background: $green-700;
+  color: $white;
+  border: none;
+  border-radius: $radius-sm;
+  font-family: $font-body;
+  font-size: 13.5px;
+  font-weight: 500;
+  cursor: pointer;
+  white-space: nowrap;
+  flex-shrink: 0;
+  transition: background 0.15s, transform 0.1s;
+
+  svg {
+    width: 16px;
+    height: 16px;
+  }
+
+  &:hover {
+    background: $green-800;
+  }
+
+  &:active {
+    transform: scale(0.98);
+  }
+}
+
+// ── Toolbar ────────────────────────────────────────────────
+.toolbar {
+  padding: 14px 28px;
+  border-bottom: 1px solid $gray-100;
+  background: $gray-50;
+}
+
+.search-wrap {
+  position: relative;
+  max-width: 360px;
+
+  svg {
+    position: absolute;
+    left: 11px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 14px;
+    height: 14px;
+    color: $gray-400;
+  }
+
+  input {
+    width: 100%;
+    height: 36px;
+    border: 1px solid $gray-200;
+    border-radius: $radius-sm;
+    padding: 0 13px 0 34px;
+    font-family: $font-body;
+    font-size: 13px;
+    color: $gray-900;
+    background: $white;
+    outline: none;
+    transition: border-color 0.18s, box-shadow 0.18s;
+
+    &:focus {
+      border-color: $green-600;
+      box-shadow: 0 0 0 3px rgba(99, 153, 34, .1);
+    }
+
+    &::placeholder {
+      color: $gray-400;
+    }
+  }
+}
+
+// ── Table ──────────────────────────────────────────────────
+.table-wrap {
+  overflow-x: auto;
+}
+
+.settings-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13.5px;
+
+  thead tr {
+    background: $gray-50;
+    border-bottom: 1px solid $gray-100;
+
+    th {
+      padding: 11px 20px;
+      text-align: left;
+      font-size: 11px;
+      font-weight: 600;
+      color: $gray-600;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+      white-space: nowrap;
+    }
+  }
+
+  tbody tr {
+    border-bottom: 1px solid $gray-100;
+    transition: background 0.1s;
+
+    &:last-child {
+      border-bottom: none;
+    }
+
+    &:hover {
+      background: $gray-50;
+    }
+  }
+
+  td {
+    padding: 13px 20px;
+    vertical-align: middle;
+    color: $gray-900;
+  }
+
+  .td-num {
+    color: $gray-400;
+    font-size: 12px;
+    width: 36px;
+  }
+
+  .td-name {
+    display: flex;
+    align-items: center;
+    gap: 11px;
+
+    .item-main {
+      font-size: 13.5px;
+      font-weight: 500;
+    }
+
+    .item-sub {
+      font-size: 11.5px;
+      color: $gray-400;
+      margin-top: 1px;
+    }
+  }
+
+  .td-actions {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+  }
+
+  .td-empty {
+    text-align: center;
+    padding: 52px 20px;
+    color: $gray-400;
+
+    svg {
+      width: 32px;
+      height: 32px;
+      margin: 0 auto 10px;
+      opacity: 0.35;
+      display: block;
+    }
+
+    p {
+      font-size: 13px;
+    }
+  }
+}
+
+// Avatar
+.item-avatar {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  font-size: 12px;
+  font-weight: 700;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-transform: uppercase;
+
+  &.amber {
+    background: $amber-100;
+    color: darken($amber-500, 20%);
+  }
+
+  &.green {
+    background: $green-100;
+    color: $green-700;
+  }
+}
+
+// Type badge
+.type-badge {
+  display: inline-block;
+  padding: 2px 9px;
+  border-radius: 20px;
+  font-size: 11.5px;
+  font-weight: 500;
+  background: $blue-100;
+  color: $blue-500;
+}
+
+// Action buttons
+.btn-action {
+  width: 30px;
+  height: 30px;
+  border: none;
+  border-radius: $radius-sm;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background 0.14s;
+
+  svg {
+    width: 14px;
+    height: 14px;
+  }
+
+  &.btn-edit {
+    background: $blue-100;
+    color: $blue-500;
+
+    &:hover {
+      background: #bfdbfe;
+    }
+  }
+
+  &.btn-delete {
+    background: $red-100;
+    color: $red-500;
+
+    &:hover {
+      background: #fecaca;
+    }
+  }
+}
+
+// ── Filières grid ──────────────────────────────────────────
+.filiere-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 14px;
+  padding: 24px 28px;
+}
+
+.filiere-card {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  background: $gray-50;
+  border: 1px solid $gray-100;
+  border-radius: $radius-md;
+  padding: 16px;
+  transition: border-color 0.14s, box-shadow 0.14s;
+
+  &:hover {
+    border-color: $green-600;
+    box-shadow: 0 0 0 3px rgba(99, 153, 34, .07);
+  }
+
+  .filiere-icon {
+    width: 36px;
+    height: 36px;
+    background: $green-100;
+    border-radius: $radius-sm;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    color: $green-700;
+
+    svg {
+      width: 18px;
+      height: 18px;
+    }
+  }
+
+  .filiere-info {
+    flex: 1;
+    min-width: 0;
+
+    .filiere-name {
+      font-size: 14px;
+      font-weight: 600;
+      color: $gray-900;
+    }
+
+    .filiere-desc {
+      font-size: 12px;
+      color: $gray-600;
+      margin-top: 3px;
+      line-height: 1.4;
+    }
+  }
+
+  .filiere-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    flex-shrink: 0;
+  }
+}
+
+.filiere-empty {
+  grid-column: 1 / -1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 52px;
+  color: $gray-400;
+  text-align: center;
+
+  svg {
+    width: 36px;
+    height: 36px;
+    margin-bottom: 10px;
+    opacity: 0.35;
+  }
+
+  p {
+    font-size: 13px;
+  }
+}
+
+// ── Coming soon ────────────────────────────────────────────
+.coming-soon {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 64px 24px;
+  text-align: center;
+
+  .coming-icon {
+    width: 64px;
+    height: 64px;
+    background: $amber-100;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: darken($amber-500, 10%);
+    margin-bottom: 20px;
+
+    svg {
+      width: 30px;
+      height: 30px;
+    }
+  }
+
+  h3 {
+    font-family: $font-display;
+    font-size: 20px;
+    color: $gray-900;
+    margin-bottom: 8px;
+  }
+
+  p {
+    font-size: 14px;
+    color: $gray-600;
+    max-width: 360px;
+    line-height: 1.6;
+  }
+}
+
+// ── Fields ─────────────────────────────────────────────────
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+
+  label {
+    font-size: 12.5px;
+    font-weight: 500;
+    color: $gray-900;
+  }
+
+  .req {
+    color: $amber-500;
+  }
+
+  input,
+  select,
+  textarea {
+    border: 1px solid $gray-200;
+    border-radius: $radius-sm;
+    padding: 0 11px;
+    font-family: $font-body;
+    font-size: 13.5px;
+    color: $gray-900;
+    background: $white;
+    outline: none;
+    width: 100%;
+    transition: border-color 0.18s, box-shadow 0.18s;
+
+    &:focus {
+      border-color: $green-600;
+      box-shadow: 0 0 0 3px rgba(99, 153, 34, .1);
+    }
+
+    &::placeholder {
+      color: $gray-400;
+    }
+  }
+
+  input,
+  select {
+    height: 40px;
+  }
+
+  textarea {
+    padding: 9px 11px;
+    resize: vertical;
+    min-height: 80px;
+    line-height: 1.5;
+  }
+
+  select {
+    cursor: pointer;
+  }
+}
+
+.text-danger {
+  font-size: 11.5px;
+  color: $red-500;
+  min-height: 14px;
+}
+
+// ── Modals ─────────────────────────────────────────────────
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(44, 44, 42, 0.5);
+  backdrop-filter: blur(4px);
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  animation: fadeIn 0.18s ease;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+.modal-box {
+  background: $white;
+  border-radius: $radius-lg;
+  box-shadow: $shadow-lg;
+  width: 100%;
+  max-width: 580px;
+  max-height: 90vh;
+  display: flex;
+  flex-direction: column;
+  animation: slideUp 0.22s cubic-bezier(.22, .68, 0, 1.2);
+
+  &.modal-sm {
+    max-width: 480px;
+  }
+
+  &.modal-xs {
+    max-width: 440px;
+  }
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px) scale(0.98);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.modal-head {
+  padding: 22px 28px 18px;
+  border-bottom: 1px solid $gray-100;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+
+  .modal-tag {
+    display: inline-block;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 1.2px;
+    text-transform: uppercase;
+    background: $green-100;
+    color: $green-800;
+    padding: 2px 9px;
+    border-radius: 20px;
+    margin-bottom: 5px;
+
+    &.amber {
+      background: $amber-100;
+      color: darken($amber-500, 20%);
+    }
+
+    &.danger {
+      background: $red-100;
+      color: $red-500;
+    }
+  }
+
+  h2 {
+    font-family: $font-display;
+    font-size: 19px;
+    color: $gray-900;
+    margin: 0;
+  }
+
+  &.danger h2 {
+    color: $red-500;
+  }
+}
+
+.modal-close {
+  width: 30px;
+  height: 30px;
+  background: $gray-100;
+  border: none;
+  border-radius: $radius-sm;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  color: $gray-600;
+  margin-left: 14px;
+  flex-shrink: 0;
+
+  svg {
+    width: 15px;
+    height: 15px;
+  }
+
+  &:hover {
+    background: $gray-200;
+  }
+}
+
+.modal-body {
+  padding: 22px 28px;
+  overflow-y: auto;
+  flex: 1;
+}
+
+.form-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+
+  .field.full {
+    grid-column: 1 / -1;
+  }
+}
+
+.modal-footer {
+  padding: 16px 28px;
+  border-top: 1px solid $gray-100;
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+}
+
+.btn-cancel {
+  height: 40px;
+  padding: 0 20px;
+  background: $gray-100;
+  color: $gray-900;
+  border: none;
+  border-radius: $radius-sm;
+  font-family: $font-body;
+  font-size: 14px;
+  cursor: pointer;
+  transition: background 0.14s;
+
+  &:hover {
+    background: $gray-200;
+  }
+}
+
+.btn-danger {
+  height: 40px;
+  padding: 0 24px;
+  background: $red-500;
+  color: $white;
+  border: none;
+  border-radius: $radius-sm;
+  font-family: $font-body;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.14s;
+
+  &:hover {
+    background: #b91c1c;
+  }
+}
+
+.delete-msg {
+  font-size: 14px;
+  color: $gray-600;
+  line-height: 1.7;
+
+  strong {
+    color: $gray-900;
+  }
+}
+
+// ── Responsive ─────────────────────────────────────────────
+@media (max-width: 900px) {
+  .project-settings-page {
+    padding: 24px 20px;
+  }
+
+  .panel-header {
+    flex-direction: column;
+    gap: 14px;
+
+    .btn-add {
+      width: 100%;
+      justify-content: center;
+    }
+  }
+
+  .filiere-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+@media (max-width: 600px) {
+  .form-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .filiere-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .tabs-nav {
+    gap: 2px;
+    padding: 4px;
+  }
+
+  .tab-item {
+    padding: 0 10px;
+    font-size: 12.5px;
+  }
+}

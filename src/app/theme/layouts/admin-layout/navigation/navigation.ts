@@ -69,6 +69,14 @@ export const NavigationItems: NavigationItem[] = [
     icon: 'icon-navigation',
     children: [
       {
+        id: 'settingProject',
+        title: 'Paramètres projet',
+        type: 'item',
+        classes: 'nav-item',
+        url: '/settings-projet',
+        icon: 'user'
+      },
+      {
         id: 'plotLand',
         title: 'Parcelles',
         type: 'item',

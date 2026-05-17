@@ -66,16 +66,11 @@ export function swalWithRedirect(icon: any, title: string, message: string, path
 }
 
 
-export function setPagination(
-  callService: (page: number, searchTerm: any, startDate?: any, endDate?: any) => Observable<any>,
-  page: number = 1,
-  searchTerm: any,
-  setState: (...args: any[]) => void,
-  startDate?: any,
-  endDate?: any,
-  onError?: (error: any) => void
-): Subscription {
-  return callService(page, searchTerm, startDate, endDate).subscribe({
+export function setPagination(callService: (...args: any[]) => Observable<any>,
+  page: number = 1, searchTerm: any, setState: (...args: any[]) => void, startDate?: any, endDate?: any, statutLand?: any,
+  onError?: (error: any) => void): Subscription {
+
+  return callService(page, searchTerm, statutLand, startDate, endDate).subscribe({
     next: (data: any) => {
       setState({
         listItems: data?.listItems,
@@ -87,24 +82,27 @@ export function setPagination(
         nber_pages: data?.nber_pages,
         otherParams: data?.other_params,
       });
+
     },
+
     error: (err: any) => {
-      onError?.(err); // call optional handler
+      onError?.(err);
     }
   });
 }
 
+
 export const roles = [
-  {name:"Administrateur", value:"Admin"},
-  {name:"Comptable", value:"Daf"},
-  {name:"Entrepreneur agricole", value:"Agricultural"},
+  { name: "Administrateur", value: "Admin" },
+  { name: "Comptable", value: "Daf" },
+  { name: "Entrepreneur agricole", value: "Agricultural" },
 ]
 
 export const listDonors = [
-  {name:"Organisation internationale", value:"international"},
-  {name:"État / Gouvernement", value:"state"},
-  {name:"ONG", value:"ngo"},
-  {name:"Secteur privé", value:"private"},
-  {name:"bank", value:"Banque"},
-  {name:"Autre", value:"other"},
+  { name: "Organisation internationale", value: "international" },
+  { name: "État / Gouvernement", value: "state" },
+  { name: "ONG", value: "ngo" },
+  { name: "Secteur privé", value: "private" },
+  { name: "bank", value: "Banque" },
+  { name: "Autre", value: "other" },
 ]
