@@ -10,6 +10,7 @@ import { SelectedComponent } from "../../reusableComponents/selected/selected.co
 import { OthersService } from 'src/app/services/others-service';
 import { MultiselectComponent } from '../../reusableComponents/multiselect/multiselect.component';
 import { SearchListComponent } from "../../reusableComponents/search-list/search-list.component";
+import { SpinnerComponent } from "../../reusableComponents/spinner/spinner.component";
 
 
 export interface Donor {
@@ -38,7 +39,7 @@ export interface Subsidy {
 
 @Component({
   selector: 'app-grantors',
-  imports: [CommonModule, FormsModule, SetPaginationComponent, SubmitSpinnerComponent, SelectedComponent, MultiselectComponent, SearchListComponent],
+  imports: [CommonModule, FormsModule, SetPaginationComponent, SubmitSpinnerComponent, SelectedComponent, MultiselectComponent, SearchListComponent, SpinnerComponent],
   templateUrl: './grantors.component.html',
   styleUrl: './grantors.component.scss',
 })
@@ -67,6 +68,9 @@ export class GrantorsComponent implements OnInit {
   errors: any = []
   isSaving: boolean = false
   devise: string = ''
+  showDeleteConfirmModal = false;
+  itemToDelete: any = null;
+  deleteConfirmWord = '';
   // ── Propriétés de filtre ──────────────────────────────────
   subsidySearch = '';
   subsidyFilterStatus = '';
@@ -76,6 +80,14 @@ export class GrantorsComponent implements OnInit {
   // ── Modal states ──────────────────────────────────────────
   showSubsidyModal = false;
   subsidyEditMode = false;
+
+
+  showEntryModal = false;
+  selectedSubsidy: any = null;
+  partialSubsidies!: any
+  isSavingEntry = false;
+  entryForm = { amount: null, received_date: '' };
+  today: string = new Date().toISOString().split('T')[0];
 
   // ── Forms ─────────────────────────────────────────────────
   subsidyForm: Partial<Subsidy> = this.emptySubsidyForm();
@@ -209,7 +221,6 @@ export class GrantorsComponent implements OnInit {
       },
       error: (err) => {
         this.errors = err.error.errors || {};
-        console.log(this.errors)
         this.isSaving = false
         showError(err, err.status, this.errors, err.error, document.getElementById('a'));
       }
@@ -223,7 +234,7 @@ export class GrantorsComponent implements OnInit {
       next: () => {
         this.isSaving = false
         this.fetchSubsidies(1)
-        toastShow('success', "Subvention mise à jou")
+        toastShow('success', "Subvention mise à jour")
         this.closeSubsidyModal();
       },
       error: (err) => {
@@ -235,8 +246,28 @@ export class GrantorsComponent implements OnInit {
   }
 
 
-  deleteSubsidy(subsidy: Subsidy): void {
-    this.subsidies = this.subsidies.filter(s => s.id !== subsidy.id);
+  openDeleteModal(item: any): void {
+    this.itemToDelete = item;
+    this.deleteConfirmWord = '';
+    this.showDeleteConfirmModal = true;
+  }
+
+  closeDeleteModal(): void {
+    this.showDeleteConfirmModal = false;
+    this.itemToDelete = null;
+    this.deleteConfirmWord = '';
+  }
+
+
+  deleteSubsidy(): void {
+    if (this.deleteConfirmWord !== 'supprimer') return;
+    this.otherService.deleteSubsidy(this.itemToDelete?.id).subscribe({
+      next: () => {
+        this.closeDeleteModal();
+        this.fetchSubsidies(1)
+        toastShow('success', "Subvention supprimée")
+      }
+    })
   }
 
   // ── Helpers ───────────────────────────────────────────────
@@ -247,6 +278,57 @@ export class GrantorsComponent implements OnInit {
       partial: 'Partiel'
     };
     return map[status] || status;
+  }
+
+
+  openEntryModal(subsidy: any) {
+    this.selectedSubsidy = subsidy;
+    this.entryForm = { amount: null, received_date: '' };
+    this.errors = [];
+    this.showEntryModal = true;
+    this.otherService.getPartialSubsidies(subsidy?.id).subscribe({
+      next: (res: any) => {
+        this.partialSubsidies = res?.result
+      }
+    })
+  }
+
+  closeEntryModal() {
+    this.showEntryModal = false;
+    this.selectedSubsidy = null;
+  }
+
+  saveEntry() {
+    this.isSaving = true
+    this.otherService.postPartialSubsidy(this.selectedSubsidy?.id, this.entryForm).subscribe({
+      next: () => {
+        this.isSaving = false
+        toastShow('success', "Nouveau montant enregistrée")
+        this.closeEntryModal()
+        this.fetchSubsidies(1)
+      },
+      error: (err) => {
+        this.errors = err.error.errors || {};
+        this.isSaving = false
+        showError(err, err.status, this.errors, err.error, document.getElementById('a'));
+      }
+    })
+  }
+
+
+  deleteEntry(item: any) {
+    this.otherService.deletePartialSubsidy(item?.id).subscribe({
+      next: () => {
+        toastShow('success', "Montant supprimée")
+        this.closeEntryModal()
+        this.fetchSubsidies(1)
+      },
+      error: (err) => {
+        this.errors = err.error.errors || {};
+        this.isSaving = false
+        showError(err, err.status, this.errors, err.error, document.getElementById('a'));
+      }
+    })
   }
 
 

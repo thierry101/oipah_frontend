@@ -29,6 +29,313 @@ $shadow-sm: 0 1px 3px rgba(0, 0, 0, .06), 0 1px 2px rgba(0, 0, 0, .04);
 $shadow-lg: 0 20px 60px rgba(0, 0, 0, .14);
 
 
+// ── Modal suppression ──────────────────────────────────────
+.modal-box.modal-xs {
+  max-width: 460px;
+}
+
+.modal-head.danger h2 {
+  color: $red-500;
+}
+
+.modal-tag.danger {
+  background: $red-100;
+  color: $red-500;
+}
+
+.delete-target-info {
+  background: $gray-50;
+  border: 1px solid $gray-100;
+  border-radius: $radius-sm;
+  padding: 12px 14px;
+  margin-bottom: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.delete-target-row {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+
+  .dtl {
+    font-size: 11px;
+    font-weight: 600;
+    color: $gray-400;
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
+    min-width: 100px;
+    flex-shrink: 0;
+  }
+
+  .dtv {
+    font-size: 13px;
+    color: $gray-900;
+    font-weight: 500;
+  }
+}
+
+.delete-warning {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  font-size: 13px;
+  color: $gray-600;
+  line-height: 1.6;
+  margin-bottom: 20px;
+  padding: 10px 12px;
+  background: $amber-100;
+  border-radius: $radius-sm;
+  border-left: 3px solid $amber-500;
+
+  svg {
+    width: 16px;
+    height: 16px;
+    color: darken($amber-500, 15%);
+    flex-shrink: 0;
+    margin-top: 2px;
+  }
+
+  strong {
+    color: $gray-900;
+  }
+}
+
+.delete-confirm-field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+
+  label {
+    font-size: 12.5px;
+    font-weight: 500;
+    color: $gray-900;
+  }
+
+  .delete-keyword {
+    font-family: monospace;
+    font-size: 13px;
+    font-weight: 700;
+    color: $red-500;
+    background: $red-100;
+    padding: 1px 6px;
+    border-radius: 4px;
+  }
+
+  input {
+    height: 40px;
+    border: 1.5px solid $gray-200;
+    border-radius: $radius-sm;
+    padding: 0 12px;
+    font-family: $font-body;
+    font-size: 14px;
+    color: $gray-900;
+    background: $white;
+    outline: none;
+    transition: border-color 0.18s, box-shadow 0.18s;
+
+    &::placeholder {
+      color: $gray-400;
+    }
+
+    &:focus {
+      border-color: $gray-400;
+    }
+
+    &.input-valid {
+      border-color: $green-600;
+      box-shadow: 0 0 0 3px rgba(99, 153, 34, 0.1);
+      background: $green-100;
+      color: $green-700;
+      font-weight: 500;
+    }
+  }
+}
+
+.btn-danger {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  height: 40px;
+  padding: 0 20px;
+  background: $red-500;
+  color: $white;
+  border: none;
+  border-radius: $radius-sm;
+  font-family: $font-body;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.14s, opacity 0.14s;
+
+  svg {
+    width: 15px;
+    height: 15px;
+  }
+
+  &:hover:not(:disabled) {
+    background: #b91c1c;
+  }
+
+  &:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+  }
+}
+
+
+// ── Bouton entrée ──────────────────────────────────────────
+.btn-action.btn-entry {
+  background: $green-100;
+  color: $green-700;
+
+  &:hover {
+    background: #c6e5a0;
+  }
+}
+
+// ── Modal entrées ──────────────────────────────────────────
+.modal-box.modal-entry {
+  max-width: 600px;
+}
+
+.modal-subtitle {
+  font-size: 12px;
+  color: $gray-600;
+  margin-top: 3px;
+}
+
+// Résumé montants
+.entry-summary {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+  background: $gray-50;
+  border: 1px solid $gray-100;
+  border-radius: $radius-md;
+  padding: 16px;
+  margin-bottom: 24px;
+}
+
+.esum-item {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+
+  .esum-lbl {
+    font-size: 11px;
+    color: $gray-600;
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
+  }
+
+  .esum-val {
+    font-family: $font-display;
+    font-size: 18px;
+    color: $gray-900;
+    font-weight: 500;
+
+    &.green {
+      color: $green-700;
+    }
+
+    &.amber {
+      color: #9a6300;
+    }
+  }
+}
+
+// Historique
+.entry-history {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.entry-row {
+  display: grid;
+  grid-template-columns: 28px 1fr;
+  grid-template-rows: auto auto;
+  column-gap: 12px;
+  align-items: center;
+  padding: 12px 14px;
+  background: $gray-50;
+  border: 1px solid $gray-100;
+  border-radius: $radius-sm;
+  transition: background 0.1s;
+  grid-template-columns: 28px 1fr auto; // ← ajouter auto pour la colonne bouton
+  align-items: center;
+
+  &:hover {
+    background: $green-100;
+  }
+}
+
+.entry-delete {
+  grid-row: 1 / -1; // occupe toute la hauteur de la ligne
+}
+
+.entry-index {
+  grid-row: 1 / -1;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: $green-100;
+  color: $green-700;
+  font-size: 11px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.entry-info {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  .entry-amount {
+    font-family: $font-display;
+    font-size: 15px;
+    font-weight: 500;
+    color: $green-700;
+  }
+
+  .entry-date {
+    font-size: 12px;
+    color: $gray-400;
+  }
+}
+
+.entry-notes {
+  grid-column: 2;
+  font-size: 12px;
+  color: $gray-600;
+  margin-top: 3px;
+  font-style: italic;
+}
+
+.entry-empty {
+  text-align: center;
+  padding: 32px 16px;
+  color: $gray-400;
+
+  svg {
+    width: 28px;
+    height: 28px;
+    margin: 0 auto 8px;
+    opacity: 0.35;
+    display: block;
+  }
+
+  p {
+    font-size: 12.5px;
+  }
+}
+
+
 // ── Page ───────────────────────────────────────────────────
 .subsidy-page {
   font-family: $font-body;
@@ -182,7 +489,9 @@ $shadow-lg: 0 20px 60px rgba(0, 0, 0, .14);
   transition: border-color 0.18s;
   flex-shrink: 0;
 
-  &:focus { border-color: $green-600; }
+  &:focus {
+    border-color: $green-600;
+  }
 }
 
 .date-field {
@@ -257,8 +566,14 @@ $shadow-lg: 0 20px 60px rgba(0, 0, 0, .14);
   flex-shrink: 0;
   transition: background 0.14s;
 
-  svg { width: 13px; height: 13px; }
-  &:hover { background: $green-900; }
+  svg {
+    width: 13px;
+    height: 13px;
+  }
+
+  &:hover {
+    background: $green-900;
+  }
 }
 
 // ── Bouton nouvelle subvention ─────────────────────────────
@@ -285,7 +600,9 @@ $shadow-lg: 0 20px 60px rgba(0, 0, 0, .14);
     height: 15px;
   }
 
-  &:hover { background: $green-800; }
+  &:hover {
+    background: $green-800;
+  }
 }
 
 // ── Stats ──────────────────────────────────────────────────
@@ -301,7 +618,9 @@ $shadow-lg: 0 20px 60px rgba(0, 0, 0, .14);
   flex-direction: column;
   gap: 3px;
 
-  & + & { border-left: 1px solid $gray-100; }
+  &+& {
+    border-left: 1px solid $gray-100;
+  }
 
   .sstat-num {
     font-family: $font-display;
@@ -353,8 +672,13 @@ $shadow-lg: 0 20px 60px rgba(0, 0, 0, .14);
     border-bottom: 1px solid $gray-100;
     transition: background 0.1s;
 
-    &:last-child { border-bottom: none; }
-    &:hover { background: $gray-50; }
+    &:last-child {
+      border-bottom: none;
+    }
+
+    &:hover {
+      background: $gray-50;
+    }
   }
 
   td {
@@ -466,14 +790,18 @@ $shadow-lg: 0 20px 60px rgba(0, 0, 0, .14);
     background: $blue-100;
     color: $blue-500;
 
-    &:hover { background: #bfdbfe; }
+    &:hover {
+      background: #bfdbfe;
+    }
   }
 
   &.btn-delete {
     background: $red-100;
     color: $red-500;
 
-    &:hover { background: #fecaca; }
+    &:hover {
+      background: #fecaca;
+    }
   }
 }
 
@@ -489,7 +817,9 @@ $shadow-lg: 0 20px 60px rgba(0, 0, 0, .14);
     color: $gray-900;
   }
 
-  .req { color: $amber-500; }
+  .req {
+    color: $amber-500;
+  }
 
   input,
   select,
@@ -510,10 +840,15 @@ $shadow-lg: 0 20px 60px rgba(0, 0, 0, .14);
       box-shadow: 0 0 0 3px rgba(99, 153, 34, 0.1);
     }
 
-    &::placeholder { color: $gray-400; }
+    &::placeholder {
+      color: $gray-400;
+    }
   }
 
-  input, select { height: 40px; }
+  input,
+  select {
+    height: 40px;
+  }
 
   textarea {
     padding: 9px 11px;
@@ -522,7 +857,9 @@ $shadow-lg: 0 20px 60px rgba(0, 0, 0, .14);
     line-height: 1.5;
   }
 
-  select { cursor: pointer; }
+  select {
+    cursor: pointer;
+  }
 }
 
 .text-danger {
@@ -546,8 +883,13 @@ $shadow-lg: 0 20px 60px rgba(0, 0, 0, .14);
 }
 
 @keyframes fadeIn {
-  from { opacity: 0; }
-  to   { opacity: 1; }
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
 }
 
 .modal-box {
@@ -563,8 +905,15 @@ $shadow-lg: 0 20px 60px rgba(0, 0, 0, .14);
 }
 
 @keyframes slideUp {
-  from { opacity: 0; transform: translateY(20px) scale(0.98); }
-  to   { opacity: 1; transform: translateY(0) scale(1); }
+  from {
+    opacity: 0;
+    transform: translateY(20px) scale(0.98);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
 }
 
 .modal-head {
@@ -610,8 +959,14 @@ $shadow-lg: 0 20px 60px rgba(0, 0, 0, .14);
   flex-shrink: 0;
   transition: background 0.14s;
 
-  svg { width: 15px; height: 15px; }
-  &:hover { background: $gray-200; }
+  svg {
+    width: 15px;
+    height: 15px;
+  }
+
+  &:hover {
+    background: $gray-200;
+  }
 }
 
 .modal-body {
@@ -622,7 +977,10 @@ $shadow-lg: 0 20px 60px rgba(0, 0, 0, .14);
 
 .form-section {
   margin-bottom: 24px;
-  &:last-child { margin-bottom: 0; }
+
+  &:last-child {
+    margin-bottom: 0;
+  }
 }
 
 .section-title {
@@ -638,7 +996,10 @@ $shadow-lg: 0 20px 60px rgba(0, 0, 0, .14);
   padding-bottom: 8px;
   border-bottom: 1.5px solid $green-100;
 
-  svg { width: 14px; height: 14px; }
+  svg {
+    width: 14px;
+    height: 14px;
+  }
 }
 
 .form-grid {
@@ -646,7 +1007,9 @@ $shadow-lg: 0 20px 60px rgba(0, 0, 0, .14);
   grid-template-columns: 1fr 1fr;
   gap: 16px;
 
-  .field.full { grid-column: 1 / -1; }
+  .field.full {
+    grid-column: 1 / -1;
+  }
 }
 
 .modal-footer {
@@ -669,16 +1032,24 @@ $shadow-lg: 0 20px 60px rgba(0, 0, 0, .14);
   cursor: pointer;
   transition: background 0.14s;
 
-  &:hover { background: $gray-200; }
+  &:hover {
+    background: $gray-200;
+  }
 }
 
 // ── Responsive ─────────────────────────────────────────────
 @media (max-width: 600px) {
-  .subsidy-page { padding: 24px 20px; }
+  .subsidy-page {
+    padding: 24px 20px;
+  }
 
-  .form-grid { grid-template-columns: 1fr; }
+  .form-grid {
+    grid-template-columns: 1fr;
+  }
 
-  .subsidy-stats { grid-template-columns: 1fr 1fr; }
+  .subsidy-stats {
+    grid-template-columns: 1fr 1fr;
+  }
 
   .page-header {
     flex-direction: column;

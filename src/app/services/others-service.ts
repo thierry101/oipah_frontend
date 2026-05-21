@@ -94,4 +94,27 @@ export class OthersService {
   }
 
 
+  deleteSubsidy(idSubsidy: any) {
+    return this.http.delete(`${environment.apiUrl}/edit-subsidy/${idSubsidy}`, { withCredentials: true });
+  }
+
+
+  getPartialSubsidies(idSubsidy: any) {
+    return this.http.get(`${environment.apiUrl}/partial-subsidy/${idSubsidy}`, { withCredentials: true });
+  }
+
+
+  postPartialSubsidy(idSubsidy: any, data: any) {
+    return this.http.post(`${environment.apiUrl}/partial-subsidy/${idSubsidy}`, data, { withCredentials: true });
+  }
+
+
+  deletePartialSubsidy(idSubsidy: any) {
+    return this.http.delete(`${environment.apiUrl}/partial-subsidy/${idSubsidy}`, { withCredentials: true });
+  }
+
+
+
+
+
 }

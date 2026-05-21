@@ -107,73 +107,93 @@
         <button class="btn-reset-filters" type="button" (click)="filterByDate()">Valider</button>
       </div>
 
-      <!-- Tableau subventions -->
-      <div class="table-wrap">
-        <table class="subsidy-table">
-          <thead>
-            <tr>
-              <th>#</th>
-              <th>Subventionneur</th>
-              <th>Objet</th>
-              <th>Montant</th>
-              <th>Date réception</th>
-              <th>Statut</th>
-              <th>Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            @for (item of subsidies; track item.id; let i = $index) {
-              <tr>
-                <td class="td-num">{{ i + 1 }}</td>
-                <td class="td-donor-cell">
-                  <div class="mini-avatar">{{ item?.grantor.name[0] || '?' }}</div>
-                  <span>{{ item?.grantor?.name }}</span>
-                </td>
-                <td class="text-wrap">{{ item.object }}</td>
-                <td class="td-amount">{{ item.amount | number }} {{ devise }}</td>
-                <td>{{ item.received_date | date: 'dd/MM/yyyy' }}</td>
-                <td>
-                  <span class="status-badge" [ngClass]="'status-' + item.status">
-                    {{ getStatusName(item.status) }}
-                  </span>
-                </td>
-                <td class="td-actions">
-                  <button class="btn-action btn-edit" (click)="openSubsidyModal(item)" title="Modifier">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                      <path
-                        d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"
-                      />
-                    </svg>
-                  </button>
-                  <button class="btn-action btn-delete" (click)="deleteSubsidy(item)" title="Supprimer">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                      <polyline points="3 6 5 6 21 6" />
-                      <path d="M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6" />
-                      <path d="M10 11v6M14 11v6" />
-                      <path d="M9 6V4a1 1 0 011-1h4a1 1 0 011 1v2" />
-                    </svg>
-                  </button>
-                </td>
-              </tr>
-            } @empty {
-              <tr>
-                <td colspan="7" class="td-empty">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-                    <line x1="12" y1="1" x2="12" y2="23" />
-                    <path d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6" />
-                  </svg>
-                  <p>
-                    Aucune subvention enregistrée.
-                    <br />
-                    Cliquez sur "Nouvelle subvention" pour commencer.
-                  </p>
-                </td>
-              </tr>
-            }
-          </tbody>
-        </table>
-      </div>
+      @if (isLoading) {
+        <app-spinner message="Chargement des subventions"></app-spinner>
+      }
 
+      @if (!isLoading) {
+        <!-- Tableau subventions -->
+        <div class="table-wrap">
+          <table class="subsidy-table">
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>Subventionneur</th>
+                <th>Objet</th>
+                <th>Montant</th>
+                <th>Date réception</th>
+                <th>Statut</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (item of subsidies; track item.id; let i = $index) {
+                <tr>
+                  <td class="td-num">{{ i + 1 }}</td>
+                  <td class="td-donor-cell">
+                    <div class="mini-avatar">{{ item?.grantor.name[0] || '?' }}</div>
+                    <span>{{ item?.grantor?.name }}</span>
+                  </td>
+                  <td class="text-wrap">{{ item.object }}</td>
+                  <td class="td-amount">{{ item.amount | number }} {{ devise }}</td>
+                  <td>{{ item.received_date | date: 'dd/MM/yyyy' }}</td>
+                  <td>
+                    <span class="status-badge" [ngClass]="'status-' + item.status">
+                      {{ getStatusName(item.status) }}
+                    </span>
+                  </td>
+                  <td class="td-actions">
+                    <button class="btn-action btn-entry" (click)="openEntryModal(item)" title="Nouvelle entrée">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M12 5v14M5 12h14" />
+                      </svg>
+                    </button>
+                    <button class="btn-action btn-edit" (click)="openSubsidyModal(item)" title="Modifier">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path
+                          d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"
+                        />
+                      </svg>
+                    </button>
+                    <!-- Bouton delete dans le tableau — inchangé, juste pour rappel -->
+                    <button class="btn-action btn-delete" (click)="openDeleteModal(item)" title="Supprimer">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <polyline points="3 6 5 6 21 6" />
+                        <path d="M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6" />
+                        <path d="M10 11v6M14 11v6" />
+                        <path d="M9 6V4a1 1 0 011-1h4a1 1 0 011 1v2" />
+                      </svg>
+                    </button>
+
+                    <!-- <button class="btn-action btn-delete" (click)="deleteSubsidy(item)" title="Supprimer">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <polyline points="3 6 5 6 21 6" />
+                        <path d="M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6" />
+                        <path d="M10 11v6M14 11v6" />
+                        <path d="M9 6V4a1 1 0 011-1h4a1 1 0 011 1v2" />
+                      </svg>
+                    </button> -->
+                  </td>
+                </tr>
+              } @empty {
+                <tr>
+                  <td colspan="7" class="td-empty">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                      <line x1="12" y1="1" x2="12" y2="23" />
+                      <path d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6" />
+                    </svg>
+                    <p>
+                      Aucune subvention enregistrée.
+                      <br />
+                      Cliquez sur "Nouvelle subvention" pour commencer.
+                    </p>
+                  </td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      }
       <app-set-pagination
         [currentPage]="paginationSub?.currentPage"
         [totalPages]="paginationSub?.nber_pages"
@@ -185,9 +205,8 @@
   </div>
 </div>
 
-
 <!-- ═══════════════════════════════════════════
-     MODAL : Subvention
+    MODAL : Subvention
 ════════════════════════════════════════════ -->
 @if (showSubsidyModal) {
   <div class="modal-backdrop" (click)="closeSubsidyModal()">
@@ -258,12 +277,12 @@
                 Montant
                 <span class="req">*</span>
               </label>
-              <input type="number" [(ngModel)]="subsidyForm.amount" placeholder="Ex : 5000000" min="0" />
+              <input [disabled]="subsidyEditMode" type="number" [(ngModel)]="subsidyForm.amount" placeholder="Ex : 5000000" min="0" />
               <span class="text-danger">{{ errors?.amount }}</span>
             </div>
             <div class="field">
               <label>Statut</label>
-              <select [(ngModel)]="subsidyForm.status">
+              <select [disabled]="subsidyEditMode" [(ngModel)]="subsidyForm.status">
                 <option value="received">Reçu</option>
                 <option value="pending">En attente</option>
                 <option value="partial">Partiel</option>
@@ -276,7 +295,13 @@
                   Montant partiel
                   <span class="req">*</span>
                 </label>
-                <input type="number" [(ngModel)]="subsidyForm.advanced_amnt" placeholder="Ex : 5000000" min="0" />
+                <input
+                  [disabled]="subsidyEditMode"
+                  type="number"
+                  [(ngModel)]="subsidyForm.advanced_amnt"
+                  placeholder="Ex : 5000000"
+                  min="0"
+                />
                 <span class="text-danger">{{ errors?.advancedAmnt }}</span>
               </div>
             }
@@ -285,13 +310,9 @@
                 Date de réception
                 <span class="req">*</span>
               </label>
-              <input type="date" [(ngModel)]="subsidyForm.received_date" />
+              <input type="date" [(ngModel)]="subsidyForm.received_date" [max]="today" />
               <span class="text-danger">{{ errors?.receivedDate }}</span>
             </div>
-            <!-- <div class="field">
-              <label>Date d'expiration</label>
-              <input type="date" [(ngModel)]="subsidyForm.expiryDate" />
-            </div> -->
           </div>
         </div>
 
@@ -318,13 +339,6 @@
                 placeholder="Sélectionner une ou plusieurs filières…"
                 [(ngModel)]="subsidyForm.filiere"
               ></app-multiselect>
-
-              <!-- <select [(ngModel)]="subsidyForm.filiere" multiple>
-                <option value="">Choisir la filière</option>
-                @for (fil of allFilieres; track fil?.id) {
-                  <option [value]="fil?.name">{{ fil?.name }}</option>
-                }
-              </select> -->
               <span class="text-danger">{{ errors?.filiere }}</span>
             </div>
             <div class="field full">
@@ -354,6 +368,207 @@
             (clicked)="saveEditSubsidy()"
           ></app-submit-spinner>
         }
+      </div>
+    </div>
+  </div>
+}
+
+@if (showEntryModal) {
+  <div class="modal-backdrop" (click)="closeEntryModal()">
+    <div class="modal-box modal-entry" (click)="$event.stopPropagation()">
+      <div class="modal-head">
+        <div>
+          <span class="modal-tag">Subvention partielle</span>
+          <h2>Nouvelle entrée de fonds</h2>
+          <p class="modal-subtitle">{{ selectedSubsidy?.grantor?.name }} — {{ selectedSubsidy?.object }}</p>
+        </div>
+        <button class="modal-close" (click)="closeEntryModal()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M18 6L6 18M6 6l12 12" />
+          </svg>
+        </button>
+      </div>
+
+      <div class="modal-body">
+        <!-- Résumé montant -->
+        <div class="entry-summary">
+          <div class="esum-item">
+            <span class="esum-lbl">Montant total accordé</span>
+            <span class="esum-val">{{ selectedSubsidy?.amount || 0 | number }} {{ devise }}</span>
+          </div>
+          <div class="esum-item">
+            <span class="esum-lbl">Déjà reçu</span>
+            <span class="esum-val green">{{ selectedSubsidy?.advanced_amnt || 0 | number }} {{ devise }}</span>
+          </div>
+          <div class="esum-item">
+            <span class="esum-lbl">Restant attendu</span>
+            <span class="esum-val amber">{{ selectedSubsidy?.amount - selectedSubsidy?.advanced_amnt || 0 | number }} {{ devise }}</span>
+          </div>
+        </div>
+
+        <!-- Formulaire nouvelle entrée -->
+        <div class="form-section">
+          <div class="section-title">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <line x1="12" y1="1" x2="12" y2="23" />
+              <path d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6" />
+            </svg>
+            Enregistrer un versement
+          </div>
+          <div class="form-grid">
+            <div class="field">
+              <label>
+                Montant reçu
+                <span class="req">*</span>
+              </label>
+              <input type="number" [(ngModel)]="entryForm.amount" placeholder="Ex : 1000000" min="0" />
+              <span class="text-danger">{{ errors?.amount }}</span>
+            </div>
+            <div class="field">
+              <label>
+                Date de réception
+                <span class="req">*</span>
+              </label>
+              <input type="date" [(ngModel)]="entryForm.received_date" />
+              <span class="text-danger">{{ errors?.receivedDate }}</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Historique -->
+        <div class="form-section">
+          <div class="section-title">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="12" cy="12" r="10" />
+              <polyline points="12 6 12 12 16 14" />
+            </svg>
+            Historique des versements
+          </div>
+
+          <div class="entry-history">
+            @for (entry of partialSubsidies; track entry?.id; let i = $index) {
+              <div class="entry-row">
+                <div class="entry-index">{{ i + 1 }}</div>
+                <div class="entry-info">
+                  <span class="entry-amount">{{ entry?.advanced_amnt | number }} {{ devise }}</span>
+                  <span class="entry-date">{{ entry?.received_date | date: 'dd/MM/yyyy' }}</span>
+                </div>
+                <button
+                  class="btn-action btn-delete entry-delete"
+                  type="button"
+                  (click)="deleteEntry(entry); $event.stopPropagation()"
+                  title="Supprimer ce versement"
+                >
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <polyline points="3 6 5 6 21 6" />
+                    <path d="M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6" />
+                    <path d="M10 11v6M14 11v6" />
+                    <path d="M9 6V4a1 1 0 011-1h4a1 1 0 011 1v2" />
+                  </svg>
+                </button>
+              </div>
+            } @empty {
+              <div class="entry-empty">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                  <circle cx="12" cy="12" r="10" />
+                  <polyline points="12 6 12 12 16 14" />
+                </svg>
+                <p>Aucun versement enregistré pour l'instant.</p>
+              </div>
+            }
+          </div>
+        </div>
+      </div>
+
+      <div class="modal-footer">
+        <button class="btn-cancel" (click)="closeEntryModal()">Fermer</button>
+        @if (selectedSubsidy?.status !== 'received') {
+          <app-submit-spinner
+            [loading]="isSavingEntry"
+            label="Enregistrer le versement"
+            icon=""
+            cssClass="btn btn-primary btn-sm"
+            (clicked)="saveEntry()"
+          ></app-submit-spinner>
+        }
+      </div>
+    </div>
+  </div>
+}
+
+<!-- MODAL : Confirmation suppression avec saisie du mot "supprimer" -->
+@if (showDeleteConfirmModal) {
+  <div class="modal-backdrop" (click)="closeDeleteModal()">
+    <div class="modal-box modal-xs" (click)="$event.stopPropagation()">
+      <div class="modal-head danger">
+        <div>
+          <span class="modal-tag danger">Suppression définitive</span>
+          <h2>Confirmer la suppression</h2>
+        </div>
+        <button class="modal-close" (click)="closeDeleteModal()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M18 6L6 18M6 6l12 12" />
+          </svg>
+        </button>
+      </div>
+
+      <div class="modal-body">
+        <!-- Info subvention -->
+        <div class="delete-target-info">
+          <div class="delete-target-row">
+            <span class="dtl">Subventionneur</span>
+            <span class="dtv">{{ itemToDelete?.grantor?.name }}</span>
+          </div>
+          <div class="delete-target-row">
+            <span class="dtl">Objet</span>
+            <span class="dtv">{{ itemToDelete?.object }}</span>
+          </div>
+          <div class="delete-target-row">
+            <span class="dtl">Montant</span>
+            <span class="dtv">{{ itemToDelete?.amount | number }} {{ devise }}</span>
+          </div>
+        </div>
+
+        <p class="delete-warning">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z" />
+            <line x1="12" y1="9" x2="12" y2="13" />
+            <line x1="12" y1="17" x2="12.01" y2="17" />
+          </svg>
+          Cette action est
+          <strong>irréversible</strong>
+          . Toutes les entrées de versements associées seront également supprimées.
+        </p>
+
+        <!-- Saisie du mot "supprimer" -->
+        <div class="delete-confirm-field">
+          <label>
+            Pour confirmer, saisissez le mot
+            <span class="delete-keyword">supprimer</span>
+            ci-dessous
+          </label>
+          <input
+            type="text"
+            [(ngModel)]="deleteConfirmWord"
+            placeholder="supprimer"
+            [class.input-valid]="deleteConfirmWord === 'supprimer'"
+            (paste)="$event.preventDefault()"
+            autocomplete="off"
+          />
+        </div>
+      </div>
+
+      <div class="modal-footer">
+        <button class="btn-cancel" (click)="closeDeleteModal()">Annuler</button>
+        <button class="btn-danger" (click)="deleteSubsidy()" [disabled]="deleteConfirmWord !== 'supprimer'">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polyline points="3 6 5 6 21 6" />
+            <path d="M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6" />
+            <path d="M10 11v6M14 11v6" />
+            <path d="M9 6V4a1 1 0 011-1h4a1 1 0 011 1v2" />
+          </svg>
+          Supprimer définitivement
+        </button>
       </div>
     </div>
   </div>
