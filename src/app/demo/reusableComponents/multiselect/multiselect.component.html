@@ -26,6 +26,7 @@
       </span>
     }
 
+    <!-- Chevron -->
     <svg
       class="ms-chevron"
       viewBox="0 0 24 24"
@@ -43,24 +44,26 @@
   @if (isOpen) {
     <div class="ms-dropdown" role="listbox" aria-multiselectable="true">
       <ul class="ms-list">
-        @for (opt of options; track opt[valueKey]) {
+        @for (opt of options; track resolveValue(opt)) {
           <li
             class="ms-item"
             role="option"
-            [attr.aria-selected]="isSelected(opt[valueKey])"
-            [class.ms-item-checked]="isSelected(opt[valueKey])"
-            (click)="toggleOption(opt[valueKey])"
+            [attr.aria-selected]="isSelected(resolveValue(opt))"
+            [class.ms-item-checked]="isSelected(resolveValue(opt))"
+            (click)="toggleOption(resolveValue(opt))"
           >
-            <div class="ms-checkbox" [class.checked]="isSelected(opt[valueKey])" aria-hidden="true">
-              @if (isSelected(opt[valueKey])) {
+            <!-- Checkbox -->
+            <div class="ms-checkbox" [class.checked]="isSelected(resolveValue(opt))" aria-hidden="true">
+              @if (isSelected(resolveValue(opt))) {
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
                   <path d="M20 6L9 17l-5-5" />
                 </svg>
               }
             </div>
 
+            <!-- Label -->
             <span class="ms-item-label">
-              {{ opt[labelKey] }}
+              {{ resolveLabel(opt) }}
             </span>
           </li>
         } @empty {
@@ -68,6 +71,7 @@
         }
       </ul>
 
+      <!-- Footer -->
       <div class="ms-footer">
         <button type="button" class="ms-action" (click)="selectAll()">Tout sélectionner</button>
 

@@ -66,13 +66,45 @@ export function swalWithRedirect(icon: any, title: string, message: string, path
 }
 
 
-export function setPagination(callService: (...args: any[]) => Observable<any>,
-  page: number = 1, searchTerm: any, setState: (...args: any[]) => void, startDate?: any, endDate?: any, statutLand?: any,
-  onError?: (error: any) => void): Subscription {
+// export function setPagination(callService: (...args: any[]) => Observable<any>,
+//   page: number = 1, searchTerm: any, setState: (...args: any[]) => void, startDate?: any, endDate?: any, statutLand?: any,
+//   onError?: (error: any) => void): Subscription {
+
+//   return callService(page, searchTerm, statutLand, startDate, endDate).subscribe({
+//     next: (data: any) => {
+//       setState({
+//         listItems: data?.listItems,
+//         nberItems: data?.nberItems,
+//         nextPage: data?.nextPage,
+//         previousPage: data?.previousPage,
+//         currentPage: data?.currentPage,
+//         page_size: data?.page_size,
+//         nber_pages: data?.nber_pages,
+//         otherParams: data?.other_params,
+//       });
+
+//     },
+
+//     error: (err: any) => {
+//       onError?.(err);
+//     }
+//   });
+// }
+
+export function setPagination(
+  callService: (...args: any[]) => Observable<any>,
+  page: number = 1,
+  searchTerm?: any,
+  setState?: (...args: any[]) => void,
+  startDate?: any,
+  endDate?: any,
+  statutLand?: any,
+  onError?: (error: any) => void
+): Subscription {
 
   return callService(page, searchTerm, statutLand, startDate, endDate).subscribe({
     next: (data: any) => {
-      setState({
+      setState?.({
         listItems: data?.listItems,
         nberItems: data?.nberItems,
         nextPage: data?.nextPage,
@@ -82,7 +114,6 @@ export function setPagination(callService: (...args: any[]) => Observable<any>,
         nber_pages: data?.nber_pages,
         otherParams: data?.other_params,
       });
-
     },
 
     error: (err: any) => {

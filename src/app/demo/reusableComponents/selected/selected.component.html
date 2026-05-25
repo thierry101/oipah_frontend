@@ -1,4 +1,4 @@
-<div class="autocomplete-container">
+<div class="autocomplete-container position-relative">
   <div class="input-group">
     <input
       [disabled]="disabled"
@@ -8,15 +8,20 @@
       [(ngModel)]="searchTerm"
       (input)="onInputChange(searchTerm)"
       (click)="onInputClick()"
+      autocomplete="off"
     />
   </div>
+
   @if (error) {
-    <small class="text-danger">{{ error }}</small>
+    <small class="text-danger">
+      {{ error }}
+    </small>
   }
+
   @if (results?.length && showResults) {
-    <div class="autocomplete-results list-group">
-      @for (item of results; track item?.id) {
-        <button type="button" class="list-group-item list-group-item-action" (click)="onSelect(item)">
+    <div class="autocomplete-results list-group position-absolute w-100 shadow" style="z-index: 9999; max-height: 250px; overflow-y: auto">
+      @for (item of results; track trackById($index, item)) {
+        <button type="button" class="list-group-item list-group-item-action" (mousedown)="onSelect(item)">
           {{ displayFn ? displayFn(item) : item[displayField] }}
         </button>
       }

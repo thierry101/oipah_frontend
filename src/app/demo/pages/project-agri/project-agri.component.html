@@ -45,7 +45,7 @@
         </svg>
       </div>
       <div>
-        <span class="stat-num amber">{{ countByStatus('en_cours') }}</span>
+        <span class="stat-num amber">4</span>
         <span class="stat-lbl">En cours</span>
       </div>
     </div>
@@ -57,7 +57,7 @@
         </svg>
       </div>
       <div>
-        <span class="stat-num green">{{ countByStatus('termine') }}</span>
+        <span class="stat-num green">3</span>
         <span class="stat-lbl">Terminés</span>
       </div>
     </div>
@@ -69,7 +69,7 @@
         </svg>
       </div>
       <div>
-        <span class="stat-num blue">{{ countByStatus('soumis') }}</span>
+        <span class="stat-num blue">4</span>
         <span class="stat-lbl">Soumis</span>
       </div>
     </div>
@@ -81,7 +81,7 @@
         </svg>
       </div>
       <div>
-        <span class="stat-num red">{{ countByStatus('rejete') }}</span>
+        <span class="stat-num red">2</span>
         <span class="stat-lbl">Rejetés</span>
       </div>
     </div>
@@ -94,7 +94,7 @@
         <circle cx="11" cy="11" r="8" />
         <path d="M21 21l-4.35-4.35" />
       </svg>
-      <input type="text" placeholder="Rechercher par titre, porteur, filière…" [(ngModel)]="searchTerm" />
+      <input type="text" placeholder="Rechercher par titre, filière…" [(ngModel)]="searchTerm" />
     </div>
     <select class="filter-select" [(ngModel)]="filterStatus">
       <option value="">Tous les statuts</option>
@@ -107,9 +107,9 @@
     </select>
     <select class="filter-select" [(ngModel)]="filterFiliere">
       <option value="">Toutes les filières</option>
-      <option value="Manioc">Manioc</option>
-      <option value="Maraîchère">Maraîchère</option>
-      <option value="Aquacole">Aquacole</option>
+      @for (f of allFilieres; track f.id) {
+        <option [value]="f.name">{{ f.name }}</option>
+      }
     </select>
     <select class="filter-select" [(ngModel)]="filterType">
       <option value="">Tous les types</option>
@@ -123,50 +123,71 @@
     <table class="project-table">
       <thead>
         <tr>
-          <th>#</th>
           <th>Projet</th>
           <th>Porteur</th>
-          <th>Filière</th>
+          <th>Filière(s)</th>
           <th>Type</th>
           <th>Budget (FCFA)</th>
           <th>Superficie (ha)</th>
           <th>Département</th>
+          <!-- <th>Subvention</th> -->
           <th>Statut</th>
           <th>Actions</th>
         </tr>
       </thead>
       <tbody>
-        @for (item of filteredProjects(); track item.id; let i = $index) {
+        @for (item of projects; track item?.id; let i = $index) {
           <tr>
-            <td class="td-num">{{ i + 1 }}</td>
             <td class="td-project">
-              <div class="project-title">{{ item.titre }}</div>
-              <div class="project-ref">{{ item.reference }}</div>
+              <div class="project-title">{{ item?.name }}</div>
+              <div class="project-ref">{{ item?.submission_date | date: 'dd/MM/yyyy' }}</div>
             </td>
+
             <td class="td-owner">
-              <div class="avatar">{{ item.porteur[0] }}</div>
+              <div class="avatar">{{ item?.modeExecution?.[0] }}</div>
               <div>
-                <div class="owner-name">{{ item.porteur }}</div>
-                <div class="owner-sub">{{ item.porteurContact }}</div>
+                <div class="owner-name">{{ item?.modeExecution }}</div>
+                <div class="owner-sub">{{ item?.type_project }}</div>
               </div>
             </td>
+
             <td>
-              <span class="filiere-badge f-{{ item.filiere | lowercase | slice: 0 : 6 }}">
-                {{ item.filiere }}
-              </span>
+              @for (f of item?.filiere; track f.id) {
+                <span class="filiere-badge f-{{ f.name | lowercase | slice: 0 : 6 }}">
+                  {{ f.name }}
+                </span>
+              }
             </td>
+
             <td>
-              <span class="type-badge">{{ item.typeProjet }}</span>
+              <span class="type-badge">{{ item?.type_project }}</span>
             </td>
-            <td class="td-budget">{{ item.budget | number }}</td>
-            <td class="td-superficie">{{ item.superficie | number: '1.0-2' }}</td>
-            <td>{{ item.departement }}</td>
+
+            <td class="td-budget">{{ item?.budget | number }}</td>
+
+            <td class="td-superficie">
+              {{ item?.plot_land?.area | number: '1.0-2' }}
+            </td>
+
+            <td>{{ item?.plot_land?.department }}</td>
+
+            <!-- <td class="td-subsidy">
+              @if (item?.subsidies?.length) {
+                <span class="subsidy-badge">
+                  {{ getTotalSubsidies(item) | number }}
+                </span>
+              } @else {
+                <span class="no-subsidy">—</span>
+              }
+            </td> -->
+
             <td>
-              <span class="status-badge status-{{ item.status }}">
+              <span class="status-badge status-{{ item?.current_statut }}">
                 <span class="status-dot"></span>
-                {{ getStatusName(item.status) }}
+                {{ getStatusName(item?.current_statut) }}
               </span>
             </td>
+
             <td class="td-actions">
               <button class="btn-action btn-view" (click)="openDetailModal(item)" title="Voir détails">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -200,7 +221,7 @@
           </tr>
         } @empty {
           <tr>
-            <td colspan="10" class="td-empty">
+            <td colspan="11" class="td-empty">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
                 <path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2" />
                 <rect x="9" y="3" width="6" height="4" rx="1" />
@@ -222,12 +243,12 @@
     [totalPages]="pagination?.nber_pages"
     [previousPage]="pagination?.previousPage"
     [nextPage]="pagination?.nextPage"
-    (pageChange)="onPageChange($event)"
+    (pageChange)="fetchProjects($event)"
   ></app-set-pagination>
 </div>
 
 <!-- ═══════════════════════════════════════════
-     MODAL : Création / Modification projet
+    MODAL : Création / Modification projet
 ════════════════════════════════════════════ -->
 @if (showModal) {
   <div class="modal-backdrop" (click)="closeModal()">
@@ -256,34 +277,17 @@
             Identification du projet
           </div>
           <div class="form-grid">
-            <div class="field full">
+            <div class="field">
               <label>
                 Titre du projet
                 <span class="req">*</span>
               </label>
-              <input type="text" [(ngModel)]="form.titre" placeholder="Ex : Développement de la culture manioc à Bouaké" />
-              <span class="text-danger">{{ errors?.titre }}</span>
-            </div>
-            <div class="field">
-              <label>Référence</label>
-              <input type="text" [(ngModel)]="form.reference" placeholder="Ex : PROJ-2025-001" />
-            </div>
-            <div class="field">
-              <label>
-                Filière
-                <span class="req">*</span>
-              </label>
-              <select [(ngModel)]="form.filiere">
-                <option value="">Sélectionner</option>
-                <option value="Manioc">Manioc</option>
-                <option value="Maraîchère">Maraîchère</option>
-                <option value="Aquacole">Aquacole</option>
-              </select>
-              <span class="text-danger">{{ errors?.filiere }}</span>
+              <input type="text" [(ngModel)]="form.name" placeholder="Ex : Développement de la culture manioc à Bouaké" />
+              <span class="text-danger">{{ errors?.name }}</span>
             </div>
             <div class="field">
               <label>Type de projet</label>
-              <select [(ngModel)]="form.typeProjet">
+              <select [(ngModel)]="form.type_project">
                 <option value="Communautaire">Communautaire</option>
                 <option value="Individuel">Individuel</option>
               </select>
@@ -296,10 +300,28 @@
               </select>
             </div>
             <div class="field">
+              <label>
+                Filière
+                <span class="req">*</span>
+              </label>
+              <app-multiselect
+                [options]="allFilieres"
+                valueKey="id"
+                labelKey="name"
+                placeholder="Sélectionner une ou plusieurs filières…"
+                [(ngModel)]="form.filiere"
+              ></app-multiselect>
+              <span class="text-danger">{{ errors?.filiere }}</span>
+            </div>
+            <div class="field">
               <label>Statut initial</label>
-              <select [(ngModel)]="form.status">
+              <select [(ngModel)]="form.current_statut">
                 <option value="brouillon">Brouillon</option>
                 <option value="soumis">Soumis</option>
+                <option value="approuve">Approuvé</option>
+                <option value="en_cours">En cours</option>
+                <option value="termine">Terminé</option>
+                <option value="rejete">Rejeté</option>
               </select>
             </div>
           </div>
@@ -317,23 +339,24 @@
           <div class="form-grid">
             <div class="field">
               <label>
-                Nom & Prénoms
+                Nom &amp; Prénoms
                 <span class="req">*</span>
               </label>
-              <input type="text" [(ngModel)]="form.porteur" placeholder="Nom complet" />
-              <span class="text-danger">{{ errors?.porteur }}</span>
+              <app-selected
+                [placeholder]="'Choisir l\'entrepreneur agricole...'"
+                [(searchTerm)]="searchTermOwner"
+                [results]="listUsers"
+                [displayField]="'name'"
+                [error]="errors?.owner"
+                [showResults]="!!listUsers?.length"
+                (search)="searchUser($event)"
+                (select)="selectUser($event)"
+              ></app-selected>
+              <span class="text-danger">{{ errors?.owner_land }}</span>
             </div>
             <div class="field">
               <label>Contact</label>
-              <input type="tel" [(ngModel)]="form.porteurContact" placeholder="07 00 00 00 00" />
-            </div>
-            <div class="field">
-              <label>Organisation / OPA</label>
-              <input type="text" [(ngModel)]="form.organisation" placeholder="Ex : COOP Agri Nord" />
-            </div>
-            <div class="field">
-              <label>Email</label>
-              <input type="email" [(ngModel)]="form.porteurEmail" placeholder="porteur@email.ci" />
+              <input readonly type="tel" [value]="form.plot_land?.owner_land ?? ''" placeholder="07 00 00 00 00" />
             </div>
           </div>
         </div>
@@ -353,36 +376,31 @@
                 Département
                 <span class="req">*</span>
               </label>
-              <select [(ngModel)]="form.departement" (ngModelChange)="onDepartementChange($event)">
-                <option value="">Sélectionner</option>
-                @for (dept of departements; track dept.value) {
-                  <option [value]="dept.value">{{ dept.name }}</option>
-                }
-              </select>
-              <span class="text-danger">{{ errors?.departement }}</span>
+              <input readonly type="text" [value]="form.plot_land?.department ?? ''" />
+              <span class="text-danger">{{ errors?.department }}</span>
             </div>
             <div class="field">
               <label>Sous-préfecture</label>
-              <select [(ngModel)]="form.sousPrefecture" [disabled]="!sousPrefectures.length">
-                <option value="">
-                  {{ form.departement ? 'Sélectionner' : "Choisir d'abord un département" }}
-                </option>
-                @for (sp of sousPrefectures; track sp) {
-                  <option [value]="sp">{{ sp }}</option>
-                }
-              </select>
+              <input readonly type="text" [value]="form.plot_land?.sub_prefecture ?? ''" />
             </div>
             <div class="field">
               <label>
                 Village / Lieu d'exécution
                 <span class="req">*</span>
               </label>
-              <input type="text" [(ngModel)]="form.lieuExecution" placeholder="Ex : Niakara" />
-              <span class="text-danger">{{ errors?.lieuExecution }}</span>
+              <input readonly type="text" [value]="form.plot_land?.quater ?? ''" placeholder="Ex : Niakara" />
             </div>
             <div class="field">
               <label>GPS</label>
-              <app-gps-position [(value)]="form.gps" #gpsRef></app-gps-position>
+              <input readonly type="text" [value]="form.plot_land?.gps ?? ''" placeholder="Ex : 7.7333, -5.0667" />
+            </div>
+            <div class="field">
+              <label>
+                Superficie (ha)
+                <span class="req">*</span>
+              </label>
+              <input readonly type="number" [value]="form.plot_land?.area ?? 0" placeholder="Ex : 2.5" min="0" step="0.01" />
+              <span class="text-danger">{{ errors?.area }}</span>
             </div>
           </div>
         </div>
@@ -394,7 +412,7 @@
               <line x1="12" y1="1" x2="12" y2="23" />
               <path d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6" />
             </svg>
-            Budget &amp; Superficie
+            Budget &amp; Financement
           </div>
           <div class="form-grid">
             <div class="field">
@@ -406,20 +424,24 @@
               <span class="text-danger">{{ errors?.budget }}</span>
             </div>
             <div class="field">
-              <label>
-                Superficie (ha)
-                <span class="req">*</span>
-              </label>
-              <input type="number" [(ngModel)]="form.superficie" placeholder="Ex : 2.5" min="0" step="0.01" />
-              <span class="text-danger">{{ errors?.superficie }}</span>
-            </div>
-            <div class="field">
               <label>Coût / ha (FCFA)</label>
               <input type="text" [value]="coutParHa | number" readonly class="readonly" placeholder="Calculé automatiquement" />
             </div>
             <div class="field">
-              <label>Nombre d'étangs piscicoles</label>
-              <input type="number" [(ngModel)]="form.nbEtangs" placeholder="0" min="0" />
+              <label>Subventionneur</label>
+              <app-multiselect
+                (click)="subsidySelected()"
+                [options]="subsidies"
+                valueKey="id"
+                labelKey="object"
+                placeholder="Sélectionner un ou plusieurs subventionneurs…"
+                [(ngModel)]="form.subsidies"
+              ></app-multiselect>
+              <span class="text-danger">{{ errors?.subsidies }}</span>
+            </div>
+            <div class="field">
+              <label>Montant total subvention (FCFA)</label>
+              <input readonly type="number" [value]="form.subventionAmt" placeholder="Calculé automatiquement" min="0" />
             </div>
           </div>
         </div>
@@ -438,19 +460,22 @@
           <div class="form-grid">
             <div class="field">
               <label>Date de soumission</label>
-              <input type="date" [(ngModel)]="form.dateSoumission" />
+              <input type="date" [(ngModel)]="form.submission_date" />
+              <span class="text-danger">{{ errors?.submission_date }}</span>
             </div>
             <div class="field">
               <label>Date de démarrage prévue</label>
-              <input type="date" [(ngModel)]="form.dateDemarrage" />
+              <input type="date" [(ngModel)]="form.start_date" />
+              <span class="text-danger">{{ errors?.start_date }}</span>
             </div>
             <div class="field">
               <label>Date de fin prévue</label>
-              <input type="date" [(ngModel)]="form.dateFin" />
+              <input type="date" [(ngModel)]="form.end_date" (change)="calculateTiming()" />
+              <span class="text-danger">{{ errors?.end_date }}</span>
             </div>
             <div class="field">
-              <label>Durée (mois)</label>
-              <input type="number" [(ngModel)]="form.duree" placeholder="Ex : 12" min="1" />
+              <label>Durée (jours)</label>
+              <input readonly type="number" [(ngModel)]="form.nber_days" placeholder="Calculé automatiquement" min="0" />
             </div>
           </div>
         </div>
@@ -474,7 +499,7 @@
             </div>
             <div class="field full">
               <label>Objectifs attendus</label>
-              <textarea [(ngModel)]="form.objectifs" placeholder="Résultats attendus et indicateurs de succès…" rows="3"></textarea>
+              <textarea [(ngModel)]="form.purpose" placeholder="Résultats attendus et indicateurs de succès…" rows="3"></textarea>
             </div>
           </div>
         </div>
@@ -482,22 +507,30 @@
 
       <div class="modal-footer">
         <button class="btn-cancel" (click)="closeModal()">Annuler</button>
-        <button class="btn-ghost" (click)="saveProject('brouillon')" type="button">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <path d="M17 3a2.828 2.828 0 114 4L7.5 20.5 2 22l1.5-5.5L17 3z" />
-          </svg>
-          Enregistrer en brouillon
-        </button>
-        <button class="btn-save" (click)="saveProject('soumis')">
-          {{ editMode ? 'Enregistrer les modifications' : 'Soumettre le projet' }}
-        </button>
+        @if (!editMode) {
+          <app-submit-spinner
+            [loading]="isSaving"
+            label="Enregistrer le projet"
+            icon=""
+            cssClass="btn btn-primary btn-sm"
+            (clicked)="saveProject()"
+          ></app-submit-spinner>
+        } @else {
+          <app-submit-spinner
+            [loading]="isSaving"
+            label="Mettre à jour le projet"
+            icon=""
+            cssClass="btn btn-primary btn-sm"
+            (clicked)="saveEditProject()"
+          ></app-submit-spinner>
+        }
       </div>
     </div>
   </div>
 }
 
 <!-- ═══════════════════════════════════════════
-     MODAL : Changement de statut
+    MODAL : Changement de statut
 ════════════════════════════════════════════ -->
 @if (showStatusModal && selectedItem) {
   <div class="modal-backdrop" (click)="closeStatusModal()">
@@ -514,31 +547,30 @@
         </button>
       </div>
       <div class="modal-body">
-        <!-- Projet concerné -->
         <div class="status-project-name">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
             <path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2" />
             <rect x="9" y="3" width="6" height="4" rx="1" />
           </svg>
-          {{ selectedItem.titre }}
+          {{ selectedItem?.name }}
         </div>
 
-        <!-- Statut actuel → nouveau -->
         <div class="status-flow">
-          <span class="status-badge status-{{ selectedItem.status }}">
+          <span class="status-badge status-{{ selectedItem?.current_statut }}">
             <span class="status-dot"></span>
-            {{ getStatusName(selectedItem.status) }}
+            {{ getStatusName(selectedItem?.current_statut) }}
           </span>
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="status-arrow">
             <path d="M5 12h14M12 5l7 7-7 7" />
           </svg>
-          <span class="status-badge status-{{ newStatus }}" *ngIf="newStatus">
-            <span class="status-dot"></span>
-            {{ getStatusName(newStatus) }}
-          </span>
+          @if (newStatus) {
+            <span class="status-badge status-{{ newStatus }}">
+              <span class="status-dot"></span>
+              {{ getStatusName(newStatus) }}
+            </span>
+          }
         </div>
 
-        <!-- Sélection du nouveau statut -->
         <div class="field" style="margin-top: 16px">
           <label>
             Nouveau statut
@@ -546,7 +578,7 @@
           </label>
           <select [(ngModel)]="newStatus">
             <option value="">Sélectionner</option>
-            @for (s of availableStatuses(selectedItem.status); track s.value) {
+            @for (s of availableStatuses(selectedItem?.current_statut); track s.value) {
               <option [value]="s.value">{{ s.label }}</option>
             }
           </select>
@@ -574,7 +606,7 @@
       <div class="modal-head">
         <div>
           <span class="modal-tag">Détails</span>
-          <h2>{{ selectedItem.titre }}</h2>
+          <h2>{{ selectedItem?.name }}</h2>
         </div>
         <button class="modal-close" (click)="closeDetailModal()">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -583,95 +615,103 @@
         </button>
       </div>
       <div class="modal-body">
-        <!-- Statut + historique -->
         <div class="detail-status-row">
-          <span class="status-badge status-{{ selectedItem.status }}">
+          <span class="status-badge status-{{ selectedItem?.current_statut }}">
             <span class="status-dot"></span>
-            {{ getStatusName(selectedItem.status) }}
+            {{ getStatusName(selectedItem?.current_statut) }}
           </span>
-          <span class="detail-ref">{{ selectedItem.reference }}</span>
+          <span class="detail-ref">{{ selectedItem?.submission_date | date: 'dd/MM/yyyy' }}</span>
         </div>
 
-        <!-- Timeline des statuts -->
-        @if (selectedItem.statusHistory?.length) {
-          <div class="status-timeline">
-            @for (h of selectedItem.statusHistory; track h.date) {
-              <div class="timeline-item">
-                <div class="tl-dot status-{{ h.status }}"></div>
-                <div class="tl-content">
-                  <span class="tl-status">{{ getStatusName(h.status) }}</span>
-                  <span class="tl-date">{{ h.date | date: 'dd/MM/yyyy' }}</span>
-                  @if (h.comment) {
-                    <span class="tl-comment">{{ h.comment }}</span>
-                  }
-                </div>
+        <div class="detail-grid">
+          <div class="detail-row">
+            <span class="dl">Mode d'exécution</span>
+            <span class="dv">{{ selectedItem?.modeExecution || '—' }}</span>
+          </div>
+          <div class="detail-row">
+            <span class="dl">Filière(s)</span>
+            <span class="dv">
+              @for (f of selectedItem?.filiere; track f.id) {
+                <span class="filiere-badge f-{{ f.name | lowercase | slice: 0 : 6 }}">{{ f.name }}</span>
+              }
+            </span>
+          </div>
+          <div class="detail-row">
+            <span class="dl">Type</span>
+            <span class="dv">{{ selectedItem?.type_project }}</span>
+          </div>
+          <div class="detail-row">
+            <span class="dl">Département</span>
+            <span class="dv">{{ getDepartementName(selectedItem?.plot_land?.department) }}</span>
+          </div>
+          <div class="detail-row">
+            <span class="dl">Sous-préfecture</span>
+            <span class="dv">{{ selectedItem?.plot_land?.sub_prefecture || '—' }}</span>
+          </div>
+          <div class="detail-row">
+            <span class="dl">Lieu</span>
+            <span class="dv">{{ selectedItem?.plot_land?.quater || '—' }}</span>
+          </div>
+          <div class="detail-row">
+            <span class="dl">GPS</span>
+            <span class="dv">{{ selectedItem?.plot_land?.gps || '—' }}</span>
+          </div>
+          <div class="detail-row">
+            <span class="dl">Budget</span>
+            <span class="dv dv-green">{{ selectedItem?.budget | number }} FCFA</span>
+          </div>
+          <div class="detail-row">
+            <span class="dl">Coût / ha</span>
+            <span class="dv">{{ selectedItem?.cost_per_ha | number }} FCFA</span>
+          </div>
+          <div class="detail-row">
+            <span class="dl">Superficie</span>
+            <span class="dv">{{ selectedItem?.plot_land?.area | number: '1.0-2' }} ha</span>
+          </div>
+          <div class="detail-row">
+            <span class="dl">Démarrage</span>
+            <span class="dv">{{ (selectedItem?.start_date | date: 'dd/MM/yyyy') || '—' }}</span>
+          </div>
+          <div class="detail-row">
+            <span class="dl">Fin prévue</span>
+            <span class="dv">{{ (selectedItem?.end_date | date: 'dd/MM/yyyy') || '—' }}</span>
+          </div>
+          <div class="detail-row">
+            <span class="dl">Durée</span>
+            <span class="dv">{{ selectedItem?.nber_days ? selectedItem?.nber_days + ' jours' : '—' }}</span>
+          </div>
+          @if (selectedItem?.description) {
+            <div class="detail-row full">
+              <span class="dl">Description</span>
+              <span class="dv">{{ selectedItem?.description }}</span>
+            </div>
+          }
+          @if (selectedItem?.purpose) {
+            <div class="detail-row full">
+              <span class="dl">Objectifs</span>
+              <span class="dv">{{ selectedItem?.purpose }}</span>
+            </div>
+          }
+        </div>
+
+        <!-- Subventions détail -->
+        @if (selectedItem?.subsidies?.length) {
+          <div class="form-section" style="margin-top: 16px">
+            <div class="section-title">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <line x1="12" y1="1" x2="12" y2="23" />
+                <path d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6" />
+              </svg>
+              Subventions
+            </div>
+            @for (s of selectedItem?.subsidies; track s.id) {
+              <div class="detail-row">
+                <span class="dl">{{ s.grantor?.name }}</span>
+                <span class="dv dv-green">{{ s.amount | number }} FCFA</span>
               </div>
             }
           </div>
         }
-
-        <div class="detail-grid">
-          <div class="detail-row">
-            <span class="dl">Porteur</span>
-            <span class="dv">{{ selectedItem.porteur }}</span>
-          </div>
-          <div class="detail-row">
-            <span class="dl">Contact</span>
-            <span class="dv">{{ selectedItem.porteurContact || '—' }}</span>
-          </div>
-          <div class="detail-row">
-            <span class="dl">Organisation</span>
-            <span class="dv">{{ selectedItem.organisation || '—' }}</span>
-          </div>
-          <div class="detail-row">
-            <span class="dl">Filière</span>
-            <span class="dv">{{ selectedItem.filiere }}</span>
-          </div>
-          <div class="detail-row">
-            <span class="dl">Type</span>
-            <span class="dv">{{ selectedItem.typeProjet }}</span>
-          </div>
-          <div class="detail-row">
-            <span class="dl">Département</span>
-            <span class="dv">{{ getDepartementName(selectedItem.departement) }}</span>
-          </div>
-          <div class="detail-row">
-            <span class="dl">Lieu</span>
-            <span class="dv">{{ selectedItem.lieuExecution }}</span>
-          </div>
-          <div class="detail-row">
-            <span class="dl">Budget</span>
-            <span class="dv dv-green">{{ selectedItem.budget | number }} FCFA</span>
-          </div>
-          <div class="detail-row">
-            <span class="dl">Superficie</span>
-            <span class="dv">{{ selectedItem.superficie | number: '1.0-2' }} ha</span>
-          </div>
-          <div class="detail-row">
-            <span class="dl">Démarrage</span>
-            <span class="dv">{{ (selectedItem.dateDemarrage | date: 'dd/MM/yyyy') || '—' }}</span>
-          </div>
-          <div class="detail-row">
-            <span class="dl">Fin prévue</span>
-            <span class="dv">{{ (selectedItem.dateFin | date: 'dd/MM/yyyy') || '—' }}</span>
-          </div>
-          <div class="detail-row">
-            <span class="dl">Durée</span>
-            <span class="dv">{{ selectedItem.duree ? selectedItem.duree + ' mois' : '—' }}</span>
-          </div>
-          @if (selectedItem.description) {
-            <div class="detail-row full">
-              <span class="dl">Description</span>
-              <span class="dv">{{ selectedItem.description }}</span>
-            </div>
-          }
-          @if (selectedItem.objectifs) {
-            <div class="detail-row full">
-              <span class="dl">Objectifs</span>
-              <span class="dv">{{ selectedItem.objectifs }}</span>
-            </div>
-          }
-        </div>
       </div>
       <div class="modal-footer">
         <button class="btn-cancel" (click)="closeDetailModal()">Fermer</button>
@@ -701,7 +741,7 @@
       <div class="modal-body">
         <p class="delete-msg">
           Vous êtes sur le point de supprimer le projet
-          <strong>{{ selectedItem?.titre }}</strong>
+          <strong>{{ selectedItem?.name }}</strong>
           . Cette action est irréversible.
         </p>
       </div>

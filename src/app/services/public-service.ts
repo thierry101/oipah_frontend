@@ -88,4 +88,22 @@ export class PublicService {
     return this.allSectorsSubject.value;
   }
 
+
+  getLandsProject(idUser: number) {
+    return this.http.get(`${environment.apiUrl}/plot-land-project/${idUser}`, { withCredentials: true });
+  }
+
+
+  getProjectSubsidies(page: number = 1, search: any = '') {
+    const params: string[] = [];
+    params.push(`page=${page}`);
+
+    if (search) {
+      params.push(`search=${encodeURIComponent(search)}`);
+    }
+    const queryString = params.join('&');
+
+    return this.http.get(`${environment.apiUrl}/subsidy-project?${queryString}`, { withCredentials: true });
+  }
+
 }

@@ -1,17 +1,29 @@
-import { FormsModule } from '@angular/forms';
 /* eslint-disable @typescript-eslint/no-explicit-any */
+/* eslint-disable @angular-eslint/prefer-inject */
 /* eslint-disable @angular-eslint/no-output-native */
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+
+
+import {
+  Component,
+  ElementRef,
+  EventEmitter,
+  HostListener,
+  Input,
+  Output,
+} from '@angular/core';
+
+import { FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-selected',
+  standalone: true,
   imports: [FormsModule],
   templateUrl: './selected.component.html',
   styleUrl: './selected.component.scss',
 })
-
-
 export class SelectedComponent<T extends { name?: any; id?: any }> {
+  constructor(private elementRef: ElementRef) { }
+
   @Input() placeholder: string = 'Search...';
   @Input() disabled = false;
   @Input() searchTerm: string = '';
@@ -27,28 +39,48 @@ export class SelectedComponent<T extends { name?: any; id?: any }> {
   @Output() select = new EventEmitter<T>();
   @Output() searchTermChange = new EventEmitter<string>();
 
-  // onInputChange(value: string) {
-  //   this.search.emit(value);
-  // }
-
   onInputChange(value: string) {
     this.searchTerm = value;
 
     this.searchTermChange.emit(value);
 
     this.search.emit(value);
+
+    this.showResults = true;
   }
 
-
   onSelect(item: T) {
+    this.searchTerm = this.displayFn
+      ? this.displayFn(item)
+      : String(item[this.displayField] ?? '');
+
+    this.searchTermChange.emit(this.searchTerm);
+
     this.select.emit(item);
+
+    this.showResults = false;
   }
 
   onInputClick() {
+    this.showResults = true;
+
     this.search.emit(this.searchTerm || '');
   }
 
   trackById(index: number, item?: any): number {
     return item?.id ?? index;
+  }
+
+  @HostListener('document:mousedown', ['$event'])
+  onClickOutside(event: MouseEvent) {
+    setTimeout(() => {
+      const clickedInside = this.elementRef.nativeElement.contains(
+        event.target
+      );
+
+      if (!clickedInside) {
+        this.showResults = false;
+      }
+    });
   }
 }

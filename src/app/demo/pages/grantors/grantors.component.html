@@ -49,13 +49,20 @@
         </div>
         <div class="sstat">
           <span class="sstat-num">
+            {{ paginationSub?.otherParams?.total_subsidies | number }}
+            <small>{{ devise }}</small>
+          </span>
+          <span class="sstat-lbl">Montant total accordé</span>
+        </div>
+        <div class="sstat">
+          <span class="sstat-num green">
             {{ paginationSub?.otherParams?.total_received | number }}
             <small>{{ devise }}</small>
           </span>
           <span class="sstat-lbl">Montant reçu</span>
         </div>
         <div class="sstat">
-          <span class="sstat-num">
+          <span class="sstat-num amber">
             {{ paginationSub?.otherParams?.total_pending | number }}
             <small>{{ devise }}</small>
           </span>
@@ -223,7 +230,7 @@
         </button>
       </div>
 
-      <div class="modal-body" (click)="clearDonors()">
+      <div class="modal-body">
         <!-- Section : Origine -->
         <div class="form-section">
           <div class="section-title">
@@ -398,11 +405,11 @@
           </div>
           <div class="esum-item">
             <span class="esum-lbl">Déjà reçu</span>
-            <span class="esum-val green">{{ selectedSubsidy?.advanced_amnt || 0 | number }} {{ devise }}</span>
+            <span class="esum-val green">{{ selectedSubsidy?.amount - selectedSubsidy?.rest_amnt || 0 | number }} {{ devise }}</span>
           </div>
           <div class="esum-item">
             <span class="esum-lbl">Restant attendu</span>
-            <span class="esum-val amber">{{ selectedSubsidy?.amount - selectedSubsidy?.advanced_amnt || 0 | number }} {{ devise }}</span>
+            <span class="esum-val amber">{{ selectedSubsidy?.rest_amnt || 0 | number }} {{ devise }}</span>
           </div>
         </div>
 

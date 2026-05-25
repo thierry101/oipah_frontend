@@ -23,6 +23,7 @@ export interface Donor {
 }
 
 export interface Subsidy {
+  dynamic_amount: any;
   id: number;
   donorId: any;
   grantor: any;
@@ -105,7 +106,6 @@ export class GrantorsComponent implements OnInit {
   ngOnInit(): void {
     // Remplacer par appel API
     this.allFilieres = this.publicService.allSectors
-    this.fetchDonors(1)
     this.fetchSubsidies(1)
     this.publicService.getSettingOipah().subscribe({
       next: (res: any) => {
@@ -181,6 +181,8 @@ export class GrantorsComponent implements OnInit {
   openSubsidyModal(subsidy?: Subsidy): void {
     this.showSubsidyModal = true;
     this.subsidyEditMode = !!subsidy;
+    this.donorsSelect = []
+
     this.errors = []
     if (this.subsidyEditMode) {
       this.idSubsidy = subsidy?.id
@@ -330,11 +332,5 @@ export class GrantorsComponent implements OnInit {
       }
     })
   }
-
-
-  clearDonors() {
-    this.donorsSelect = []
-  }
-
 }
 

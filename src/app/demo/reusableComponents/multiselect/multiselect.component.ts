@@ -1,6 +1,7 @@
 /* eslint-disable @angular-eslint/prefer-inject */
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/no-explicit-any */
+
 import {
   Component,
   ElementRef,
@@ -35,6 +36,10 @@ import {
 export class MultiselectComponent
   implements ControlValueAccessor, OnChanges {
 
+  // ─────────────────────────────────────────────
+  // Inputs
+  // ─────────────────────────────────────────────
+
   /** Liste des options */
   @Input() options: any[] = [];
 
@@ -47,8 +52,18 @@ export class MultiselectComponent
   /** Placeholder */
   @Input() placeholder = 'Sélectionner…';
 
-  /** Event de sortie */
-  @Output() selectedChange = new EventEmitter<any[]>();
+  /** Fonction custom pour la valeur */
+  @Input() valueFn?: (item: any) => any;
+
+  /** Fonction custom pour le label */
+  @Input() labelFn?: (item: any) => string;
+
+  // ─────────────────────────────────────────────
+  // Outputs
+  // ─────────────────────────────────────────────
+
+  @Output() selectedChange =
+    new EventEmitter<any[]>();
 
   // ─────────────────────────────────────────────
   // Etat interne
@@ -60,7 +75,9 @@ export class MultiselectComponent
 
   isDisabled = false;
 
-  constructor(private elRef: ElementRef) { }
+  constructor(
+    private elRef: ElementRef
+  ) { }
 
   // ─────────────────────────────────────────────
   // ControlValueAccessor
@@ -71,9 +88,11 @@ export class MultiselectComponent
   private onTouched = () => { };
 
   writeValue(values: any[]): void {
-    this.selectedValues = Array.isArray(values)
-      ? [...values]
-      : [];
+
+    this.selectedValues =
+      Array.isArray(values)
+        ? [...values]
+        : [];
   }
 
   registerOnChange(fn: any): void {
@@ -89,40 +108,49 @@ export class MultiselectComponent
   }
 
   // ─────────────────────────────────────────────
-  // Quand les options changent
+  // Lifecycle
   // ─────────────────────────────────────────────
 
   ngOnChanges(changes: SimpleChanges): void {
+
     if (changes['options']) {
-      this.selectedValues = this.selectedValues.filter(v =>
-        this.options.some(o => o[this.valueKey] === v)
-      );
+
+      this.selectedValues =
+        this.selectedValues.filter(v =>
+          this.options.some(
+            o => this.resolveValue(o) === v
+          )
+        );
     }
   }
 
   // ─────────────────────────────────────────────
-  // Ouverture / fermeture
+  // Gestion ouverture
   // ─────────────────────────────────────────────
 
   toggle(): void {
+
     if (this.isDisabled) return;
 
     this.isOpen = !this.isOpen;
   }
 
   open(): void {
+
     if (this.isDisabled) return;
 
     this.isOpen = true;
   }
 
   close(): void {
+
     this.isOpen = false;
+
     this.onTouched();
   }
 
   // ─────────────────────────────────────────────
-  // Fermer au clic extérieur
+  // Fermeture clic extérieur
   // ─────────────────────────────────────────────
 
   @HostListener('document:mousedown', ['$event'])
@@ -131,7 +159,9 @@ export class MultiselectComponent
     if (!this.isOpen) return;
 
     const clickedInside =
-      this.elRef.nativeElement.contains(event.target as Node);
+      this.elRef.nativeElement.contains(
+        event.target as Node
+      );
 
     if (!clickedInside) {
       this.close();
@@ -139,11 +169,12 @@ export class MultiselectComponent
   }
 
   // ─────────────────────────────────────────────
-  // Fermer avec Echap
+  // Fermeture Echap
   // ─────────────────────────────────────────────
 
   @HostListener('document:keydown.escape')
   onEscape(): void {
+
     if (this.isOpen) {
       this.close();
     }
@@ -175,7 +206,9 @@ export class MultiselectComponent
   remove(value: any): void {
 
     const updated =
-      this.selectedValues.filter(v => v !== value);
+      this.selectedValues.filter(
+        v => v !== value
+      );
 
     this.emit(updated);
   }
@@ -183,24 +216,82 @@ export class MultiselectComponent
   selectAll(): void {
 
     const values =
-      this.options.map(o => o[this.valueKey]);
+      this.options.map(
+        o => this.resolveValue(o)
+      );
 
     this.emit(values);
   }
 
   clearAll(): void {
+
     this.emit([]);
+
     this.close();
+  }
+
+  // ─────────────────────────────────────────────
+  // Labels / values dynamiques
+  // ─────────────────────────────────────────────
+
+  resolveValue(item: any): any {
+
+    if (this.valueFn) {
+      return this.valueFn(item);
+    }
+
+    return this.getNestedValue(
+      item,
+      this.valueKey
+    );
+  }
+
+  resolveLabel(item: any): string {
+
+    if (this.labelFn) {
+      return this.labelFn(item);
+    }
+
+    return this.getNestedValue(
+      item,
+      this.labelKey
+    );
   }
 
   getLabel(value: any): string {
 
     const opt =
-      this.options?.find(o => o[this.valueKey] === value);
+      this.options?.find(
+        o => this.resolveValue(o) === value
+      );
 
     return opt
-      ? opt[this.labelKey]
+      ? this.resolveLabel(opt)
       : value;
+  }
+
+  // ─────────────────────────────────────────────
+  // Nested path support
+  // Exemple:
+  // "element.name"
+  // "user.profile.firstname"
+  // ─────────────────────────────────────────────
+
+  getNestedValue(
+    obj: any,
+    path: string
+  ): any {
+
+    if (!obj || !path) {
+      return obj;
+    }
+
+    return path
+      .split('.')
+      .reduce(
+        (acc, part) => acc?.[part],
+        obj
+      );
   }
 
   // ─────────────────────────────────────────────

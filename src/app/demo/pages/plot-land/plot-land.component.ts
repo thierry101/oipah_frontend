@@ -102,12 +102,10 @@ export class PlotLandComponent implements OnInit {
   }
 
 
-  fetchUsers(page: number = 1) { //instead of bind I can call arrow function like (page, term) => this.authService.getRegisterByAdmin(page, term)
-    // this.isLoading = true;
+  fetchUsers(page: number = 1) {
     setPagination(this.authService.getUsers.bind(this.authService), page, this.searchTermOwner, (data: any) => {
       this.pagination = data;
       this.listUsers = data?.listItems;
-      // this.isLoading = false;
     })
   }
 
@@ -118,7 +116,16 @@ export class PlotLandComponent implements OnInit {
   }
 
 
-  fetchPlotLands(page: number = 1) { //instead of bind I can call arrow function like (page, term) => this.authService.getRegisterByAdmin(page, term)
+  selectUser(user: any): void {
+    if (!user || !user.id) return;
+    this.searchTermOwner = user?.name + ' ' + user?.surname
+    this.form.ownerContact = user?.phone
+    this.form.owner_land = user?.id
+    this.listUsers = []
+  }
+
+
+  fetchPlotLands(page: number = 1) {
     this.isLoading = true;
     setPagination(this.othersService.getLands.bind(this.othersService), page, this.searchTerm, (data: any) => {
       this.pagination = data;
@@ -144,15 +151,6 @@ export class PlotLandComponent implements OnInit {
 
   onPageChange(page: number): void {
     this.fetchPlotLands(page)
-  }
-
-
-  selectProduct(user: any): void {
-    if (!user || !user.id) return;
-    this.searchTermOwner = user?.name + ' ' + user?.surname
-    this.form.ownerContact = user?.phone
-    this.form.owner_land = user?.id
-    this.listUsers = []
   }
 
 
