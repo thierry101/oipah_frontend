@@ -37,4 +37,19 @@ export class ProjectService {
     return this.http.post(`${environment.apiUrl}/start-project`, data, { withCredentials: true });
   }
 
+
+  getHistorikProject(idProject: number, ) {
+    return this.http.get(`${environment.apiUrl}/delete-update-project/${idProject}`, { withCredentials: true });
+  }
+
+
+  putProject(idProject: number, data: any) {
+    return this.http.put(`${environment.apiUrl}/delete-update-project/${idProject}`, data, { withCredentials: true });
+  }
+
+
+  deleteProject(idProject: number) {
+    return this.http.delete(`${environment.apiUrl}/delete-update-project/${idProject}`, { withCredentials: true });
+  }
+
 }

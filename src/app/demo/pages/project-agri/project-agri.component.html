@@ -33,11 +33,11 @@
         </svg>
       </div>
       <div>
-        <span class="stat-num">{{ pagination?.nberItems ?? projects.length }}</span>
+        <span class="stat-num">{{ pagination?.otherParams?.nber_project }}</span>
         <span class="stat-lbl">Total projets</span>
       </div>
     </div>
-    <div class="stat-card">
+    <!-- <div class="stat-card">
       <div class="stat-icon amber">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
           <circle cx="12" cy="12" r="10" />
@@ -45,46 +45,10 @@
         </svg>
       </div>
       <div>
-        <span class="stat-num amber">4</span>
-        <span class="stat-lbl">En cours</span>
+        <span class="stat-num amber">7</span>
+        <span class="stat-lbl">{{getStatusName(this.filterStatus)}}</span>
       </div>
-    </div>
-    <div class="stat-card">
-      <div class="stat-icon green">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
-          <path d="M22 11.08V12a10 10 0 11-5.93-9.14" />
-          <polyline points="22 4 12 14.01 9 11.01" />
-        </svg>
-      </div>
-      <div>
-        <span class="stat-num green">3</span>
-        <span class="stat-lbl">Terminés</span>
-      </div>
-    </div>
-    <div class="stat-card">
-      <div class="stat-icon blue">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
-          <circle cx="12" cy="12" r="10" />
-          <path d="M12 8v4M12 16h.01" />
-        </svg>
-      </div>
-      <div>
-        <span class="stat-num blue">4</span>
-        <span class="stat-lbl">Soumis</span>
-      </div>
-    </div>
-    <div class="stat-card">
-      <div class="stat-icon red">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
-          <circle cx="12" cy="12" r="10" />
-          <path d="M15 9l-6 6M9 9l6 6" />
-        </svg>
-      </div>
-      <div>
-        <span class="stat-num red">2</span>
-        <span class="stat-lbl">Rejetés</span>
-      </div>
-    </div>
+    </div> -->
   </div>
 
   <!-- Toolbar -->
@@ -94,16 +58,13 @@
         <circle cx="11" cy="11" r="8" />
         <path d="M21 21l-4.35-4.35" />
       </svg>
-      <input type="text" placeholder="Rechercher par titre, filière…" [(ngModel)]="searchTerm" />
+      <app-search-list [searchTerm]="searchProject" (searchChange)="onSearchProject($event)"></app-search-list>
     </div>
-    <select class="filter-select" [(ngModel)]="filterStatus">
+    <select (change)="statusSelect()" class="filter-select" [(ngModel)]="filterStatus">
       <option value="">Tous les statuts</option>
-      <option value="brouillon">Brouillon</option>
-      <option value="soumis">Soumis</option>
-      <option value="approuve">Approuvé</option>
-      <option value="en_cours">En cours</option>
-      <option value="termine">Terminé</option>
-      <option value="rejete">Rejeté</option>
+      @for (s of allStatuses; track s.value) {
+        <option [value]="s.value">{{ s.name }}</option>
+      }
     </select>
     <select class="filter-select" [(ngModel)]="filterFiliere">
       <option value="">Toutes les filières</option>
@@ -130,7 +91,6 @@
           <th>Budget (FCFA)</th>
           <th>Superficie (ha)</th>
           <th>Département</th>
-          <!-- <th>Subvention</th> -->
           <th>Statut</th>
           <th>Actions</th>
         </tr>
@@ -144,16 +104,15 @@
             </td>
 
             <td class="td-owner">
-              <div class="avatar">{{ item?.modeExecution?.[0] }}</div>
               <div>
-                <div class="owner-name">{{ item?.modeExecution }}</div>
+                <div class="owner-name">{{ item?.plot_land?.owner_land?.name }} {{ item?.plot_land?.owner_land?.surname }}</div>
                 <div class="owner-sub">{{ item?.type_project }}</div>
               </div>
             </td>
 
             <td>
               @for (f of item?.filiere; track f.id) {
-                <span class="filiere-badge f-{{ f.name | lowercase | slice: 0 : 6 }}">
+                <span class="filiere-badge f-manioc">
                   {{ f.name }}
                 </span>
               }
@@ -171,16 +130,6 @@
 
             <td>{{ item?.plot_land?.department }}</td>
 
-            <!-- <td class="td-subsidy">
-              @if (item?.subsidies?.length) {
-                <span class="subsidy-badge">
-                  {{ getTotalSubsidies(item) | number }}
-                </span>
-              } @else {
-                <span class="no-subsidy">—</span>
-              }
-            </td> -->
-
             <td>
               <span class="status-badge status-{{ item?.current_statut }}">
                 <span class="status-dot"></span>
@@ -195,13 +144,13 @@
                   <circle cx="12" cy="12" r="3" />
                 </svg>
               </button>
-              <button class="btn-action btn-edit" (click)="openModal(item)" title="Modifier">
+              <!-- <button class="btn-action btn-edit" (click)="openModal(item)" title="Modifier">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                   <path
                     d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"
                   />
                 </svg>
-              </button>
+              </button> -->
               <button class="btn-action btn-status" (click)="openStatusModal(item)" title="Changer le statut">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                   <polyline points="17 1 21 5 17 9" />
@@ -221,7 +170,7 @@
           </tr>
         } @empty {
           <tr>
-            <td colspan="11" class="td-empty">
+            <td colspan="9" class="td-empty">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
                 <path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2" />
                 <rect x="9" y="3" width="6" height="4" rx="1" />
@@ -301,7 +250,7 @@
             </div>
             <div class="field">
               <label>
-                Filière
+                Filière(s)
                 <span class="req">*</span>
               </label>
               <app-multiselect
@@ -316,12 +265,9 @@
             <div class="field">
               <label>Statut initial</label>
               <select [(ngModel)]="form.current_statut">
-                <option value="brouillon">Brouillon</option>
-                <option value="soumis">Soumis</option>
-                <option value="approuve">Approuvé</option>
-                <option value="en_cours">En cours</option>
-                <option value="termine">Terminé</option>
-                <option value="rejete">Rejeté</option>
+                @for (status of allStatuses; track status) {
+                  <option [value]="status.value">{{ status.name }}</option>
+                }
               </select>
             </div>
           </div>
@@ -352,11 +298,11 @@
                 (search)="searchUser($event)"
                 (select)="selectUser($event)"
               ></app-selected>
-              <span class="text-danger">{{ errors?.owner_land }}</span>
+              <span class="text-danger">{{ errors?.plot_land }}</span>
             </div>
             <div class="field">
               <label>Contact</label>
-              <input readonly type="tel" [value]="form.plot_land?.owner_land ?? ''" placeholder="07 00 00 00 00" />
+              <input readonly type="tel" [value]="form.contact ?? ''" placeholder="07 00 00 00 00" />
             </div>
           </div>
         </div>
@@ -441,7 +387,7 @@
             </div>
             <div class="field">
               <label>Montant total subvention (FCFA)</label>
-              <input readonly type="number" [value]="form.subventionAmt" placeholder="Calculé automatiquement" min="0" />
+              <input readonly type="number" [value]="totalSubvention" placeholder="Calculé automatiquement" min="0" />
             </div>
           </div>
         </div>
@@ -515,7 +461,8 @@
             cssClass="btn btn-primary btn-sm"
             (clicked)="saveProject()"
           ></app-submit-spinner>
-        } @else {
+        }
+         <!-- @else {
           <app-submit-spinner
             [loading]="isSaving"
             label="Mettre à jour le projet"
@@ -523,7 +470,7 @@
             cssClass="btn btn-primary btn-sm"
             (clicked)="saveEditProject()"
           ></app-submit-spinner>
-        }
+        } -->
       </div>
     </div>
   </div>
@@ -578,8 +525,8 @@
           </label>
           <select [(ngModel)]="newStatus">
             <option value="">Sélectionner</option>
-            @for (s of availableStatuses(selectedItem?.current_statut); track s.value) {
-              <option [value]="s.value">{{ s.label }}</option>
+            @for (s of allStatuses; track s.value) {
+              <option [value]="s.value">{{ s.name }}</option>
             }
           </select>
         </div>
@@ -587,6 +534,34 @@
         <div class="field" style="margin-top: 12px">
           <label>Commentaire (optionnel)</label>
           <textarea [(ngModel)]="statusComment" placeholder="Motif du changement de statut…" rows="2"></textarea>
+        </div>
+
+        <div class="status-timeline">
+          @if (statusHistory?.length) {
+            @for (item of statusHistory; track item.id) {
+              <div class="timeline-item">
+                <div class="tl-dot" [ngClass]="'status-' + (item.statut_project || 'brouillon')"></div>
+
+                <div class="tl-content">
+                  <div class="tl-status">
+                    {{ getStatusName(item.statut_project || 'brouillon') }}
+                  </div>
+
+                  <div class="tl-date">
+                    {{ item.changed_at | date: 'dd/MM/yyyy à HH:mm' }}
+                  </div>
+
+                  @if (item.message) {
+                    <div class="tl-comment">
+                      {{ item.message }}
+                    </div>
+                  }
+                </div>
+              </div>
+            }
+          } @else {
+            <div class="empty-history">Aucun historique disponible</div>
+          }
         </div>
       </div>
       <div class="modal-footer">
@@ -598,7 +573,7 @@
 }
 
 <!-- ═══════════════════════════════════════════
-     MODAL : Détail projet
+    MODAL : Détail projet
 ════════════════════════════════════════════ -->
 @if (showDetailModal && selectedItem) {
   <div class="modal-backdrop" (click)="closeDetailModal()">
@@ -624,22 +599,39 @@
         </div>
 
         <div class="detail-grid">
+          <!-- Porteur -->
           <div class="detail-row">
-            <span class="dl">Mode d'exécution</span>
-            <span class="dv">{{ selectedItem?.modeExecution || '—' }}</span>
+            <span class="dl">Porteur du projet</span>
+            <span class="dv">{{ selectedItem?.plot_land.owner_land?.name }} {{ selectedItem?.plot_land.owner_land?.surname }}</span>
           </div>
           <div class="detail-row">
+            <span class="dl">Contact porteur</span>
+            <span class="dv">{{ selectedItem?.plot_land.owner_land?.phone || '—' }}</span>
+          </div>
+
+          <!-- Filières -->
+          <div class="detail-row">
             <span class="dl">Filière(s)</span>
-            <span class="dv">
+            <span class="dv" style="display: flex; flex-wrap: wrap; gap: 4px">
               @for (f of selectedItem?.filiere; track f.id) {
-                <span class="filiere-badge f-{{ f.name | lowercase | slice: 0 : 6 }}">{{ f.name }}</span>
+                <span class="filiere-badge f-manioc">{{ f.name }}</span>
               }
             </span>
           </div>
+
+          <!-- Type -->
           <div class="detail-row">
             <span class="dl">Type</span>
             <span class="dv">{{ selectedItem?.type_project }}</span>
           </div>
+
+          <!-- Mode d'exécution -->
+          <div class="detail-row">
+            <span class="dl">Mode d'exécution</span>
+            <span class="dv">{{ selectedItem?.modeExecution || '—' }}</span>
+          </div>
+
+          <!-- Localisation -->
           <div class="detail-row">
             <span class="dl">Département</span>
             <span class="dv">{{ getDepartementName(selectedItem?.plot_land?.department) }}</span>
@@ -656,6 +648,8 @@
             <span class="dl">GPS</span>
             <span class="dv">{{ selectedItem?.plot_land?.gps || '—' }}</span>
           </div>
+
+          <!-- Budget -->
           <div class="detail-row">
             <span class="dl">Budget</span>
             <span class="dv dv-green">{{ selectedItem?.budget | number }} FCFA</span>
@@ -668,6 +662,8 @@
             <span class="dl">Superficie</span>
             <span class="dv">{{ selectedItem?.plot_land?.area | number: '1.0-2' }} ha</span>
           </div>
+
+          <!-- Dates -->
           <div class="detail-row">
             <span class="dl">Démarrage</span>
             <span class="dv">{{ (selectedItem?.start_date | date: 'dd/MM/yyyy') || '—' }}</span>
@@ -680,6 +676,7 @@
             <span class="dl">Durée</span>
             <span class="dv">{{ selectedItem?.nber_days ? selectedItem?.nber_days + ' jours' : '—' }}</span>
           </div>
+
           @if (selectedItem?.description) {
             <div class="detail-row full">
               <span class="dl">Description</span>
@@ -695,7 +692,7 @@
         </div>
 
         <!-- Subventions détail -->
-        @if (selectedItem?.subsidies?.length) {
+        @if (selectedItem?.project_subsidies?.length) {
           <div class="form-section" style="margin-top: 16px">
             <div class="section-title">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -704,12 +701,16 @@
               </svg>
               Subventions
             </div>
-            @for (s of selectedItem?.subsidies; track s.id) {
+            @for (s of selectedItem?.project_subsidies; track s.id) {
               <div class="detail-row">
-                <span class="dl">{{ s.grantor?.name }}</span>
-                <span class="dv dv-green">{{ s.amount | number }} FCFA</span>
+                <span class="dl">{{ s.subsidy_name }}</span>
+                <span class="dv dv-green">{{ s.amount_used | number }} FCFA</span>
               </div>
             }
+            <div class="detail-row" style="border-top: 0.5px solid var(--color-border-secondary); margin-top: 4px; padding-top: 8px">
+              <span class="dl" style="font-weight: 500">Total subventions</span>
+              <span class="dv dv-green" style="font-weight: 500">{{ getTotalProjectSubsidies(selectedItem) | number }} FCFA</span>
+            </div>
           </div>
         }
       </div>
@@ -722,14 +723,14 @@
 }
 
 <!-- ═══════════════════════════════════════════
-     MODAL : Suppression
+    MODAL : Suppression
 ════════════════════════════════════════════ -->
 @if (showDeleteModal) {
   <div class="modal-backdrop" (click)="closeDeleteModal()">
     <div class="modal-box modal-xs" (click)="$event.stopPropagation()">
       <div class="modal-head danger">
         <div>
-          <span class="modal-tag danger">Suppression</span>
+          <span class="modal-tag danger">Suppression définitive</span>
           <h2>Confirmer la suppression</h2>
         </div>
         <button class="modal-close" (click)="closeDeleteModal()">
@@ -738,16 +739,72 @@
           </svg>
         </button>
       </div>
+
       <div class="modal-body">
-        <p class="delete-msg">
-          Vous êtes sur le point de supprimer le projet
-          <strong>{{ selectedItem?.name }}</strong>
-          . Cette action est irréversible.
+        <!-- Info projet -->
+        <div class="delete-target-info">
+          <div class="delete-target-row">
+            <span class="dtl">Projet</span>
+            <span class="dtv">{{ selectedItem?.name }}</span>
+          </div>
+          <div class="delete-target-row">
+            <span class="dtl">Porteur</span>
+            <span class="dtv">
+              {{ selectedItem?.plot_land?.owner_land?.name }}
+              {{ selectedItem?.plot_land?.owner_land?.surname }}
+            </span>
+          </div>
+          <div class="delete-target-row">
+            <span class="dtl">Statut</span>
+            <span class="dtv">
+              <span class="status-badge status-{{ selectedItem?.current_statut }}">
+                <span class="status-dot"></span>
+                {{ getStatusName(selectedItem?.current_statut) }}
+              </span>
+            </span>
+          </div>
+        </div>
+
+        <!-- Avertissement -->
+        <p class="delete-warning">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z" />
+            <line x1="12" y1="9" x2="12" y2="13" />
+            <line x1="12" y1="17" x2="12.01" y2="17" />
+          </svg>
+          Cette action est
+          <strong>irréversible</strong>
+          . Toutes les données liées à ce projet seront supprimées définitivement.
         </p>
+
+        <!-- Saisie confirmation -->
+        <div class="delete-confirm-field">
+          <label>
+            Pour confirmer, saisissez le mot
+            <span class="delete-keyword">supprimer</span>
+          </label>
+          <input
+            type="text"
+            [(ngModel)]="deleteConfirmWord"
+            placeholder="supprimer"
+            [class.input-valid]="deleteConfirmWord === 'supprimer'"
+            (paste)="$event.preventDefault()"
+            autocomplete="off"
+          />
+        </div>
       </div>
+
       <div class="modal-footer">
         <button class="btn-cancel" (click)="closeDeleteModal()">Annuler</button>
-        <button class="btn-danger" (click)="deleteProject()">Supprimer définitivement</button>
+        <button class="btn-danger" (click)="deleteProject()" [disabled]="deleteConfirmWord !== 'supprimer'">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polyline points="3 6 5 6 21 6" />
+            <path d="M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6" />
+            <path d="M10 11v6M14 11v6" />
+            <path d="M9 6V4a1 1 0 011-1h4a1 1 0 011 1v2" />
+          </svg>
+          Supprimer définitivement
+        </button>
       </div>
     </div>
   </div>
