@@ -15,8 +15,7 @@
         <p>Programme de Développement des Coopératives et Valeurs Vivrières</p>
         <h5>
           <span class="badge text-bg-secondary">
-            <span class="stat-num">{{ pagination?.nberItems }}</span>
-            <span class="stat-lbl">Enrôlés total</span>
+            <span class="stat-lbl">{{ pagination?.nberItems }} Enrôlés total</span>
           </span>
         </h5>
       </div>
@@ -242,12 +241,12 @@
 
         @if (editMode) {
           <app-submit-spinner
-          [loading]="isSaving"
-          label="Mettre à jour"
-          icon=""
-          cssClass="btn btn-warning btn-sm"
-          (clicked)="saveEditEntrepreneur()"
-        ></app-submit-spinner>
+            [loading]="isSaving"
+            label="Mettre à jour"
+            icon=""
+            cssClass="btn btn-warning btn-sm"
+            (clicked)="saveEditEntrepreneur()"
+          ></app-submit-spinner>
         }
       </div>
     </div>
@@ -275,7 +274,7 @@
             <div class="field full">
               <label>Nouveau mot de passe</label>
               <input type="password" [(ngModel)]="pwdForm.newPwd" placeholder="••••••••" />
-              <span class="text-danger">{{errors?.password}}</span>
+              <span class="text-danger">{{ errors?.password }}</span>
             </div>
           </div>
         </div>
@@ -283,12 +282,12 @@
       <div class="modal-footer">
         <button class="btn-cancel" (click)="closePwdModal()">Annuler</button>
         <app-submit-spinner
-            [loading]="isSaving"
-            label="Mettre à jour"
-            icon=""
-            cssClass="btn btn-warning btn-sm"
-            (clicked)="savePassword()"
-          ></app-submit-spinner>
+          [loading]="isSaving"
+          label="Mettre à jour"
+          icon=""
+          cssClass="btn btn-warning btn-sm"
+          (clicked)="savePassword()"
+        ></app-submit-spinner>
       </div>
     </div>
   </div>

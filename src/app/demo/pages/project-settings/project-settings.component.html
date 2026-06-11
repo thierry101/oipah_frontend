@@ -25,7 +25,7 @@
         class="tab-item"
         [class.active]="activeTab === tab.key"
         [class.disabled]="tab.disabled"
-        (click)="!tab.disabled && (activeTab = tab.key)"
+        (click)="!tab.disabled && (activeTab = tab.key); checkTypeTab(tab.key)"
         type="button"
       >
         <span class="tab-icon" [innerHTML]="tab.icon"></span>
@@ -40,7 +40,7 @@
   <!-- Contenu des onglets -->
   <div class="tab-content">
     <!-- ══════════════════════════════
-         Onglet : Subventionneurs
+        Onglet : Subventionneurs
     ═══════════════════════════════ -->
     @if (activeTab === 'donors') {
       <div class="tab-panel">
@@ -65,75 +65,79 @@
         </div>
 
         <!-- Tableau -->
-        <div class="table-wrap">
-          <table class="settings-table">
-            <thead>
-              <tr>
-                <th>#</th>
-                <th>Nom</th>
-                <th>Type</th>
-                <th>Pays</th>
-                <th>Contact</th>
-                <th>Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-              @for (donor of donors; track donor.id; let i = $index) {
+        @if (isLoading) {
+          <app-spinner message="Chargement des subventionneurs..."></app-spinner>
+        } @else {
+          <div class="table-wrap">
+            <table class="settings-table">
+              <thead>
                 <tr>
-                  <td class="td-num">{{ i + 1 }}</td>
-                  <td class="td-name">
-                    <div class="item-avatar amber">{{ donor.name[0] }}</div>
-                    <div>
-                      <div class="item-main">{{ donor.name }}</div>
-                      @if (donor.email) {
-                        <div class="item-sub">{{ donor.email }}</div>
-                      }
-                    </div>
-                  </td>
-                  <td>
-                    <span class="type-badge">{{ getDonorTypeName(donor.type_donor) }}</span>
-                  </td>
-                  <td>{{ donor.country || '—' }}</td>
-                  <td>{{ donor.phone || '—' }}</td>
-                  <td class="td-actions">
-                    <button class="btn-action btn-edit" (click)="openDonorModal(donor)" title="Modifier">
-                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <path
-                          d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"
-                        />
-                      </svg>
-                    </button>
-                    <button class="btn-action btn-delete" (click)="confirmDeleteDonor(donor)" title="Supprimer">
-                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <polyline points="3 6 5 6 21 6" />
-                        <path d="M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6" />
-                        <path d="M10 11v6M14 11v6" />
-                        <path d="M9 6V4a1 1 0 011-1h4a1 1 0 011 1v2" />
-                      </svg>
-                    </button>
-                  </td>
+                  <th>#</th>
+                  <th>Nom</th>
+                  <th>Type</th>
+                  <th>Pays</th>
+                  <th>Contact</th>
+                  <th>Actions</th>
                 </tr>
-              } @empty {
-                <tr>
-                  <td colspan="6" class="td-empty">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-                      <path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2" />
-                      <circle cx="9" cy="7" r="4" />
-                    </svg>
-                    <p>Aucun subventionneur enregistré</p>
-                  </td>
-                </tr>
-              }
-            </tbody>
-          </table>
-        </div>
-        <app-set-pagination
-          [currentPage]="donorPagination?.currentPage"
-          [totalPages]="donorPagination?.nber_pages"
-          [previousPage]="donorPagination?.previousPage"
-          [nextPage]="donorPagination?.nextPage"
-          (pageChange)="onDonorPageChange($event)"
-        ></app-set-pagination>
+              </thead>
+              <tbody>
+                @for (donor of donors; track donor.id; let i = $index) {
+                  <tr>
+                    <td class="td-num">{{ i + 1 }}</td>
+                    <td class="td-name">
+                      <div class="item-avatar amber">{{ donor.name[0] }}</div>
+                      <div>
+                        <div class="item-main">{{ donor.name }}</div>
+                        @if (donor.email) {
+                          <div class="item-sub">{{ donor.email }}</div>
+                        }
+                      </div>
+                    </td>
+                    <td>
+                      <span class="type-badge">{{ getDonorTypeName(donor.type_donor) }}</span>
+                    </td>
+                    <td>{{ donor.country || '—' }}</td>
+                    <td>{{ donor.phone || '—' }}</td>
+                    <td class="td-actions">
+                      <button class="btn-action btn-edit" (click)="openDonorModal(donor)" title="Modifier">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                          <path
+                            d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"
+                          />
+                        </svg>
+                      </button>
+                      <button class="btn-action btn-delete" (click)="confirmDeleteDonor(donor)" title="Supprimer">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                          <polyline points="3 6 5 6 21 6" />
+                          <path d="M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6" />
+                          <path d="M10 11v6M14 11v6" />
+                          <path d="M9 6V4a1 1 0 011-1h4a1 1 0 011 1v2" />
+                        </svg>
+                      </button>
+                    </td>
+                  </tr>
+                } @empty {
+                  <tr>
+                    <td colspan="6" class="td-empty">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                        <path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2" />
+                        <circle cx="9" cy="7" r="4" />
+                      </svg>
+                      <p>Aucun subventionneur enregistré</p>
+                    </td>
+                  </tr>
+                }
+              </tbody>
+            </table>
+          </div>
+          <app-set-pagination
+            [currentPage]="donorPagination?.currentPage"
+            [totalPages]="donorPagination?.nber_pages"
+            [previousPage]="donorPagination?.previousPage"
+            [nextPage]="donorPagination?.nextPage"
+            (pageChange)="onDonorPageChange($event)"
+          ></app-set-pagination>
+        }
       </div>
     }
 
@@ -166,70 +170,346 @@
         </div>
 
         <!-- Grille cartes filières -->
-        <div class="filiere-grid">
-          @for (fil of filieres; track fil.id) {
-            <div class="filiere-card">
-              <div class="filiere-icon">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+        @if (isLoadingFiliere) {
+          <app-spinner message="Chargement des filières..."></app-spinner>
+        } @else {
+          <div class="filiere-grid">
+            @for (fil of filieres; track fil.id) {
+              <div class="filiere-card">
+                <div class="filiere-icon">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+                    <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+                  </svg>
+                </div>
+                <div class="filiere-info">
+                  <div class="filiere-name">{{ fil.name }}</div>
+                  @if (fil.description) {
+                    <div class="filiere-desc">{{ fil.description }}</div>
+                  }
+                </div>
+                <div class="filiere-actions">
+                  <button class="btn-action btn-edit" (click)="openFiliereModal(fil)" title="Modifier">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <path
+                        d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"
+                      />
+                    </svg>
+                  </button>
+                  <button class="btn-action btn-delete" (click)="confirmDeleteFiliere(fil)" title="Supprimer">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <polyline points="3 6 5 6 21 6" />
+                      <path d="M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6" />
+                      <path d="M10 11v6M14 11v6" />
+                      <path d="M9 6V4a1 1 0 011-1h4a1 1 0 011 1v2" />
+                    </svg>
+                  </button>
+                </div>
+              </div>
+            } @empty {
+              <div class="filiere-empty">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
                   <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
                 </svg>
+                <p>Aucune filière enregistrée</p>
               </div>
-              <div class="filiere-info">
-                <div class="filiere-name">{{ fil.name }}</div>
-                @if (fil.description) {
-                  <div class="filiere-desc">{{ fil.description }}</div>
-                }
-              </div>
-              <div class="filiere-actions">
-                <button class="btn-action btn-edit" (click)="openFiliereModal(fil)" title="Modifier">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <path
-                      d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"
-                    />
-                  </svg>
-                </button>
-                <button class="btn-action btn-delete" (click)="confirmDeleteFiliere(fil)" title="Supprimer">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <polyline points="3 6 5 6 21 6" />
-                    <path d="M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6" />
-                    <path d="M10 11v6M14 11v6" />
-                    <path d="M9 6V4a1 1 0 011-1h4a1 1 0 011 1v2" />
-                  </svg>
-                </button>
-              </div>
+            }
+          </div>
+        }
+      </div>
+    }
+
+    <!-- ══════════════════════════════
+        Onglets futurs (désactivés)
+    ═══════════════════════════════ -->
+    <!-- ══════════════════════════════
+     Onglet : Commissions
+═══════════════════════════════ -->
+    @if (activeTab === 'commission') {
+      <div class="tab-panel">
+        <div class="panel-header">
+          <div>
+            <h2>Commissions</h2>
+            <p>Définissez les taux de commission appliqués aux projets</p>
+          </div>
+        </div>
+
+        <div class="commission-layout">
+          <!-- Formulaire gauche -->
+          <div class="commission-form-panel">
+            <div class="commission-form-title">
+              {{ editingCommission ? 'Modifier la commission' : 'Nouvelle commission' }}
             </div>
-          } @empty {
-            <div class="filiere-empty">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
-              </svg>
-              <p>Aucune filière enregistrée</p>
+
+            <div class="field">
+              <label>
+                Titre
+                <span class="req">*</span>
+              </label>
+              <input type="text" [(ngModel)]="commissionForm.title" placeholder="Ex : Commission de gestion" />
+              <span class="text-danger">{{ commissionErrors?.title }}</span>
             </div>
-          }
+
+            <div class="field">
+              <label>
+                Pourcentage (%)
+                <span class="req">*</span>
+              </label>
+              <div class="percent-input">
+                <input type="number" [(ngModel)]="commissionForm.rate" placeholder="Ex : 5" min="0" max="100" step="0.1" />
+                <span class="percent-suffix">%</span>
+              </div>
+              <span class="text-danger">{{ commissionErrors?.rate }}</span>
+            </div>
+
+            <!-- Checkbox -->
+            <div class="field">
+              <label class="checkbox-label">
+                <div class="custom-checkbox" [class.checked]="commissionForm.is_entrepreneur">
+                  <input type="checkbox" [(ngModel)]="commissionForm.is_entrepreneur" id="isEntrepreneur" />
+                  @if (commissionForm.is_entrepreneur) {
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                      <path d="M20 6L9 17l-5-5" />
+                    </svg>
+                  }
+                </div>
+                <div class="checkbox-text">
+                  <span class="checkbox-title">Commission entrepreneur agricole</span>
+                  <span class="checkbox-hint">Applicable aux entrepreneurs enrôlés dans le programme</span>
+                </div>
+              </label>
+              <span class="text-danger">{{ commissionErrors?.is_entrepreneur }}</span>
+            </div>
+
+            <div class="commission-form-actions">
+              @if (editingCommission) {
+                <button class="btn-ghost-sm" type="button" (click)="resetCommissionForm()">Annuler</button>
+              }
+
+              @if (!editingCommission) {
+                <app-submit-spinner
+                  [loading]="isSaving"
+                  label="Ajouter"
+                  icon=""
+                  cssClass="btn btn-primary btn-sm"
+                  (clicked)="saveCommission()"
+                ></app-submit-spinner>
+              } @else {
+                <app-submit-spinner
+                  [loading]="isSaving"
+                  label="Mettre à jour"
+                  icon=""
+                  cssClass="btn btn-primary btn-sm"
+                  (clicked)="saveEditCommission()"
+                ></app-submit-spinner>
+              }
+            </div>
+          </div>
+
+          <!-- Liste droite -->
+          <div class="commission-list-panel">
+            <div class="commission-list-header">
+              <span>{{ commissions.length }} commission{{ commissions.length > 1 ? 's' : '' }}</span>
+            </div>
+            @if (isLoadingCommission) {
+              <app-spinner message="Chargement des filières..."></app-spinner>
+            } @else {
+              @if (commissions.length) {
+                <div class="commission-list">
+                  @for (c of commissions; track c.id; let i = $index) {
+                    <div class="commission-item" [class.editing]="editingCommission?.id === c.id">
+                      <div class="commission-rank">{{ i + 1 }}</div>
+                      <div class="commission-info">
+                        <div class="commission-name">{{ c.title }}</div>
+                        @if (c.is_entrepreneur) {
+                          <span class="entrepreneur-badge">Entrepreneur agricole</span>
+                        }
+                      </div>
+                      <div class="commission-rate">
+                        <span class="rate-value">{{ c.rate }}</span>
+                        <span class="rate-unit">%</span>
+                      </div>
+                      <div class="commission-actions">
+                        <button class="btn-action btn-edit" (click)="editCommission(c)" title="Modifier">
+                          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path
+                              d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"
+                            />
+                          </svg>
+                        </button>
+                        <!-- <button class="btn-action btn-delete" (click)="deleteCommission(c)" title="Supprimer">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                          <polyline points="3 6 5 6 21 6" />
+                          <path d="M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6" />
+                          <path d="M10 11v6M14 11v6" />
+                          <path d="M9 6V4a1 1 0 011-1h4a1 1 0 011 1v2" />
+                        </svg>
+                      </button> -->
+                      </div>
+                    </div>
+                  }
+                </div>
+              } @else {
+                <div class="commission-empty">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                    <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2z" />
+                    <path d="M15 9l-6 6M9 9l6 6" />
+                  </svg>
+                  <p>Aucune commission enregistrée</p>
+                </div>
+              }
+            }
+          </div>
         </div>
       </div>
     }
 
     <!-- ══════════════════════════════
-         Onglets futurs (désactivés)
+        Onglet : Véhicules
     ═══════════════════════════════ -->
-    @if (activeTab === 'coming1' || activeTab === 'coming2') {
-      <div class="tab-panel coming-soon">
-        <div class="coming-icon">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-            <circle cx="12" cy="12" r="10" />
-            <path d="M12 6v6l4 2" />
-          </svg>
+    @if (activeTab === 'vehicles') {
+      <div class="tab-panel">
+        <div class="panel-header">
+          <div>
+            <h2>Parc Automobile</h2>
+            <p>Gestion des véhicules et moyens de transport</p>
+          </div>
         </div>
-        <h3>Fonctionnalité à venir</h3>
-        <p>Cette section sera disponible dans une prochaine version du programme.</p>
+
+        <div class="vehicle-layout">
+          <!-- Formulaire gauche -->
+          <div class="vehicle-form-panel">
+            <div class="section-title">Informations du véhicule</div>
+
+            <div class="form-grid">
+              <div class="field full">
+                <label>
+                  Immatriculation
+                  <span class="req">*</span>
+                </label>
+                <input type="text" [(ngModel)]="vehicleForm.plate" placeholder="Ex : CI-123-AB-45" />
+                <span class="text-danger">{{ errors?.plate }}</span>
+              </div>
+
+              <div class="field full">
+                <label>
+                  Marque / Modèle
+                  <span class="req">*</span>
+                </label>
+                <input type="text" [(ngModel)]="vehicleForm.model" placeholder="Ex : Toyota Hilux" />
+                <span class="text-danger">{{ errors?.model }}</span>
+              </div>
+
+              <div class="field">
+                <label>Type</label>
+                <select [(ngModel)]="vehicleForm.type_vehicle">
+                  <option value="">Sélectionner</option>
+                  @for (typeV of typeVehicles; track typeV.value) {
+                    <option [value]="typeV.value">{{ typeV.name }}</option>
+                  }
+                </select>
+                <span class="text-danger">{{ errors?.type_vehicle }}</span>
+              </div>
+
+              <div class="field">
+                <label>Capacité (Tonnes)</label>
+                <input type="number" [(ngModel)]="vehicleForm.capacity" placeholder="Ex : 5" />
+                <span class="text-danger">{{ errors?.capacity }}</span>
+              </div>
+
+              <div class="field full">
+                @if (isSavingVehicle) {
+                  <button class="btn-add" (click)="saveEditVehicle()" type="button">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                      <path d="M12 5v14M5 12h14" />
+                    </svg>
+                    Mettre à jour le véhicule
+                  </button>
+                } @else {
+                  <button class="btn-add" (click)="saveVehicle()" type="button">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                      <path d="M12 5v14M5 12h14" />
+                    </svg>
+                    Ajouter un véhicule
+                  </button>
+                }
+
+                <!-- <label>Chauffeur attitré</label>
+                <input type="text" [(ngModel)]="vehicleForm.driver" placeholder="Nom du chauffeur" /> -->
+              </div>
+            </div>
+          </div>
+
+          <!-- Liste droite -->
+          <div class="vehicle-list-panel">
+            <div class="vehicle-list-header">
+              <span>{{ vehicles.length }} véhicule{{ vehicles.length > 1 ? 's' : '' }} enregistré{{ vehicles.length > 1 ? 's' : '' }}</span>
+            </div>
+
+            @if (isLoadingVehicle) {
+              <app-spinner message="Chargement des véhicules..."></app-spinner>
+            }
+            @if (vehicles.length) {
+              <div class="vehicle-list">
+                @for (v of vehicles; track v.id) {
+                  <div class="vehicle-item">
+                    <div class="vehicle-plate-badge">
+                      {{ v.plate }}
+                    </div>
+                    <div class="vehicle-info">
+                      <div class="vehicle-model">{{ v.model }}</div>
+                      <span class="type-badge">{{ v.type_vehicle }}</span>
+                    </div>
+                    <div class="vehicle-details">
+                      <span class="capacity-val">{{ v.capacity }}T</span>
+                      <!-- <span class="driver-val">{{ v.driver || '—' }}</span> -->
+                    </div>
+                    <div class="vehicle-actions">
+                      <button class="btn-action btn-edit" (click)="editVehicle(v)" title="Modifier">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                          <path
+                            d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"
+                          />
+                        </svg>
+                      </button>
+                      <button class="btn-action btn-delete" (click)="openDeleteVehicleModal(v); $event.stopPropagation()" title="Supprimer">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                          <path
+                            d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
+                          />
+                        </svg>
+                      </button>
+
+                      <!-- <button class="btn-action btn-delete" (click)="deleteVehicle(v)" title="Supprimer">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                          <path
+                            d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
+                          />
+                        </svg>
+                      </button> -->
+                    </div>
+                  </div>
+                }
+              </div>
+            } @else {
+              <div class="vehicle-empty">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                  <rect x="1" y="3" width="15" height="13"></rect>
+                  <polygon points="16 8 20 8 23 11 23 16 16 16 16 8"></polygon>
+                  <circle cx="5.5" cy="18.5" r="2.5"></circle>
+                  <circle cx="18.5" cy="18.5" r="2.5"></circle>
+                </svg>
+                <p>Aucun véhicule enregistré</p>
+              </div>
+            }
+          </div>
+        </div>
       </div>
     }
   </div>
 </div>
 
 <!-- ═══════════════════════════════════════════
-     MODAL : Subventionneur
+    MODAL : Subventionneur
 ════════════════════════════════════════════ -->
 @if (showDonorModal) {
   <div class="modal-backdrop" (click)="closeDonorModal()">
@@ -370,7 +650,7 @@
 }
 
 <!-- ═══════════════════════════════════════════
-     MODAL : Confirmation suppression
+    MODAL : Confirmation suppression
 ════════════════════════════════════════════ -->
 @if (showDeleteModal) {
   <div class="modal-backdrop" (click)="closeDeleteModal()">
@@ -400,3 +680,60 @@
     </div>
   </div>
 }
+
+@if (showDeleteVehicleModal) {
+  <div class="modal-backdrop" (click)="closeDeleteVehicleModal()">
+    <div class="modal-box modal-xs" (click)="$event.stopPropagation()">
+      <div class="modal-head danger">
+        <div>
+          <span class="modal-tag danger">Suppression</span>
+          <h2>Confirmer la suppression</h2>
+        </div>
+        <button class="modal-close" (click)="closeDeleteVehicleModal()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M18 6L6 18M6 6l12 12"/>
+          </svg>
+        </button>
+      </div>
+
+      <div class="modal-body">
+        <div class="delete-target-info">
+          <div class="delete-target-row">
+            <span class="dtl">Véhicule</span>
+            <span class="dtv">{{ vehicleToDelete?.model }}</span>
+          </div>
+          <div class="delete-target-row">
+            <span class="dtl">Immatriculation</span>
+            <span class="dtv">
+              <span class="vehicle-plate-badge">{{ vehicleToDelete?.plate }}</span>
+            </span>
+          </div>
+          <div class="delete-target-row">
+            <span class="dtl">Capacité</span>
+            <span class="dtv">{{ vehicleToDelete?.capacity }}T</span>
+          </div>
+        </div>
+
+        <p class="delete-warning">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/>
+            <line x1="12" y1="9" x2="12" y2="13"/>
+            <line x1="12" y1="17" x2="12.01" y2="17"/>
+          </svg>
+          Cette action est <strong>irréversible</strong>. Le véhicule sera définitivement supprimé.
+        </p>
+      </div>
+
+      <div class="modal-footer">
+        <button class="btn-cancel" (click)="closeDeleteVehicleModal()">Annuler</button>
+        <button class="btn-danger" (click)="confirmDeleteVehicle()">
+          <!-- <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
+          </svg> -->
+          Supprimer définitivement
+        </button>
+      </div>
+    </div>
+  </div>
+}
+

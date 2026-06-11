@@ -6,7 +6,6 @@ import { PublicService } from 'src/app/services/public-service';
 import { showError, toastShow } from 'src/app/share/shared';
 import { SubmitSpinnerComponent } from "../../reusableComponents/submit-spinner/submit-spinner.component";
 import { environment } from 'src/environments/environment.prod';
-import { OthersService } from 'src/app/services/others-service';
 
 export interface OipahAttribute {
   name: string;
@@ -38,7 +37,6 @@ interface NavTab {
 export class SettingsComponent implements OnInit {
 
   private publicService = inject(PublicService)
-  private othersService = inject(OthersService)
 
   @ViewChild('logoInput') logoInput!: ElementRef<HTMLInputElement>;
 
@@ -87,11 +85,13 @@ export class SettingsComponent implements OnInit {
 
   // ── Filières ──
   editingIndex: number | null = null;
+  commDev!:number
 
 
   ngOnInit(): void {
     this.publicService.getSettingOipah().subscribe({
       next: (res: any) => {
+        this.commDev = res?.rate_dev || 1
         this.form = {
           name: res?.name || '',
           rccm: res?.rccm || '',

@@ -1,14 +1,17 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { CommonModule } from '@angular/common';
 import { Component, inject, OnInit } from '@angular/core';
 import { SubmitSpinnerComponent } from "../../reusableComponents/submit-spinner/submit-spinner.component";
 import { FormsModule } from '@angular/forms';
 import { SetPaginationComponent } from "../../reusableComponents/set-pagination/set-pagination.component";
-import { setPagination, showError, toastShow } from 'src/app/share/shared';
+import { setPagination, showError, toastShow, typesVehicles } from 'src/app/share/shared';
 import { PublicService } from 'src/app/services/public-service';
 import { countries } from 'src/app/share/countries';
 import { SearchListComponent } from "../../reusableComponents/search-list/search-list.component";
 import { OthersService } from 'src/app/services/others-service';
+import { ProjectService } from 'src/app/services/project-service';
+import { SpinnerComponent } from "../../reusableComponents/spinner/spinner.component";
 
 
 export interface Donor {
@@ -33,10 +36,17 @@ interface Tab {
   disabled: boolean;
 }
 
+export interface Commission {
+  id: number;
+  title: string;
+  rate: number;
+  is_entrepreneur: boolean;
+}
+
 
 @Component({
   selector: 'app-project-settings',
-  imports: [CommonModule, SubmitSpinnerComponent, FormsModule, SetPaginationComponent, SearchListComponent],
+  imports: [CommonModule, SubmitSpinnerComponent, FormsModule, SetPaginationComponent, SearchListComponent, SpinnerComponent],
   templateUrl: './project-settings.component.html',
   styleUrl: './project-settings.component.scss',
 })
@@ -49,7 +59,9 @@ export class ProjectSettingsComponent implements OnInit {
 
   tabs: Tab[] = [
     {
-      key: 'donors', label: 'Subventionneurs', disabled: false,
+      key: 'donors',
+      label: 'Subventionneurs',
+      disabled: false,
       icon: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                <path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/>
                <circle cx="9" cy="7" r="4"/>
@@ -57,35 +69,54 @@ export class ProjectSettingsComponent implements OnInit {
              </svg>`
     },
     {
-      key: 'filieres', label: 'Filières', disabled: false,
+      key: 'filieres',
+      label: 'Filières',
+      disabled: false,
       icon: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
              </svg>`
     },
     {
-      key: 'coming1', label: 'À venir', disabled: true,
+      key: 'commission',
+      label: 'Commissions',
+      disabled: false,
       icon: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-               <circle cx="12" cy="12" r="10"/>
-               <path d="M12 6v6l4 2"/>
-             </svg>`
+           <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2z"/>
+           <path d="M15 9l-6 6M9 9l6 6"/>
+         </svg>`
     },
     {
-      key: 'coming2', label: 'À venir', disabled: true,
+      key: 'vehicles',
+      label: 'Véhicules',
+      disabled: false, // Maintenant activé
       icon: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-               <circle cx="12" cy="12" r="10"/>
-               <path d="M12 6v6l4 2"/>
+               <path d="M9 17a2 2 0 11-4 0 2 2 0 014 0zM19 17a2 2 0 11-4 0 2 2 0 014 0z" />
+               <path d="M13 16V6a1 1 0 00-1-1H4a1 1 0 00-1 1v7a1 1 0 001 1h1m8-8a1 1 0 00-1 1v7a1 1 0 001 1h1m-8 0h1" />
              </svg>`
-    },
+    }
   ];
 
   // ── Données ───────────────────────────────────────────────
   donors: Donor[] = [];
   filieres: Filiere[] = [];
 
+  typeVehicles = typesVehicles
+
+  commissions: Commission[] = [];
+  editingCommission: Commission | null = null;
+  commissionErrors: any = {};
+
+  commissionForm: Partial<Commission> = { title: '', rate: 0, is_entrepreneur: false };
+
   donorPagination: any = null;
   pages: number[] = [];
   isLoading: boolean = false
+  isLoadingVehicle: boolean = false
+  isSavingVehicle: boolean = false
+  isLoadingFiliere: boolean = false
+  isLoadingCommission: boolean = false
   idDonor!: any
+  idVehicle!: any
 
   // ── Recherche ─────────────────────────────────────────────
   donorSearch = '';
@@ -102,6 +133,9 @@ export class ProjectSettingsComponent implements OnInit {
   deleteTarget: { name: string } | null = null;
   private deleteType: 'donor' | 'filiere' | null = null;
   private deleteId = 0;
+
+  showDeleteVehicleModal = false;
+  vehicleToDelete: any = null;
 
   isSaving = false;
 
@@ -123,19 +157,138 @@ export class ProjectSettingsComponent implements OnInit {
   donorForm: Partial<Donor> = this.emptyDonorForm();
   filiereForm: Partial<Filiere> = this.emptyFiliereForm();
 
+  public vehicleForm = {
+    plate: '',
+    model: '',
+    type_vehicle: '',
+    capacity: null,
+    driver: ''
+  };
+
+  vehicles: any[] = [];
+
+
   private emptyDonorForm(): Partial<Donor> { return { name: '', type_donor: '', country: '', email: '', phone: '' }; }
   private emptyFiliereForm(): Partial<Filiere> { return { name: '', description: '' }; }
 
   private publicService = inject(PublicService)
   private othersService = inject(OthersService)
+  private projectService = inject(ProjectService)
 
   // ── Init ──────────────────────────────────────────────────
   ngOnInit(): void {
-    // Remplacer par appels API
     this.fetchDonors(1)
-    this.othersService.getAgricultural().subscribe({
+  }
+
+
+  checkTypeTab(key: string) {
+    this.isLoadingVehicle = true
+    this.isLoadingFiliere = true
+    this.isSavingVehicle = false
+    this.vehicleForm = { plate: '', model: '', type_vehicle: '', capacity: null, driver: '' };
+    this.errors = []
+    if (key === 'vehicles') {
+      this.projectService.getVehicle().subscribe({
+        next: (res: any) => {
+          this.vehicles = res?.result
+          this.isLoadingVehicle = false
+        }
+      })
+    } else if (key === 'commission') {
+      this.isLoadingCommission = true
+      this.projectService.getCommProject().subscribe({
+        next: (res: any) => {
+          this.commissions = res?.result
+          this.isLoadingCommission = false
+        }
+      })
+    }
+    else if (key === 'filieres') {
+      this.isLoadingFiliere = true
+      this.othersService.getAgricultural().subscribe({
+        next: (res: any) => {
+          this.filieres = res?.result
+          this.isLoadingFiliere = false
+        }
+      })
+    }
+  }
+
+
+  saveVehicle() {
+    this.isLoadingVehicle = true
+    this.projectService.postVehicle(this.vehicleForm).subscribe({
       next: (res: any) => {
-        this.filieres = res?.result
+        this.vehicles.unshift(res?.result);
+        this.errors = []
+        this.vehicleForm = { plate: '', model: '', type_vehicle: '', capacity: null, driver: '' };
+        toastShow('success', "Véhicule ajouté")
+        this.isLoadingVehicle = false
+        this.isSavingVehicle = false
+      },
+      error: (err) => {
+        this.errors = err.error.errors || {};
+        this.isSaving = false
+        showError(err, err.status, this.errors, err.error, document.getElementById('a'));
+        this.isLoadingVehicle = false
+      }
+    })
+  }
+
+
+  saveEditVehicle() {
+    this.isLoadingVehicle = true
+    this.projectService.putVehicle(this.idVehicle, this.vehicleForm).subscribe({
+      next: (res: any) => {
+        this.vehicles = this.vehicles.filter((v: any) => v.id !== this.idVehicle);
+        this.vehicles.unshift(res?.result);
+        this.errors = []
+        this.vehicleForm = { plate: '', model: '', type_vehicle: '', capacity: null, driver: '' };
+        toastShow('success', "Véhicule mis à jour")
+        this.isLoadingVehicle = false
+        this.isSavingVehicle = false
+      },
+      error: (err) => {
+        this.errors = err.error.errors || {};
+        this.isSaving = false
+        showError(err, err.status, this.errors, err.error, document.getElementById('a'));
+        this.isLoadingVehicle = false
+      }
+    })
+  }
+
+
+  editVehicle(v: any) {
+    this.idVehicle = v?.id
+    this.isSavingVehicle = true
+    this.errors = []
+    this.vehicleForm = { ...v }
+  }
+
+
+  openDeleteVehicleModal(vehicle: any): void {
+    this.vehicleToDelete = vehicle;
+    this.showDeleteVehicleModal = true;
+  }
+
+  closeDeleteVehicleModal(): void {
+    this.showDeleteVehicleModal = false;
+    this.vehicleToDelete = null;
+  }
+
+  confirmDeleteVehicle(): void {
+    if (!this.vehicleToDelete) return;
+    this.projectService.deleteVehicle(this.vehicleToDelete?.id).subscribe({
+      next: () => {
+        this.vehicles = this.vehicles.filter(v => v.id !== this.vehicleToDelete?.id);
+        toastShow('success', "Véhicule supprimé")
+        this.closeDeleteVehicleModal();
+      },
+      error: (err) => {
+        this.errors = err.error.errors || {};
+        this.isSaving = false
+        showError(err, err.status, this.errors, err.error, document.getElementById('a'));
+        this.isLoadingVehicle = false
       }
     })
   }
@@ -184,17 +337,20 @@ export class ProjectSettingsComponent implements OnInit {
 
 
   saveDonor(): void {
+    this.isLoading = true;
     this.publicService.postDonor(this.donorForm).subscribe({
       next: () => {
         this.closeDonorModal();
         this.fetchDonors(1)
         toastShow('success', "Subventionneur créé")
+        this.isLoading = false;
       },
       error: (err) => {
         this.errors = err.error.errors || {};
         console.log(this.errors)
         this.isSaving = false
         showError(err, err.status, this.errors, err.error, document.getElementById('a'));
+        this.isLoading = false;
       }
     })
   }
@@ -312,6 +468,64 @@ export class ProjectSettingsComponent implements OnInit {
       })
     }
     this.closeDeleteModal();
+  }
+
+
+  // about commission
+
+  editCommission(c: Commission): void {
+    this.editingCommission = c;
+    this.commissionForm = { ...c };
+    this.commissionErrors = {};
+  }
+
+  resetCommissionForm(): void {
+    this.editingCommission = null;
+    this.commissionForm = { title: '', rate: 0, is_entrepreneur: false };
+    this.commissionErrors = {};
+  }
+
+  saveCommission(): void {
+    this.isSaving = true;
+    this.isLoadingCommission = true
+    this.projectService.postCommProject(this.commissionForm).subscribe({
+      next: (res: any) => {
+        toastShow('success', 'Commission créée avec succès');
+        this.resetCommissionForm();
+        this.commissions.unshift(res?.result);
+        this.isSaving = false;
+        this.isLoadingCommission = false
+      },
+      error: (err) => {
+        this.commissionErrors = err.error.errors || {};
+        this.isSaving = false;
+        this.isLoadingCommission = false
+        showError(err, err.status, this.commissionErrors, err.error, document.getElementById('a'));
+      }
+    })
+  }
+
+
+  saveEditCommission() {
+    this.projectService.putCommProject(this.editingCommission!.id, this.commissionForm).subscribe({
+      next: (res: any) => {
+        this.commissions = this.commissions.filter(x => x.id !== this.editingCommission!.id);
+        this.commissions.unshift(res?.result);
+        this.resetCommissionForm();
+        toastShow('success', 'Commission créée avec succès');
+      },
+      error: (err) => {
+        this.commissionErrors = err.error.errors || {};
+        this.isSaving = false;
+        showError(err, err.status, this.commissionErrors, err.error, document.getElementById('a'));
+      }
+    })
+  }
+
+
+  deleteCommission(c: Commission): void {
+    this.commissions = this.commissions.filter(x => x.id !== c.id);
+    if (this.editingCommission?.id === c.id) this.resetCommissionForm();
   }
 
 

@@ -101,6 +101,7 @@ export function setPagination(
 export const roles = [
   { name: "Administrateur", value: "Admin" },
   { name: "Comptable", value: "Daf" },
+  { name: "Chauffeur", value: "Driver" },
   { name: "Entrepreneur agricole", value: "Agricultural" },
 ]
 
@@ -119,3 +120,12 @@ export const statutProject = [
   { name: "En cours", value: "en_cours" },
   { name: "Récolté", value: "termine" },
 ]
+
+
+export const typesVehicles = [
+  { name: "Camion", value: "camion" },
+  { name: "Pickup", value: "pickup" },
+  { name: "Remorque", value: "remorque" },
+  { name: "Tracteur", value: "tracteur" },
+]
+

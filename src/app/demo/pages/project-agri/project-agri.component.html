@@ -11,7 +11,10 @@
       </div>
       <div>
         <div class="header-badge">PDC2V</div>
-        <h1>Gestion des Projets</h1>
+        <h1>
+          Gestion des Projets
+          <span class="badge text-bg-secondary">{{ pagination?.otherParams?.nber_project }}</span>
+        </h1>
         <p>Création et suivi des projets agricoles soumis au programme</p>
       </div>
     </div>
@@ -23,34 +26,6 @@
     </button>
   </div>
 
-  <!-- Stats -->
-  <div class="stats-bar">
-    <div class="stat-card">
-      <div class="stat-icon">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
-          <path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2" />
-          <rect x="9" y="3" width="6" height="4" rx="1" />
-        </svg>
-      </div>
-      <div>
-        <span class="stat-num">{{ pagination?.otherParams?.nber_project }}</span>
-        <span class="stat-lbl">Total projets</span>
-      </div>
-    </div>
-    <!-- <div class="stat-card">
-      <div class="stat-icon amber">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
-          <circle cx="12" cy="12" r="10" />
-          <path d="M12 6v6l4 2" />
-        </svg>
-      </div>
-      <div>
-        <span class="stat-num amber">7</span>
-        <span class="stat-lbl">{{getStatusName(this.filterStatus)}}</span>
-      </div>
-    </div> -->
-  </div>
-
   <!-- Toolbar -->
   <div class="toolbar">
     <div class="search-wrap">
@@ -60,19 +35,19 @@
       </svg>
       <app-search-list [searchTerm]="searchProject" (searchChange)="onSearchProject($event)"></app-search-list>
     </div>
-    <select (change)="statusSelect()" class="filter-select" [(ngModel)]="filterStatus">
+    <select (change)="filterSelect()" class="filter-select" [(ngModel)]="filterStatus">
       <option value="">Tous les statuts</option>
       @for (s of allStatuses; track s.value) {
         <option [value]="s.value">{{ s.name }}</option>
       }
     </select>
-    <select class="filter-select" [(ngModel)]="filterFiliere">
+    <select (change)="filterSelect()" class="filter-select" [(ngModel)]="filterFiliere">
       <option value="">Toutes les filières</option>
       @for (f of allFilieres; track f.id) {
         <option [value]="f.name">{{ f.name }}</option>
       }
     </select>
-    <select class="filter-select" [(ngModel)]="filterType">
+    <select (change)="filterSelect()" class="filter-select" [(ngModel)]="filterType">
       <option value="">Tous les types</option>
       <option value="Communautaire">Communautaire</option>
       <option value="Individuel">Individuel</option>
@@ -273,14 +248,14 @@
           </div>
         </div>
 
-        <!-- Section : Porteur du projet -->
+        <!-- Section : Entrepreneur agricole -->
         <div class="form-section">
           <div class="section-title">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
               <path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2" />
               <circle cx="12" cy="7" r="4" />
             </svg>
-            Porteur du projet
+            Entrepreneur agricole
           </div>
           <div class="form-grid">
             <div class="field">
@@ -289,7 +264,7 @@
                 <span class="req">*</span>
               </label>
               <app-selected
-                [placeholder]="'Choisir l\'entrepreneur agricole...'"
+                [placeholder]="'Choisir l\'Entrepreneur agricole...'"
                 [(searchTerm)]="searchTermOwner"
                 [results]="listUsers"
                 [displayField]="'name'"
@@ -317,6 +292,23 @@
             Localisation du projet
           </div>
           <div class="form-grid">
+            @if (parcelles?.length > 0) {
+              <div class="field">
+                <label>
+                  Choisir la parcelle
+                  <span class="req">*</span>
+                </label>
+                <select id="inputState" class="form-select" [(ngModel)]="parcelle" (change)="onParcelleChange()">
+                  <option value=0>Choisir...</option>
+                  @for (parcel of parcelles; track parcel?.id) {
+                    <option [ngValue]="parcel?.id">{{ parcel?.quater }} ({{ parcel?.area }} ha)</option>
+                  }
+                </select>
+                <!-- <input readonly type="text" [value]="form.plot_land?.department ?? ''" />
+              <span class="text-danger">{{ errors?.department }}</span> -->
+              </div>
+            }
+
             <div class="field">
               <label>
                 Département
@@ -388,6 +380,11 @@
             <div class="field">
               <label>Montant total subvention (FCFA)</label>
               <input readonly type="number" [value]="totalSubvention" placeholder="Calculé automatiquement" min="0" />
+            </div>
+            <div class="field">
+              <label>Quantité attendue à la récolte (T)</label>
+              <input type="number" [(ngModel)]="form.qty" placeholder="Quantité attendue lors de la récolte" min="0" />
+              <span class="text-danger">{{ errors?.qty }}</span>
             </div>
           </div>
         </div>
@@ -462,7 +459,7 @@
             (clicked)="saveProject()"
           ></app-submit-spinner>
         }
-         <!-- @else {
+        <!-- @else {
           <app-submit-spinner
             [loading]="isSaving"
             label="Mettre à jour le projet"
@@ -601,7 +598,7 @@
         <div class="detail-grid">
           <!-- Porteur -->
           <div class="detail-row">
-            <span class="dl">Porteur du projet</span>
+            <span class="dl">Entrepreneur agricole</span>
             <span class="dv">{{ selectedItem?.plot_land.owner_land?.name }} {{ selectedItem?.plot_land.owner_land?.surname }}</span>
           </div>
           <div class="detail-row">
@@ -676,6 +673,10 @@
             <span class="dl">Durée</span>
             <span class="dv">{{ selectedItem?.nber_days ? selectedItem?.nber_days + ' jours' : '—' }}</span>
           </div>
+          <div class="detail-row">
+            <span class="dl">Quantité attendue</span>
+            <span class="dv">{{ selectedItem?.qty || 0 | number: '1.0-2' }} T</span>
+          </div>
 
           @if (selectedItem?.description) {
             <div class="detail-row full">
@@ -716,7 +717,7 @@
       </div>
       <div class="modal-footer">
         <button class="btn-cancel" (click)="closeDetailModal()">Fermer</button>
-        <button class="btn-save" (click)="closeDetailModal(); openModal(selectedItem!)">Modifier</button>
+        <!-- <button class="btn-save" (click)="closeDetailModal(); openModal(selectedItem!)">Modifier</button> -->
       </div>
     </div>
   </div>

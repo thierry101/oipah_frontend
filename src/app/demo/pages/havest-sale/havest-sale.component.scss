@@ -1,0 +1,1145 @@
+// ─── Variables (Palette complète) ──────────────────────────
+$green-50: #F4F8EB;
+$green-100: #EAF3DE;
+$green-600: #639922;
+$green-700: #3B6D11;
+$green-800: #27500A;
+$green-900: #173404;
+
+$blue-50: #EFF6FF;
+$blue-100: #DBEAFE;
+$blue-500: #2563EB;
+$blue-600: #1D4ED8;
+
+$amber-500: #EF9F27;
+$amber-100: #FDF3E1;
+
+$red-500: #DC2626;
+$red-100: #FEE2E2;
+
+$gray-50: #F9F8F5;
+$gray-100: #F1EFE8;
+$gray-200: #D3D1C7;
+$gray-400: #9B9890;
+$gray-600: #5F5E5A;
+$gray-700: #374151;
+$gray-900: #2C2C2A;
+
+$white: #FFFFFF;
+
+$radius-sm: 8px;
+$radius-md: 12px;
+$radius-lg: 16px;
+
+$font-display: 'Playfair Display', serif;
+$font-body: 'DM Sans', sans-serif;
+
+$shadow-sm: 0 1px 3px rgba(0, 0, 0, .06), 0 1px 2px rgba(0, 0, 0, .04);
+$shadow-lg: 0 20px 60px rgba(0, 0, 0, .14);
+
+
+.sales-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 28px;
+  border-top: 1px solid $gray-100;
+  background: $gray-50;
+  gap: 16px;
+  flex-wrap: wrap;
+
+  .sales-footer-info {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    font-size: 13px;
+    color: $gray-600;
+
+    svg {
+      width: 15px;
+      height: 15px;
+      color: $gray-400;
+      flex-shrink: 0;
+    }
+
+    strong {
+      color: $gray-900;
+    }
+  }
+
+  .sales-footer-actions {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-shrink: 0;
+  }
+}
+
+.btn-ghost-sales {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  height: 38px;
+  padding: 0 16px;
+  background: $white;
+  color: $gray-600;
+  border: 1px solid $gray-200;
+  border-radius: $radius-sm;
+  font-family: $font-body;
+  font-size: 13px;
+  cursor: pointer;
+  transition: background 0.14s;
+
+  svg {
+    width: 15px;
+    height: 15px;
+  }
+
+  &:hover {
+    background: $gray-100;
+  }
+}
+
+
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(44, 44, 42, 0.5);
+  backdrop-filter: blur(4px);
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+}
+
+.modal-box {
+  background: $white;
+  border-radius: $radius-lg;
+  box-shadow: $shadow-lg;
+  width: 100%;
+  max-width: 680px;
+  max-height: 90vh;
+  display: flex;
+  flex-direction: column;
+
+  &.modal-xs {
+    max-width: 460px;
+  }
+}
+
+.modal-head {
+  padding: 22px 28px 18px;
+  border-bottom: 1px solid $gray-100;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+
+  .modal-tag {
+    display: inline-block;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 1.2px;
+    text-transform: uppercase;
+    background: $green-100;
+    color: $green-800;
+    padding: 2px 9px;
+    border-radius: 20px;
+    margin-bottom: 5px;
+
+    &.danger {
+      background: $red-100;
+      color: $red-500;
+    }
+  }
+
+  h2 {
+    font-family: $font-display;
+    font-size: 19px;
+    color: $gray-900;
+    margin: 0;
+  }
+
+  &.danger h2 {
+    color: $red-500;
+  }
+}
+
+.modal-close {
+  width: 30px;
+  height: 30px;
+  background: $gray-100;
+  border: none;
+  border-radius: $radius-sm;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  color: $gray-600;
+  margin-left: 14px;
+  flex-shrink: 0;
+
+  svg {
+    width: 15px;
+    height: 15px;
+  }
+
+  &:hover {
+    background: $gray-200;
+  }
+}
+
+.modal-body {
+  padding: 22px 28px;
+  overflow-y: auto;
+  flex: 1;
+}
+
+.modal-footer {
+  padding: 16px 28px;
+  border-top: 1px solid $gray-100;
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+}
+
+.btn-cancel {
+  height: 40px;
+  padding: 0 20px;
+  background: $gray-100;
+  color: $gray-900;
+  border: none;
+  border-radius: $radius-sm;
+  font-family: $font-body;
+  font-size: 14px;
+  cursor: pointer;
+
+  &:hover {
+    background: $gray-200;
+  }
+}
+
+.btn-danger {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  height: 40px;
+  padding: 0 20px;
+  background: $red-500;
+  color: $white;
+  border: none;
+  border-radius: $radius-sm;
+  font-family: $font-body;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+
+  &:hover:not(:disabled) {
+    background: #b91c1c;
+  }
+
+  &:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+  }
+}
+
+.delete-target-info {
+  background: $gray-50;
+  border: 1px solid $gray-100;
+  border-radius: $radius-sm;
+  padding: 12px 14px;
+  margin-bottom: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.delete-target-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+
+  .dtl {
+    font-size: 11px;
+    font-weight: 600;
+    color: $gray-400;
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
+    min-width: 80px;
+  }
+
+  .dtv {
+    font-size: 13px;
+    color: $gray-900;
+    font-weight: 500;
+  }
+}
+
+.delete-warning {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  font-size: 13px;
+  color: $gray-600;
+  line-height: 1.6;
+  padding: 10px 12px;
+  margin-bottom: 18px;
+  background: $amber-100;
+  border-radius: $radius-sm;
+  border-left: 3px solid $amber-500;
+
+  svg {
+    width: 16px;
+    height: 16px;
+    color: #9a6300;
+    flex-shrink: 0;
+    margin-top: 1px;
+  }
+
+  strong {
+    color: $gray-900;
+  }
+}
+
+.delete-confirm-field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+
+  label {
+    font-size: 12.5px;
+    font-weight: 500;
+    color: $gray-900;
+  }
+
+  .delete-keyword {
+    font-family: monospace;
+    font-size: 13px;
+    font-weight: 700;
+    color: $red-500;
+    background: $red-100;
+    padding: 1px 6px;
+    border-radius: 4px;
+  }
+
+  input {
+    height: 40px;
+    border: 1.5px solid $gray-200;
+    border-radius: $radius-sm;
+    padding: 0 12px;
+    font-family: $font-body;
+    font-size: 14px;
+    color: $gray-900;
+    background: $white;
+    outline: none;
+    transition: border-color 0.18s, box-shadow 0.18s;
+
+    &::placeholder {
+      color: $gray-400;
+    }
+
+    &:focus {
+      border-color: $gray-400;
+    }
+
+    &.input-valid {
+      border-color: $green-600;
+      box-shadow: 0 0 0 3px rgba(99, 153, 34, 0.1);
+      background: $green-100;
+      color: $green-700;
+      font-weight: 500;
+    }
+  }
+}
+
+// ─── Page Structure ───────────────────────────────────────────────────
+.project-harvest-page {
+  font-family: $font-body;
+  background: $gray-50;
+  min-height: 100vh;
+  padding: 32px 40px;
+  color: $gray-900;
+}
+
+.page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 28px;
+
+  .header-left {
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+  }
+
+  .ph-icon {
+    width: 48px;
+    height: 48px;
+    border-radius: $radius-md;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+
+    &.green {
+      background: $green-100;
+      color: $green-700;
+    }
+
+    &.amber {
+      background: $amber-100;
+      color: $amber-500;
+    }
+
+    svg {
+      width: 22px;
+      height: 22px;
+    }
+  }
+
+  .header-badge {
+    display: inline-block;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 1.5px;
+    padding: 3px 8px;
+    border-radius: 4px;
+    margin-bottom: 5px;
+
+    &.green {
+      background: $green-700;
+      color: #C0DD97;
+    }
+  }
+
+  h1 {
+    font-family: $font-display;
+    font-size: 22px;
+    color: $gray-900;
+    margin-bottom: 3px;
+    line-height: 1.2;
+  }
+
+  p {
+    font-size: 13px;
+    color: $gray-600;
+  }
+}
+
+.toolbar {
+  padding: 14px 0;
+  border-bottom: 1px solid $gray-200;
+  margin-bottom: 20px;
+}
+
+.search-wrap {
+  position: relative;
+  max-width: 400px;
+
+  svg {
+    position: absolute;
+    left: 11px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 14px;
+    height: 14px;
+    color: $gray-400;
+  }
+
+  input {
+    width: 100%;
+    height: 38px;
+    border: 1px solid $gray-200;
+    border-radius: $radius-sm;
+    padding: 0 13px 0 34px;
+    font-family: $font-body;
+    font-size: 13px;
+    outline: none;
+
+    &:focus {
+      border-color: $green-600;
+    }
+  }
+}
+
+// ─── Project Selection Grid ───────────────────────────────────────────
+.projects-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 20px;
+}
+
+.project-card {
+  background: $white;
+  border: 1px solid $gray-200;
+  border-radius: $radius-md;
+  padding: 20px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+
+  &:hover {
+    border-color: $green-600;
+    box-shadow: $shadow-sm;
+    transform: translateY(-2px);
+  }
+
+  .card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+
+    .project-id {
+      font-size: 11px;
+      font-weight: 700;
+      color: $gray-400;
+      text-transform: uppercase;
+    }
+  }
+
+  .card-body {
+    flex: 1;
+
+    .project-name {
+      font-size: 16px;
+      font-weight: 700;
+      color: $gray-900;
+      margin-bottom: 10px;
+      font-family: $font-display;
+    }
+
+    .project-meta {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 13px;
+      color: $gray-600;
+      margin-bottom: 4px;
+
+      svg {
+        color: $gray-400;
+      }
+    }
+  }
+
+  .card-footer {
+    margin-top: 16px;
+    padding-top: 16px;
+    border-top: 1px solid $gray-100;
+    text-align: right;
+  }
+
+  .btn-select {
+    background: $green-100;
+    color: $green-700;
+    border: none;
+    padding: 6px 12px;
+    border-radius: $radius-sm;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+
+    .project-card:hover & {
+      background: $green-700;
+      color: $white;
+    }
+  }
+}
+
+.status-badge {
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  padding: 2px 8px;
+  border-radius: 4px;
+
+  &.status-green {
+    background: $green-100;
+    color: $green-700;
+  }
+
+  &.status-amber {
+    background: $amber-100;
+    color: darken($amber-500, 10%);
+  }
+
+  &.validated {
+    background: $green-100;
+    color: $green-700;
+  }
+}
+
+.empty-state {
+  grid-column: 1 / -1;
+  text-align: center;
+  padding: 40px;
+  color: $gray-400;
+}
+
+// ─── Back Button ───────────────────────────────────────────────────────
+.btn-back {
+  width: 36px;
+  height: 36px;
+  border: 1px solid $gray-200;
+  background: $white;
+  border-radius: $radius-sm;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: 12px;
+  cursor: pointer;
+  color: $gray-600;
+  transition: all 0.2s;
+
+  svg {
+    width: 18px;
+    height: 18px;
+  }
+
+  &:hover {
+    border-color: $gray-900;
+    color: $gray-900;
+  }
+}
+
+// ─── Tabs ─────────────────────────────────────────────────────────────
+.tabs-nav {
+  display: flex;
+  align-items: stretch;
+  gap: 4px;
+  background: $white;
+  border: 1px solid $gray-100;
+  border-radius: $radius-md;
+  padding: 6px;
+  margin-bottom: 20px;
+  box-shadow: $shadow-sm;
+}
+
+.tab-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  height: 38px;
+  padding: 0 16px;
+  background: transparent;
+  color: $gray-600;
+  border: none;
+  border-radius: $radius-sm;
+  font-family: $font-body;
+  font-size: 13.5px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.14s, color 0.14s;
+
+  &:hover:not(.active) {
+    background: $gray-50;
+    color: $green-700;
+  }
+
+  &.active {
+    background: $green-100;
+    color: $green-700;
+    font-weight: 600;
+  }
+}
+
+.tab-content {
+  background: $white;
+  border: 1px solid $gray-100;
+  border-radius: $radius-lg;
+  overflow: hidden;
+  box-shadow: $shadow-sm;
+  min-height: 500px;
+}
+
+.tab-panel {
+  padding: 0;
+  animation: fadeSlide 0.2s ease;
+}
+
+@keyframes fadeSlide {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.panel-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 24px 28px 18px;
+  border-bottom: 1px solid $gray-100;
+
+  h2 {
+    font-family: $font-display;
+    font-size: 19px;
+    color: $gray-900;
+    margin-bottom: 3px;
+  }
+
+  p {
+    font-size: 13px;
+    color: $gray-600;
+  }
+}
+
+// ─── Buttons & Helpers ────────────────────────────────────────────────
+.btn-primary {
+  height: 36px;
+  padding: 0 18px;
+  background: $green-700;
+  color: $white;
+  border: none;
+  border-radius: $radius-sm;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.15s;
+
+  &:hover {
+    background: $green-800;
+  }
+}
+
+.btn-sm {
+  font-size: 12px;
+  padding: 0 14px;
+}
+
+.btn-add-xs {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: 28px;
+  padding: 0 10px;
+  background: $green-700;
+  color: $white;
+  border: none;
+  border-radius: $radius-sm;
+  font-size: 11.5px;
+  font-weight: 600;
+  cursor: pointer;
+
+  svg {
+    width: 12px;
+    height: 12px;
+  }
+}
+
+.btn-dashed {
+  width: 100%;
+  padding: 10px;
+  border: 1.5px dashed $gray-200;
+  background: transparent;
+  color: $gray-600;
+  border-radius: $radius-sm;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+
+  &:hover {
+    border-color: $green-600;
+    color: $green-700;
+    background: $green-50;
+  }
+}
+
+.btn-icon-danger {
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  background: transparent;
+  color: $gray-400;
+  cursor: pointer;
+  border-radius: 4px;
+
+  svg {
+    width: 14px;
+    height: 14px;
+  }
+
+  &:hover {
+    background: $red-100;
+    color: $red-500;
+  }
+}
+
+.btn-icon-remove {
+  align-self: center;
+  width: 30px;
+  height: 30px;
+  border: 1px solid $gray-200;
+  background: $white;
+  border-radius: $radius-sm;
+  cursor: pointer;
+  color: $gray-400;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  svg {
+    width: 14px;
+    height: 14px;
+  }
+
+  &:hover {
+    border-color: $red-500;
+    color: $red-500;
+  }
+}
+
+.req {
+  color: $amber-500;
+}
+
+// ─── Forms ───────────────────────────────────────────────────────────
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+
+  label {
+    font-size: 12px;
+    font-weight: 600;
+    color: $gray-600;
+  }
+
+  input,
+  select {
+    height: 38px;
+    border: 1px solid $gray-200;
+    border-radius: $radius-sm;
+    padding: 0 10px;
+    font-family: $font-body;
+    font-size: 13px;
+    color: $gray-900;
+    outline: none;
+    width: 100%;
+
+    &:focus {
+      border-color: $green-600;
+      box-shadow: 0 0 0 3px rgba($green-600, 0.1);
+    }
+  }
+}
+
+.amount-input-group {
+  position: relative;
+
+  input {
+    padding-right: 50px;
+    font-weight: 600;
+    font-family: $font-display;
+  }
+
+  &.small input {
+    padding-right: 35px;
+    font-family: $font-body;
+  }
+
+  .input-suffix {
+    position: absolute;
+    right: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 12px;
+    color: $gray-600;
+    font-weight: 600;
+  }
+}
+
+.form-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr; // Force 2 colonnes par défaut
+  gap: 16px;
+
+  .field.full {
+    grid-column: 1 / -1; // Prend toute la largeur si la classe 'full' est ajoutée
+  }
+}
+
+.section-title {
+  font-size: 12px;
+  font-weight: 700;
+  color: $gray-400;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 12px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid $gray-100;
+}
+
+// ─── Harvest Layout ───────────────────────────────────────────────────
+.harvest-layout {
+  display: grid;
+  // MODIFICATION : 45% pour Récolte / 55% pour Charges
+  grid-template-columns: 45fr 55fr;
+  min-height: 500px;
+}
+
+.harvest-form-panel {
+  padding: 28px;
+  border-right: 1px solid $gray-100;
+  background: $gray-50;
+}
+
+.harvest-charges-panel {
+  display: flex;
+  flex-direction: column;
+}
+
+.panel-sub-header {
+  padding: 16px 24px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid $gray-100;
+  background: $white;
+
+  span {
+    font-size: 13px;
+    font-weight: 600;
+    color: $gray-900;
+  }
+}
+
+.charges-list {
+  padding: 16px 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  flex: 1;
+}
+
+.charge-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px;
+  border: 1px solid $gray-100;
+  background: $white;
+  border-radius: $radius-sm;
+}
+
+.charges-total {
+  margin-top: auto;
+  padding: 16px 24px;
+  background: $gray-50;
+  border-top: 1px solid $gray-100;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 14px;
+  color: $gray-600;
+
+  strong {
+    color: $gray-900;
+    font-family: $font-display;
+    font-size: 18px;
+  }
+}
+
+.empty-charges {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: $gray-400;
+  font-size: 13px;
+  font-style: italic;
+}
+
+// ─── Costs Recap ─────────────────────────────────────────────────────
+.costs-recap-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 20px;
+  padding: 28px;
+}
+
+.recap-card {
+  background: $gray-50;
+  border: 1px solid $gray-100;
+  padding: 20px;
+  border-radius: $radius-md;
+
+  .recap-label {
+    font-size: 12px;
+    text-transform: uppercase;
+    color: $gray-600;
+    margin-bottom: 8px;
+    font-weight: 600;
+  }
+
+  .recap-value {
+    font-family: $font-display;
+    font-size: 22px;
+    color: $gray-900;
+  }
+
+  &.highlight {
+    background: $blue-50;
+    border-color: $blue-100;
+
+    .recap-value {
+      color: $blue-600;
+    }
+  }
+
+  &.total {
+    background: $green-700;
+    border-color: $green-700;
+
+    .recap-label {
+      color: $green-100;
+    }
+
+    .recap-value {
+      color: $white;
+      font-size: 26px;
+    }
+  }
+}
+
+// ─── Sales Layout ─────────────────────────────────────────────────────
+.sales-layout {
+  display: grid;
+  // MODIFICATION : 25% pour Brut / 75% pour Transformés
+  grid-template-columns: 25fr 75fr;
+  gap: 24px;
+  padding: 28px;
+}
+
+.sales-block {
+  background: $gray-50;
+  border: 1px solid $gray-100;
+  border-radius: $radius-md;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+
+  .block-header {
+    padding: 14px 16px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+
+    h3 {
+      font-size: 14px;
+      font-weight: 600;
+      margin: 0;
+    }
+
+    svg {
+      width: 18px;
+      height: 18px;
+    }
+
+    &.blue {
+      background: $blue-100;
+      color: $blue-600;
+    }
+
+    &.amber {
+      background: $amber-100;
+      color: darken($amber-500, 10%);
+    }
+  }
+
+  .field {
+    padding: 16px;
+  }
+}
+
+.transformed-list {
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+// Mise à jour de la grille pour accueillir la colonne "Unité" (5 colonnes au total)
+.transformed-item {
+  display: grid;
+  // Colonnes : Produit | Quantité | Unité | Montant | Bouton
+  grid-template-columns: 2fr 0.8fr 0.8fr 1.5fr 30px;
+  gap: 10px;
+  align-items: center;
+  background: $white;
+  padding: 10px;
+  border: 1px solid $gray-100;
+  border-radius: $radius-sm;
+}
+
+.grand-total-section {
+  background: $gray-900;
+  color: $white;
+  padding: 24px 28px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+
+  .total-line {
+    display: flex;
+    justify-content: space-between;
+    font-size: 14px;
+    color: $gray-400;
+
+    &.final {
+      margin-top: 8px;
+      padding-top: 12px;
+      border-top: 1px solid $gray-700;
+      color: $white;
+      font-size: 15px;
+      font-weight: 600;
+      text-transform: uppercase;
+    }
+  }
+
+  .big-total {
+    font-family: $font-display;
+    font-size: 28px;
+    color: $green-100;
+  }
+}
+
+// ─── Responsive ───────────────────────────────────────────────────────
+@media (max-width: 900px) {
+
+  .harvest-layout,
+  .sales-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .harvest-form-panel {
+    border-right: none;
+    border-bottom: 1px solid $gray-100;
+  }
+
+  .transformed-item {
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+
+    .field:first-child {
+      grid-column: 1 / -1;
+    }
+
+    .btn-icon-remove {
+      grid-column: 2;
+      grid-row: 1 / span 2;
+      justify-self: end;
+    }
+  }
+}

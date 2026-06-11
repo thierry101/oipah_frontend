@@ -45,6 +45,10 @@ const routes: Routes = [
         path: 'settings-projet',
         loadComponent: () => import('./demo/pages/project-settings/project-settings.component').then((c) => c.ProjectSettingsComponent)
       },
+      {
+        path: 'harvest-sale',
+        loadComponent: () => import('./demo/pages/havest-sale/havest-sale.component').then((c) => c.HavestSaleComponent)
+      },
     ]
   },
   {

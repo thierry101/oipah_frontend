@@ -49,7 +49,7 @@
                 <img [src]="logoPreview || form?.logo" alt="Logo" />
               }
 
-              @if (!logoPreview) {
+              @if (!logoPreview && !form?.logo) {
                 <div class="logo-placeholder">
                   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
                     <rect x="3" y="3" width="18" height="18" rx="2" />
@@ -258,11 +258,19 @@
                 <span class="text-danger">{{ errors?.item_per_page }}</span>
               </div>
             </div>
-          </div>
+            <div class="field">
+              <label>Commission développeur/subvention obtenue</label>
 
-          <!-- <div class="future-section">
-            <p>D'autres paramètres seront disponibles prochainement dans cette section.</p>
-          </div> -->
+              <div class="input-with-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <rect x="2" y="5" width="20" height="14" rx="2" />
+                  <path d="M2 10h20" />
+                </svg>
+
+                <input readonly type="text" [value]="commDev" />
+              </div>
+            </div>
+          </div>
 
           <!-- Actions -->
           <div class="panel-actions">

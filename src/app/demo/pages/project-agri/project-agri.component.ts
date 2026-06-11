@@ -29,6 +29,7 @@ export interface Project {
     owner_land: any;
   };
   subsidies: number[];
+  qty: number;
   project_subsidies: {
     id: number;
     subsidy_name: string;
@@ -101,6 +102,7 @@ export class ProjectAgriComponent implements OnInit {
   filterFiliere = '';
   filterType = '';
   statusHistory: any[] = [];
+  parcelle!: any
 
   selectedItem: Project | null = null;
   errors: any = {};
@@ -151,7 +153,7 @@ export class ProjectAgriComponent implements OnInit {
 
   // ── Users ─────────────────────────────────────────────────
   fetchUsers(page: number = 1): void {
-    setPagination(this.authService.getUsers.bind(this.authService), page, this.searchTermOwner, (data: any) => {
+    setPagination(this.projectService.getUsersProject.bind(this.projectService), page, this.searchTermOwner, (data: any) => {
       this.listUsers = data?.listItems;
     });
   }
@@ -169,6 +171,7 @@ export class ProjectAgriComponent implements OnInit {
     this.publicService.getLandsProject(user?.id).subscribe({
       next: (res: any) => {
         this.parcelles = res?.result;
+        console.log(this.parcelles)
         if (this.parcelles?.length === 1) {
           const parcell = res?.result[0];
           this.form.plot_land = {
@@ -180,8 +183,19 @@ export class ProjectAgriComponent implements OnInit {
             gps: parcell?.gps,
             owner_land: user?.name + ' ' + user?.surname
           };
-          this.sousPrefectures =
-            departmentCI.find(d => d.value === parcell?.department)?.subPrefectures ?? [];
+          this.sousPrefectures = departmentCI.find(d => d?.value === parcell?.department)?.subPrefectures ?? [];
+        } else {
+          this.parcelle = 0
+          this.form.plot_land = {
+            id: 0,
+            area: 0,
+            department: '',
+            sub_prefecture: '',
+            quater: '',
+            gps: '',
+            owner_land: ''
+          };
+          this.sousPrefectures = []
         }
       },
       error: (err) => {
@@ -190,6 +204,22 @@ export class ProjectAgriComponent implements OnInit {
       }
     });
   }
+
+
+  onParcelleChange() {
+    const parcell = this.parcelles.find((d: any) => d?.id === this.parcelle);
+    this.form.plot_land = {
+      id: parcell?.id,
+      area: parcell?.area,
+      department: parcell?.department,
+      sub_prefecture: parcell?.sub_prefecture,
+      quater: parcell?.quater,
+      gps: parcell?.gps,
+      owner_land: ''
+    };
+    this.sousPrefectures = departmentCI.find(d => d?.value === parcell?.department)?.subPrefectures ?? [];
+  }
+
 
   // ── Subsidies ─────────────────────────────────────────────
   fetchSubsidies(page: number = 1): void {
@@ -249,8 +279,8 @@ export class ProjectAgriComponent implements OnInit {
   }
 
 
-  statusSelect(){
-    console.log(this.filterStatus)
+  filterSelect() {
+    this.fetchProjects(1);
   }
 
 

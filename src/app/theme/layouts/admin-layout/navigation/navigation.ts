@@ -99,6 +99,14 @@ export const NavigationItems: NavigationItem[] = [
         classes: 'nav-item',
         url: '/project',
         icon: 'user'
+      },
+      {
+        id: 'harSale',
+        title: 'Récoltes & ventes',
+        type: 'item',
+        classes: 'nav-item',
+        url: '/harvest-sale',
+        icon: 'user'
       }
     ]
   }
